@@ -1,5 +1,6 @@
 # API 與後端 APIs & Backend
 🤖 **AI-Driven | AI-Native** 🚀
+🚧 **建設中** 🚧
 
 這個資料夾包含各種使用 **AI 輔助開發**的 API 和後端服務專案。利用 AI 快速建立 RESTful API、GraphQL 服務和微服務架構。
 

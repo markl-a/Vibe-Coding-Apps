@@ -1,5 +1,6 @@
 # Vibe-coding-Apps
 🤖 **AI 驅動 | AI 原生** 🚀
+🚧 **建設中 | Under Construction** 🚧
 
 使用 AI 輔助開發寫出來的 App、網頁、桌面應用甚至是遊戲
 

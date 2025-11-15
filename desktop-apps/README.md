@@ -1,5 +1,6 @@
 # 桌面應用 Desktop Applications
 🤖 **AI-Driven | AI-Native** 🚀
+🚧 **建設中** 🚧
 
 這個資料夾包含各種使用 **AI 輔助開發**的桌面應用程式專案。利用 AI 工具建立高效能的跨平台桌面應用。
 
