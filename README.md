@@ -88,6 +88,8 @@ AI 驅動的底層系統開發：
 - 設備驅動程式
 - HAL & BSP
 
+⚠️ 驗證階段: 此類別中的工具和技術目前處於研究與驗證階段
+
 ### 🔌 [hardware-design](./hardware-design) - 硬體設計 (AI-Native)
 AI 驅動的電路與 PCB 設計工具：
 - AI PCB 佈局優化
