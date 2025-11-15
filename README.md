@@ -1,5 +1,6 @@
 # Vibe-coding-Apps
 🤖 **AI 驅動 | AI 原生** 🚀
+🚧 **建設中 | Under Construction** 🚧
 
 使用 AI 輔助開發寫出來的 App、網頁、桌面應用甚至是遊戲
 
@@ -64,6 +65,28 @@ AI 和機器學習應用：
 - 圖像處理
 - 資料分析
 - 自然語言處理
+
+### 🏢 [enterprise-apps](./enterprise-apps) - 企業應用 (AI-Native)
+AI 驅動的企業級應用系統：
+- ERP 系統
+- CRM 系統
+- 人力資源管理
+- 專案管理
+- 財務會計
+- 供應鏈管理
+- 商業智能
+- 協作工具
+
+### ⚙️ [system-firmware](./system-firmware) - 系統軟體與韌體 (AI-Native)
+AI 驅動的底層系統開發：
+- Android Framework 開發
+- Linux Kernel & Drivers
+- 嵌入式系統
+- 韌體開發
+- Bootloader
+- RTOS (即時作業系統)
+- 設備驅動程式
+- HAL & BSP
 
 ## 🚀 開始使用
 

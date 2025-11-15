@@ -1,5 +1,6 @@
 # AI/機器學習專案 AI & Machine Learning Projects
 🤖 **AI-Driven | AI-Native** 🚀
+🚧 **建設中** 🚧
 
 這個資料夾包含各種使用 **AI 輔助開發**的 AI 和機器學習專案。利用 AI 工具加速模型開發、資料處理和部署流程。
 

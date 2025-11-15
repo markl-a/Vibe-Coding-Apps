@@ -1,5 +1,6 @@
 # 移動應用 Mobile Applications
 🤖 **AI-Driven | AI-Native** 🚀
+🚧 **建設中** 🚧
 
 這個資料夾包含各種使用 **AI 輔助開發**的移動應用專案。利用 AI 工具快速建立跨平台和原生移動應用。
 
