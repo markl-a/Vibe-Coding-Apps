@@ -77,6 +77,17 @@ AI 驅動的企業級應用系統：
 - 商業智能
 - 協作工具
 
+### ⚙️ [system-firmware](./system-firmware) - 系統軟體與韌體 (AI-Native)
+AI 驅動的底層系統開發：
+- Android Framework 開發
+- Linux Kernel & Drivers
+- 嵌入式系統
+- 韌體開發
+- Bootloader
+- RTOS (即時作業系統)
+- 設備驅動程式
+- HAL & BSP
+
 ## 🚀 開始使用
 
 1. 選擇你想要開發的應用類型
