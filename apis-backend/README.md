@@ -1,6 +1,7 @@
 # API 與後端 APIs & Backend
+🤖 **AI-Driven | AI-Native** 🚀
 
-這個資料夾包含各種 API 和後端服務專案。
+這個資料夾包含各種使用 **AI 輔助開發**的 API 和後端服務專案。利用 AI 快速建立 RESTful API、GraphQL 服務和微服務架構。
 
 ## 子資料夾說明
 
@@ -51,3 +52,20 @@
 - MySQL
 - Supabase
 - Firebase
+
+## 🤖 AI 開發建議
+
+### 使用 AI 工具開發後端 API
+- 使用 **GitHub Copilot** 快速生成 API 路由和控制器
+- AI 協助設計資料庫 schema 和關聯
+- 利用 **Claude** 或 **ChatGPT** 設計 API 架構
+- 使用 AI 生成驗證和授權邏輯
+- AI 協助實作錯誤處理和日誌記錄
+- 利用 AI 優化資料庫查詢和性能
+
+### AI 輔助後端開發工作流程
+1. AI 協助設計 API 端點和資料模型
+2. 使用 AI 生成控制器和路由程式碼
+3. AI 協助實作資料庫連接和 ORM 設定
+4. 利用 AI 編寫中介軟體和驗證邏輯
+5. AI 協助生成 API 文檔和測試案例

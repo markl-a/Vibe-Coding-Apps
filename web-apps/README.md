@@ -1,6 +1,7 @@
 # 網頁應用 Web Applications
+🤖 **AI-Driven | AI-Native** 🚀
 
-這個資料夾包含各種網頁應用專案。
+這個資料夾包含各種使用 **AI 輔助開發**的網頁應用專案。所有專案都充分利用 AI 工具來加速開發、優化程式碼和提升品質。
 
 ## 子資料夾說明
 
@@ -40,3 +41,19 @@
 - Styling: Tailwind CSS, Material-UI, Styled Components
 - Backend: Node.js, Python (Django/Flask), Ruby on Rails
 - Database: PostgreSQL, MongoDB, Firebase
+
+## 🤖 AI 開發建議
+
+### 使用 AI 工具開發網頁應用
+- 使用 **GitHub Copilot** 或 **Cursor** 快速生成 React/Vue 組件
+- 利用 **ChatGPT** 或 **Claude** 設計 UI/UX 和資料架構
+- 使用 AI 工具生成 Tailwind CSS 樣式
+- 讓 AI 協助編寫 API 整合程式碼
+- 使用 AI 生成測試案例和優化性能
+
+### AI 輔助工作流程
+1. 使用 AI 進行需求分析和架構設計
+2. AI 協助生成基礎專案結構
+3. 利用 AI 編寫核心功能和組件
+4. AI 協助程式碼重構和優化
+5. 使用 AI 生成文檔和部署腳本

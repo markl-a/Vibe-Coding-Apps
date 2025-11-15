@@ -1,6 +1,7 @@
 # 移動應用 Mobile Applications
+🤖 **AI-Driven | AI-Native** 🚀
 
-這個資料夾包含各種移動應用專案。
+這個資料夾包含各種使用 **AI 輔助開發**的移動應用專案。利用 AI 工具快速建立跨平台和原生移動應用。
 
 ## 子資料夾說明
 
@@ -40,3 +41,19 @@
 - Flutter + Firebase
 - SwiftUI + CloudKit
 - Jetpack Compose + Room
+
+## 🤖 AI 開發建議
+
+### 使用 AI 工具開發移動應用
+- 使用 **GitHub Copilot** 快速生成 React Native 或 Flutter 組件
+- 利用 **Claude Code** 或 **Cursor** 編寫 SwiftUI 和 Jetpack Compose 程式碼
+- AI 協助設計應用架構和狀態管理
+- 使用 AI 生成導航結構和路由配置
+- 讓 AI 協助整合第三方 SDK 和 API
+
+### AI 輔助移動開發工作流程
+1. AI 協助設計應用 UI/UX 和功能規劃
+2. 使用 AI 生成專案初始結構和配置
+3. AI 協助編寫核心功能和畫面
+4. 利用 AI 優化性能和記憶體使用
+5. AI 協助編寫測試和處理平台特定問題
