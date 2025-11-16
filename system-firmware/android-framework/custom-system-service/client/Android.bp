@@ -1,0 +1,30 @@
+// Android.bp 編譯配置 - 客戶端 SDK
+
+// 客戶端 SDK 庫
+java_library {
+    name: "custom-service-client",
+    srcs: [
+        "CustomServiceClient.java",
+    ],
+    static_libs: [
+        "custom-service-aidl",
+    ],
+    sdk_version: "system_current",
+}
+
+// 範例應用
+android_app {
+    name: "CustomServiceExample",
+    srcs: [
+        "CustomServiceExample.java",
+    ],
+    static_libs: [
+        "custom-service-client",
+    ],
+    platform_apis: true,
+    certificate: "platform",
+    privileged: true,
+    optimize: {
+        enabled: false,
+    },
+}

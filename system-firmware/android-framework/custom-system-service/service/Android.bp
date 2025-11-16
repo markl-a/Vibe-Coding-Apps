@@ -1,0 +1,50 @@
+// Android.bp 編譯配置 - 自定義系統服務
+
+// AIDL 文件組
+filegroup {
+    name: "custom-service-aidl-sources",
+    srcs: [
+        "../aidl/**/*.aidl",
+    ],
+    path: "../aidl",
+}
+
+// AIDL 編譯生成
+java_library {
+    name: "custom-service-aidl",
+    srcs: [
+        ":custom-service-aidl-sources",
+    ],
+    aidl: {
+        local_include_dirs: ["../aidl"],
+        export_include_dirs: ["../aidl"],
+    },
+    sdk_version: "system_current",
+    installable: false,
+}
+
+// 服務實作庫
+java_library {
+    name: "custom-service-impl",
+    srcs: [
+        "**/*.java",
+    ],
+    static_libs: [
+        "custom-service-aidl",
+    ],
+    libs: [
+        "services.core",
+        "framework",
+    ],
+    sdk_version: "system_current",
+    installable: false,
+    optimize: {
+        enabled: true,
+        shrink: true,
+        proguard_flags_files: ["proguard.flags"],
+    },
+}
+
+// 將服務編譯進 services.jar
+// 在 frameworks/base/services/core/Android.bp 中添加：
+// static_libs: ["custom-service-impl"]
