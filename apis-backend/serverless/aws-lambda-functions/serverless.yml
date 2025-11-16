@@ -1,0 +1,136 @@
+service: aws-lambda-functions-demo
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1  # Change to your preferred region
+  stage: ${opt:stage, 'dev'}
+  memorySize: 256
+  timeout: 30
+
+  # IAM permissions
+  iam:
+    role:
+      statements:
+        # S3 permissions for image processing
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:PutObject
+          Resource: "arn:aws:s3:::${self:custom.imageBucket}/*"
+
+        # SES permissions for email sending
+        - Effect: Allow
+          Action:
+            - ses:SendEmail
+            - ses:SendRawEmail
+          Resource: "*"
+
+        # SQS permissions for data processing
+        - Effect: Allow
+          Action:
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+            - sqs:GetQueueAttributes
+          Resource:
+            - Fn::GetAtt:
+                - DataQueue
+                - Arn
+
+  # Environment variables
+  environment:
+    STAGE: ${self:provider.stage}
+    REGION: ${self:provider.region}
+    IMAGE_BUCKET: ${self:custom.imageBucket}
+
+# Custom variables
+custom:
+  imageBucket: ${self:service}-images-${self:provider.stage}
+
+# Functions
+functions:
+  # Hello World API
+  hello:
+    handler: handler.hello
+    events:
+      - httpApi:
+          path: /hello
+          method: get
+
+  # User Management API
+  users:
+    handler: handler.users
+    events:
+      - httpApi:
+          path: /users
+          method: get
+      - httpApi:
+          path: /users
+          method: post
+      - httpApi:
+          path: /users/{id}
+          method: get
+
+  # Image Processing (S3 trigger)
+  processImage:
+    handler: handler.processImage
+    events:
+      - s3:
+          bucket: ${self:custom.imageBucket}
+          event: s3:ObjectCreated:*
+          existing: false
+    timeout: 60
+    memorySize: 512
+
+  # Email Sender
+  sendEmail:
+    handler: handler.sendEmail
+    events:
+      - httpApi:
+          path: /send-email
+          method: post
+
+  # Data Processor (SQS trigger)
+  processData:
+    handler: handler.processData
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - DataQueue
+              - Arn
+          batchSize: 10
+
+  # Scheduled Task
+  scheduledTask:
+    handler: handler.scheduledTask
+    events:
+      - schedule:
+          rate: cron(0 2 * * ? *)  # Run daily at 2 AM UTC
+          description: Daily cleanup task
+
+# CloudFormation resources
+resources:
+  Resources:
+    # SQS Queue for data processing
+    DataQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-data-queue-${self:provider.stage}
+        VisibilityTimeout: 300
+        MessageRetentionPeriod: 1209600  # 14 days
+
+# Plugins (optional but recommended)
+plugins:
+  - serverless-offline  # For local development
+
+# Package configuration
+package:
+  exclude:
+    - .git/**
+    - .gitignore
+    - README.md
+    - node_modules/**
+    - test/**

@@ -1,0 +1,130 @@
+service: image-processing-service
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ${opt:region, 'us-east-1'}
+  stage: ${opt:stage, 'dev'}
+  memorySize: 1024  # More memory for image processing
+  timeout: 30
+
+  # IAM permissions
+  iam:
+    role:
+      statements:
+        # S3 permissions
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:PutObject
+            - s3:PutObjectAcl
+          Resource: "arn:aws:s3:::${self:custom.imageBucket}/*"
+
+  # Environment variables
+  environment:
+    STAGE: ${self:provider.stage}
+    IMAGE_BUCKET: ${self:custom.imageBucket}
+    API_KEY: ${env:API_KEY, 'demo-api-key'}
+    MAX_FILE_SIZE: ${env:MAX_FILE_SIZE, '10485760'}
+    CDN_URL: ${env:CDN_URL, ''}
+
+# Custom variables
+custom:
+  imageBucket: ${self:service}-images-${self:provider.stage}
+
+# Functions
+functions:
+  upload:
+    handler: handler.upload
+    events:
+      - httpApi:
+          path: /upload
+          method: post
+    layers:
+      - arn:aws:lambda:${self:provider.region}:account-id:layer:sharp:1
+
+  resize:
+    handler: handler.resize
+    events:
+      - httpApi:
+          path: /resize
+          method: post
+    layers:
+      - arn:aws:lambda:${self:provider.region}:account-id:layer:sharp:1
+
+  convert:
+    handler: handler.convert
+    events:
+      - httpApi:
+          path: /convert
+          method: post
+    layers:
+      - arn:aws:lambda:${self:provider.region}:account-id:layer:sharp:1
+
+  optimize:
+    handler: handler.optimize
+    events:
+      - httpApi:
+          path: /optimize
+          method: post
+    layers:
+      - arn:aws:lambda:${self:provider.region}:account-id:layer:sharp:1
+
+  batch:
+    handler: handler.batch
+    events:
+      - httpApi:
+          path: /batch
+          method: post
+    timeout: 60
+    layers:
+      - arn:aws:lambda:${self:provider.region}:account-id:layer:sharp:1
+
+# CloudFormation resources
+resources:
+  Resources:
+    # S3 Bucket for images
+    ImageBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.imageBucket}
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          BlockPublicPolicy: false
+          IgnorePublicAcls: false
+          RestrictPublicBuckets: false
+        CorsConfiguration:
+          CorsRules:
+            - AllowedOrigins:
+                - '*'
+              AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+              MaxAge: 3000
+
+    # Bucket Policy for public read
+    ImageBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref ImageBucket
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal: '*'
+              Action:
+                - s3:GetObject
+              Resource: !Sub '${ImageBucket.Arn}/*'
+
+# Package configuration
+package:
+  exclude:
+    - .git/**
+    - .gitignore
+    - README.md
+    - node_modules/**
+    - test/**
