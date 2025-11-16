@@ -1,739 +1,301 @@
-# 📱 社交媒體工具 - Social Media Tools Extension
+# 📱 社交媒體工具 Social Media Tools
 
-> 🚀 **AI 輔助開發的全能社交媒體增強工具**
+> 🚀 **實用的社交媒體瀏覽器擴充功能集合**
 
-一個專為社交媒體使用者設計的瀏覽器擴充功能，提供內容下載、排程發文、分析統計、批次操作等強大功能。
+這個資料夾包含多個專為社交媒體平台設計的瀏覽器擴充功能，提供下載、增強、優化等實用功能。
 
-## 📋 專案目標
+## 📂 子專案列表
 
-提升社交媒體使用體驗，讓使用者能夠：
-- 下載圖片、影片和故事
-- 排程自動發文
-- 分析互動數據和趨勢
-- 批次管理追蹤和封鎖
-- 增強介面和功能
-- 自動化重複性任務
+### 1. [📸 Instagram Downloader](./instagram-downloader/)
+Instagram 媒體下載器 - 輕鬆下載圖片、影片、Stories 和 Reels
 
-## 🎯 核心功能
+**核心功能：**
+- ⬇️ 一鍵下載貼文圖片和影片
+- 📖 下載 Stories 限時動態
+- 🎥 下載 Reels 短影片
+- 📦 批次下載多個媒體檔案
+- 🗂️ 自動分類和命名
+- 📊 下載歷史記錄和統計
 
-### 1. 多媒體下載器
-- 📷 Instagram 圖片/影片下載
-- 🎬 YouTube 影片下載
-- 📘 Facebook 影片/相片下載
-- 🐦 Twitter/X 媒體下載
-- 📖 Stories 和 Reels 下載
-- 📊 批次下載功能
-- 🎨 自動檔名和分類
+**技術棧：**
+- TypeScript + Webpack
+- Chrome Extension Manifest V3
+- MutationObserver API
+- Chrome Downloads API
 
-### 2. 排程發文
-- ⏰ 預約發文時間
-- 📝 草稿箱管理
-- 🔄 跨平台發布
-- 📊 最佳發文時間建議（AI）
-- 🎨 圖片/影片預覽
-- 📋 發文佇列管理
-- 🔔 發文提醒
-
-### 3. 分析工具
-- 📊 追蹤者增長趨勢
-- 💬 互動率統計
-- 🔥 熱門貼文分析
-- 👥 粉絲洞察報告
-- 📈 歷史數據追蹤
-- 🎯 競品分析
-- 📉 退追分析
-
-### 4. 批次操作
-- ✅ 批次按讚/留言
-- 👥 批次追蹤/取消追蹤
-- 🗑️ 批次刪除貼文
-- 📥 批次儲存/分類
-- 🚫 批次封鎖/解封
-- 💬 批次訊息發送
-
-### 5. 介面增強
-- 🌙 自訂主題和顏色
-- 🎨 隱藏廣告和建議
-- 📐 重新排列版面
-- 🔍 進階搜尋過濾
-- ⬇️ 自動載入更多
-- 🎯 內容過濾器
-
-### 6. 智能助手
-- 🤖 AI 生成貼文內容
-- 🎨 AI 圖片說明生成
-- 🏷️ 智能標籤建議
-- 💬 自動回覆機器人
-- 📊 趨勢話題推薦
-- 🎯 最佳標籤組合
-
-## 🛠️ 技術棧
-
-### 前端框架
-- **React 18** + **TypeScript**
-- **Tailwind CSS** - UI 樣式
-- **Zustand** - 狀態管理
-- **React Query** - 資料快取
-
-### 瀏覽器 API
-- **Chrome Downloads API** - 檔案下載
-- **Chrome Alarms API** - 排程任務
-- **Chrome Storage API** - 資料儲存
-- **Chrome Notifications API** - 通知
-
-### 核心技術
-- **MutationObserver** - DOM 監控
-- **Blob API** - 檔案處理
-- **Canvas API** - 圖片處理
-- **IndexedDB** - 大量資料儲存
-
-### 工具庫
-- **axios** - HTTP 請求
-- **file-saver** - 檔案儲存
-- **chart.js** - 資料視覺化
-- **date-fns** - 日期處理
-- **jszip** - 批次壓縮
-
-## 🚀 快速開始
-
-### 安裝依賴
-
-```bash
-cd browser-extensions/social-media-tools
-npm install
-```
-
-### 開發模式
-
-```bash
-npm run dev
-
-# 載入到 Chrome:
-# chrome://extensions/ -> 開發者模式 -> 載入未封裝項目
-```
-
-### 建置
-
-```bash
-npm run build
-```
-
-## 📁 專案結構
-
-```
-social-media-tools/
-├── README.md
-├── package.json
-├── manifest.json
-├── src/
-│   ├── background/
-│   │   ├── service-worker.ts       # 背景服務
-│   │   ├── scheduler.ts            # 排程管理
-│   │   └── downloader.ts           # 下載管理
-│   ├── content/
-│   │   ├── instagram/
-│   │   │   ├── download-button.ts  # 下載按鈕注入
-│   │   │   ├── analytics.ts        # 數據收集
-│   │   │   └── ui-enhancer.ts      # UI 增強
-│   │   ├── twitter/
-│   │   │   ├── download-button.ts
-│   │   │   └── analytics.ts
-│   │   ├── facebook/
-│   │   │   ├── download-button.ts
-│   │   │   └── analytics.ts
-│   │   └── youtube/
-│   │       ├── download-button.ts
-│   │       └── quality-selector.ts
-│   ├── popup/
-│   │   ├── Popup.tsx
-│   │   ├── components/
-│   │   │   ├── QuickDownload.tsx
-│   │   │   ├── ScheduledPosts.tsx
-│   │   │   ├── Analytics.tsx
-│   │   │   └── QuickActions.tsx
-│   │   └── index.html
-│   ├── options/
-│   │   ├── Options.tsx
-│   │   ├── pages/
-│   │   │   ├── Download.tsx
-│   │   │   ├── Scheduler.tsx
-│   │   │   ├── Analytics.tsx
-│   │   │   ├── Automation.tsx
-│   │   │   └── Settings.tsx
-│   │   └── index.html
-│   ├── services/
-│   │   ├── download-service.ts     # 下載服務
-│   │   ├── scheduler-service.ts    # 排程服務
-│   │   ├── analytics-service.ts    # 分析服務
-│   │   ├── platform-api.ts         # 平台 API 整合
-│   │   └── ai-service.ts           # AI 功能
-│   ├── utils/
-│   │   ├── media-fetcher.ts        # 媒體獲取
-│   │   ├── file-utils.ts           # 檔案工具
-│   │   ├── date-utils.ts           # 日期工具
-│   │   └── platform-detector.ts    # 平台偵測
-│   ├── types/
-│   │   └── index.ts
-│   └── constants/
-│       ├── platforms.ts            # 平台設定
-│       └── selectors.ts            # DOM 選擇器
-└── tests/
-```
-
-## 💻 核心程式碼範例
-
-### 媒體下載服務
-
-```typescript
-// src/services/download-service.ts
-export class DownloadService {
-  /**
-   * 下載 Instagram 圖片/影片
-   */
-  async downloadInstagramMedia(url: string): Promise<void> {
-    const mediaData = await this.fetchInstagramMedia(url);
-
-    if (mediaData.type === 'image') {
-      await this.downloadImage(mediaData.url, mediaData.filename);
-    } else if (mediaData.type === 'video') {
-      await this.downloadVideo(mediaData.url, mediaData.filename);
-    }
-  }
-
-  /**
-   * 批次下載
-   */
-  async batchDownload(urls: string[]): Promise<void> {
-    const downloads = urls.map(url => this.downloadInstagramMedia(url));
-    await Promise.all(downloads);
-  }
-
-  /**
-   * 下載圖片
-   */
-  private async downloadImage(url: string, filename: string): Promise<void> {
-    const response = await fetch(url);
-    const blob = await response.blob();
-
-    chrome.downloads.download({
-      url: URL.createObjectURL(blob),
-      filename: `instagram/${filename}`,
-      saveAs: false
-    });
-  }
-
-  /**
-   * 下載影片
-   */
-  private async downloadVideo(url: string, filename: string): Promise<void> {
-    chrome.downloads.download({
-      url: url,
-      filename: `instagram/${filename}`,
-      saveAs: false
-    });
-  }
-
-  /**
-   * 獲取 Instagram 媒體資料
-   */
-  private async fetchInstagramMedia(url: string): Promise<MediaData> {
-    // 從頁面中提取媒體 URL
-    const response = await fetch(url);
-    const html = await response.text();
-
-    // 解析 HTML 找到媒體 URL
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-
-    // Instagram 特定選擇器
-    const videoElement = doc.querySelector('video');
-    const imageElement = doc.querySelector('meta[property="og:image"]');
-
-    if (videoElement) {
-      return {
-        type: 'video',
-        url: videoElement.src,
-        filename: this.generateFilename('video', 'mp4')
-      };
-    } else if (imageElement) {
-      return {
-        type: 'image',
-        url: imageElement.getAttribute('content') || '',
-        filename: this.generateFilename('image', 'jpg')
-      };
-    }
-
-    throw new Error('無法找到媒體');
-  }
-
-  /**
-   * 生成檔案名稱
-   */
-  private generateFilename(type: string, extension: string): string {
-    const timestamp = new Date().getTime();
-    return `${type}_${timestamp}.${extension}`;
-  }
-}
-
-interface MediaData {
-  type: 'image' | 'video';
-  url: string;
-  filename: string;
-}
-```
-
-### 排程發文服務
-
-```typescript
-// src/services/scheduler-service.ts
-export class SchedulerService {
-  /**
-   * 建立排程發文
-   */
-  async schedulePost(post: ScheduledPost): Promise<void> {
-    // 儲存到資料庫
-    await this.saveScheduledPost(post);
-
-    // 設定鬧鐘
-    const delayInMinutes = this.calculateDelay(post.scheduledTime);
-
-    await chrome.alarms.create(`post_${post.id}`, {
-      delayInMinutes: delayInMinutes
-    });
-  }
-
-  /**
-   * 取消排程發文
-   */
-  async cancelScheduledPost(postId: string): Promise<void> {
-    await chrome.alarms.clear(`post_${postId}`);
-    await this.deleteScheduledPost(postId);
-  }
-
-  /**
-   * 執行發文
-   */
-  async executePost(post: ScheduledPost): Promise<void> {
-    const platform = post.platform;
-
-    try {
-      switch (platform) {
-        case 'instagram':
-          await this.postToInstagram(post);
-          break;
-        case 'twitter':
-          await this.postToTwitter(post);
-          break;
-        case 'facebook':
-          await this.postToFacebook(post);
-          break;
-      }
-
-      // 標記為已發布
-      await this.markAsPublished(post.id);
-
-      // 發送通知
-      chrome.notifications.create({
-        type: 'basic',
-        iconUrl: 'icons/icon-128.png',
-        title: '發文成功',
-        message: `您的貼文已成功發布到 ${platform}`
-      });
-    } catch (error) {
-      console.error('發文失敗:', error);
-
-      chrome.notifications.create({
-        type: 'basic',
-        iconUrl: 'icons/icon-128.png',
-        title: '發文失敗',
-        message: `發布到 ${platform} 失敗，請檢查設定`
-      });
-    }
-  }
-
-  /**
-   * 發布到 Instagram
-   */
-  private async postToInstagram(post: ScheduledPost): Promise<void> {
-    // 開啟 Instagram 並自動填寫內容
-    const tab = await chrome.tabs.create({
-      url: 'https://www.instagram.com/create/style/',
-      active: false
-    });
-
-    // 注入腳本來自動填寫和發布
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id! },
-      func: this.autoPostToInstagram,
-      args: [post]
-    });
-  }
-
-  private autoPostToInstagram(post: ScheduledPost): void {
-    // 自動填寫表單和發布的腳本
-    // （這需要根據 Instagram 的實際介面調整）
-  }
-
-  private calculateDelay(scheduledTime: Date): number {
-    const now = new Date();
-    const delay = scheduledTime.getTime() - now.getTime();
-    return Math.max(0, delay / 1000 / 60); // 轉換為分鐘
-  }
-
-  private async saveScheduledPost(post: ScheduledPost): Promise<void> {
-    const posts = await this.getAllScheduledPosts();
-    posts.push(post);
-    await chrome.storage.local.set({ scheduledPosts: posts });
-  }
-
-  private async deleteScheduledPost(postId: string): Promise<void> {
-    const posts = await this.getAllScheduledPosts();
-    const filtered = posts.filter(p => p.id !== postId);
-    await chrome.storage.local.set({ scheduledPosts: filtered });
-  }
-
-  private async getAllScheduledPosts(): Promise<ScheduledPost[]> {
-    const result = await chrome.storage.local.get('scheduledPosts');
-    return result.scheduledPosts || [];
-  }
-
-  private async markAsPublished(postId: string): Promise<void> {
-    const posts = await this.getAllScheduledPosts();
-    const post = posts.find(p => p.id === postId);
-
-    if (post) {
-      post.status = 'published';
-      post.publishedAt = new Date();
-      await chrome.storage.local.set({ scheduledPosts: posts });
-    }
-  }
-}
-
-interface ScheduledPost {
-  id: string;
-  platform: 'instagram' | 'twitter' | 'facebook';
-  content: string;
-  media?: {
-    type: 'image' | 'video';
-    url: string;
-  }[];
-  scheduledTime: Date;
-  status: 'pending' | 'published' | 'failed';
-  publishedAt?: Date;
-}
-```
-
-### 分析服務
-
-```typescript
-// src/services/analytics-service.ts
-export class AnalyticsService {
-  /**
-   * 收集 Instagram 數據
-   */
-  async collectInstagramData(): Promise<InstagramAnalytics> {
-    const profileData = await this.scrapeInstagramProfile();
-
-    return {
-      followers: profileData.followers,
-      following: profileData.following,
-      posts: profileData.posts,
-      engagementRate: this.calculateEngagementRate(profileData),
-      topPosts: await this.getTopPosts(),
-      followerGrowth: await this.getFollowerGrowth(),
-      bestPostingTimes: await this.analyzeBestPostingTimes()
-    };
-  }
-
-  /**
-   * 抓取 Instagram 個人檔案數據
-   */
-  private async scrapeInstagramProfile(): Promise<ProfileData> {
-    // 從當前頁面中提取數據
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-    const result = await chrome.scripting.executeScript({
-      target: { tabId: tab.id! },
-      func: () => {
-        // 提取追蹤者、追蹤中、貼文數等
-        const followers = document.querySelector('a[href*="followers"] span')?.textContent || '0';
-        const following = document.querySelector('a[href*="following"] span')?.textContent || '0';
-        const posts = document.querySelectorAll('article img').length;
-
-        return {
-          followers: this.parseNumber(followers),
-          following: this.parseNumber(following),
-          posts: posts
-        };
-      }
-    });
-
-    return result[0].result as ProfileData;
-  }
-
-  /**
-   * 計算互動率
-   */
-  private calculateEngagementRate(data: ProfileData): number {
-    // 簡化計算：平均按讚數 / 追蹤者數
-    // 實際應該包含留言數
-    return (data.averageLikes / data.followers) * 100;
-  }
-
-  /**
-   * 取得熱門貼文
-   */
-  private async getTopPosts(): Promise<PostAnalytics[]> {
-    // 分析近期貼文的互動數據
-    return [];
-  }
-
-  /**
-   * 追蹤者增長趨勢
-   */
-  private async getFollowerGrowth(): Promise<GrowthData[]> {
-    const history = await this.getHistoricalData();
-
-    return history.map((record, index) => ({
-      date: record.date,
-      followers: record.followers,
-      change: index > 0 ? record.followers - history[index - 1].followers : 0
-    }));
-  }
-
-  /**
-   * 分析最佳發文時間
-   */
-  private async analyzeBestPostingTimes(): Promise<BestTime[]> {
-    const posts = await this.getAllPostsData();
-
-    // 按時段分組計算平均互動率
-    const timeSlots = this.groupByTimeSlot(posts);
-
-    return timeSlots
-      .sort((a, b) => b.avgEngagement - a.avgEngagement)
-      .slice(0, 5);
-  }
-
-  /**
-   * 儲存歷史數據
-   */
-  async saveSnapshot(): Promise<void> {
-    const data = await this.collectInstagramData();
-
-    const history = await this.getHistoricalData();
-    history.push({
-      date: new Date(),
-      followers: data.followers,
-      following: data.following,
-      posts: data.posts
-    });
-
-    await chrome.storage.local.set({ analyticsHistory: history });
-  }
-
-  private async getHistoricalData(): Promise<HistoricalData[]> {
-    const result = await chrome.storage.local.get('analyticsHistory');
-    return result.analyticsHistory || [];
-  }
-
-  private parseNumber(str: string): number {
-    // 處理 1K, 1M 等格式
-    const multipliers: Record<string, number> = {
-      K: 1000,
-      M: 1000000,
-      B: 1000000000
-    };
-
-    const match = str.match(/^(\d+\.?\d*)([KMB])?$/);
-    if (!match) return 0;
-
-    const num = parseFloat(match[1]);
-    const multiplier = match[2] ? multipliers[match[2]] : 1;
-
-    return num * multiplier;
-  }
-}
-
-interface InstagramAnalytics {
-  followers: number;
-  following: number;
-  posts: number;
-  engagementRate: number;
-  topPosts: PostAnalytics[];
-  followerGrowth: GrowthData[];
-  bestPostingTimes: BestTime[];
-}
-
-interface ProfileData {
-  followers: number;
-  following: number;
-  posts: number;
-  averageLikes: number;
-}
-
-interface PostAnalytics {
-  url: string;
-  likes: number;
-  comments: number;
-  engagement: number;
-  postedAt: Date;
-}
-
-interface GrowthData {
-  date: Date;
-  followers: number;
-  change: number;
-}
-
-interface BestTime {
-  hour: number;
-  avgEngagement: number;
-}
-
-interface HistoricalData {
-  date: Date;
-  followers: number;
-  following: number;
-  posts: number;
-}
-```
-
-## 🤖 AI 功能整合
-
-### AI 內容生成
-
-```typescript
-// src/services/ai-service.ts
-export class AIContentService {
-  /**
-   * 生成貼文內容
-   */
-  async generatePostContent(topic: string, platform: string): Promise<string> {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-4',
-        messages: [
-          {
-            role: 'system',
-            content: `You are a social media expert. Create engaging ${platform} posts.`
-          },
-          {
-            role: 'user',
-            content: `Create a post about: ${topic}`
-          }
-        ]
-      })
-    });
-
-    const data = await response.json();
-    return data.choices[0].message.content;
-  }
-
-  /**
-   * 生成圖片說明
-   */
-  async generateImageCaption(imageUrl: string): Promise<string> {
-    // 使用視覺 AI 模型生成圖片描述
-    // 然後轉換為適合社交媒體的說明文字
-  }
-
-  /**
-   * 建議標籤
-   */
-  async suggestHashtags(content: string): Promise<string[]> {
-    // 使用 AI 分析內容並建議相關標籤
-  }
-}
-```
-
-## 🎨 UI 設計
-
-### 主要介面
-- **快速下載** - 一鍵下載當前頁面媒體
-- **排程管理** - 發文行事曆和佇列
-- **分析儀表板** - 數據視覺化
-- **批次操作** - 多選和批次處理
-
-## 🧪 開發路線圖
-
-### Phase 1: 基礎功能 ✅
-- [x] 專案設置
-- [ ] Instagram 媒體下載
-- [ ] 基本排程功能
-- [ ] 簡單數據收集
-
-### Phase 2: 多平台支援
-- [ ] Twitter/X 整合
-- [ ] Facebook 整合
-- [ ] YouTube 整合
-- [ ] TikTok 整合
-
-### Phase 3: 進階功能
-- [ ] 批次操作
-- [ ] 進階分析
-- [ ] 介面自訂
-- [ ] 自動化規則
-
-### Phase 4: AI 整合
-- [ ] AI 內容生成
-- [ ] 智能排程建議
-- [ ] 趨勢分析
-- [ ] 自動回覆
-
-### Phase 5: 完善與發布
-- [ ] 效能優化
-- [ ] 更多平台
-- [ ] 雲端同步
-- [ ] 發布到商店
-
-## 📚 支援平台
-
-### 完整支援
-- ✅ Instagram
-- ✅ Twitter/X
-- ✅ Facebook
-- ✅ YouTube
-
-### 計劃支援
-- 🔜 TikTok
-- 🔜 LinkedIn
-- 🔜 Pinterest
-- 🔜 Reddit
-
-## ⚠️ 使用須知
-
-### 遵守規範
-- ✅ 遵守各平台使用條款
-- ✅ 尊重版權和智慧財產權
-- ✅ 不進行惡意自動化操作
-- ✅ 合理使用速率限制
-
-### 隱私保護
-- ✅ 不收集使用者帳號資訊
-- ✅ 本地儲存資料
-- ✅ 不與第三方分享資料
-
-## 🤝 貢獻指南
-
-歡迎貢獻！特別需要：
-- 新平台整合
-- UI/UX 改進
-- 功能建議
-- Bug 回報
-
-## 📄 授權
-
-MIT License
+[查看詳細文檔 →](./instagram-downloader/README.md)
 
 ---
 
-**讓社交媒體管理更輕鬆** 🚀
+### 2. [🐦 Twitter/X Enhancer](./twitter-enhancer/)
+Twitter/X 增強工具 - 提升 Twitter/X 使用體驗
+
+**核心功能：**
+- ⬇️ 下載推文中的圖片、影片和 GIF
+- 🚫 自動隱藏推廣推文和廣告
+- 🎨 自訂主題（深色/淺色/多種顏色）
+- 📊 顯示詳細統計資訊
+- 🔍 進階搜尋和過濾
+- ⌨️ 自訂鍵盤快捷鍵
+
+**技術棧：**
+- TypeScript + Webpack
+- Chrome Extension Manifest V3
+- CSS Variables for Theming
+- MutationObserver for DOM Monitoring
+
+[查看詳細文檔 →](./twitter-enhancer/README.md)
+
+---
+
+### 3. [🎬 YouTube Enhancer](./youtube-enhancer/)
+YouTube 增強工具 - 全面提升 YouTube 觀看體驗
+
+**核心功能：**
+- ⬇️ 影片下載（多種畫質選擇）
+- 🚫 自動跳過廣告
+- ⏩ 自訂播放速度（0.25x - 3x）
+- 🔊 音量增強
+- ⏭️ 自動跳過片頭
+- 🎮 自訂鍵盤快捷鍵
+- 🖼️ 子母畫面模式
+
+**技術棧：**
+- TypeScript + Webpack
+- Chrome Extension Manifest V3
+- YouTube IFrame API
+- Web Audio API (音量增強)
+
+[查看詳細文檔 →](./youtube-enhancer/README.md)
+
+---
+
+## 🚀 快速開始
+
+### 通用安裝步驟
+
+1. **克隆專案**
+```bash
+git clone <repository-url>
+cd browser-extensions/social-media-tools
+```
+
+2. **選擇要安裝的子專案**
+```bash
+# 進入任一子專案目錄
+cd instagram-downloader
+# 或
+cd twitter-enhancer
+# 或
+cd youtube-enhancer
+```
+
+3. **安裝依賴**
+```bash
+npm install
+```
+
+4. **建置專案**
+```bash
+# 開發模式（自動重新編譯）
+npm run dev
+
+# 生產建置
+npm run build
+```
+
+5. **載入到瀏覽器**
+- 開啟 Chrome 瀏覽器
+- 前往 `chrome://extensions/`
+- 啟用「開發者模式」
+- 點擊「載入未封裝項目」
+- 選擇子專案的 `dist` 資料夾
+
+## 📊 專案比較
+
+| 專案 | 主要用途 | 下載功能 | 廣告移除 | 介面優化 | 難度 |
+|------|---------|---------|---------|---------|------|
+| Instagram Downloader | 媒體下載 | ✅ 強大 | ❌ | ⭐ 基本 | ⭐⭐ |
+| Twitter/X Enhancer | 全面增強 | ✅ 支援 | ✅ 支援 | ⭐⭐⭐ 豐富 | ⭐⭐⭐ |
+| YouTube Enhancer | 播放優化 | ✅ 支援 | ✅ 強大 | ⭐⭐ 中等 | ⭐⭐⭐ |
+
+## 🛠️ 共同技術棧
+
+所有子專案都使用以下技術：
+
+### 核心技術
+- **TypeScript** - 型別安全的開發
+- **Webpack 5** - 模組打包工具
+- **Chrome Extension Manifest V3** - 最新擴充功能標準
+
+### 開發工具
+- **ESLint** - 程式碼品質檢查
+- **TypeScript Compiler** - 型別檢查
+- **Copy Webpack Plugin** - 資源複製
+
+### 瀏覽器 API
+- **Chrome Downloads API** - 檔案下載
+- **Chrome Storage API** - 資料儲存
+- **Chrome Runtime API** - 擴充功能通訊
+- **MutationObserver** - DOM 變化監控
+
+## 📁 通用專案結構
+
+```
+<subproject>/
+├── README.md              # 專案說明文檔
+├── package.json           # 依賴和腳本配置
+├── manifest.json          # 擴充功能清單
+├── webpack.config.js      # Webpack 配置
+├── tsconfig.json          # TypeScript 配置
+├── .gitignore            # Git 忽略檔案
+├── src/
+│   ├── background/       # 背景服務腳本
+│   ├── content/          # 內容腳本
+│   ├── popup/            # 彈出視窗
+│   └── utils/            # 工具函式
+└── icons/                # 圖示資源
+```
+
+## 🤖 AI 輔助開發
+
+這些專案都是利用 AI 工具開發的，展示了如何使用 AI 快速建立實用的瀏覽器擴充功能：
+
+### AI 開發優勢
+- ✅ 快速生成樣板程式碼
+- ✅ 自動產生 TypeScript 型別定義
+- ✅ 智能完成 API 調用
+- ✅ 生成完整的文檔
+- ✅ 優化程式碼結構
+
+### 推薦 AI 工具
+- **GitHub Copilot** - 程式碼自動完成
+- **Claude** / **ChatGPT** - 架構設計和問題解決
+- **Cursor** - AI 增強的程式碼編輯器
+
+## 🔒 隱私和安全
+
+所有子專案都遵循以下隱私原則：
+
+- ✅ **本地優先** - 所有資料儲存在本地
+- ✅ **不收集資料** - 不追蹤使用者行為
+- ✅ **不與第三方分享** - 資料不離開您的裝置
+- ✅ **開源透明** - 所有程式碼公開可查
+- ✅ **最小權限** - 僅請求必要的權限
+
+## ⚠️ 使用須知
+
+### 遵守服務條款
+- 請遵守各平台的使用條款
+- 下載的內容僅供個人使用
+- 尊重創作者的版權和智慧財產權
+
+### 合理使用
+- 不進行大規模自動化操作
+- 避免濫用下載功能
+- 遵守速率限制
+
+### 法律責任
+- 使用者需自行承擔使用責任
+- 開發者不對濫用行為負責
+- 請遵守當地法律法規
+
+## 🧪 開發指南
+
+### 通用開發命令
+
+```bash
+# 安裝依賴
+npm install
+
+# 開發模式（監聽變更）
+npm run dev
+
+# 生產建置
+npm run build
+
+# 程式碼檢查
+npm run lint
+
+# 型別檢查
+npm run type-check
+```
+
+### 除錯技巧
+
+1. **查看背景服務日誌**
+   - 前往 `chrome://extensions/`
+   - 點擊「Service Worker」查看日誌
+
+2. **除錯內容腳本**
+   - 在頁面上按 F12 開啟開發者工具
+   - 在 Console 中查看訊息
+
+3. **即時更新**
+   - 使用 `npm run dev` 自動重新編譯
+   - 在擴充功能頁面點擊「重新載入」
+
+## 🎯 功能路線圖
+
+### 短期計畫
+- [ ] 新增更多社交媒體平台支援
+  - [ ] Facebook 增強工具
+  - [ ] TikTok 下載器
+  - [ ] LinkedIn 增強工具
+- [ ] 改進現有功能
+  - [ ] 更好的錯誤處理
+  - [ ] 效能優化
+  - [ ] UI/UX 改進
+
+### 長期計畫
+- [ ] 跨平台支援
+  - [ ] Firefox 版本
+  - [ ] Edge 版本
+  - [ ] Safari 版本
+- [ ] 進階功能
+  - [ ] 雲端同步設定
+  - [ ] AI 內容分析
+  - [ ] 排程和自動化
+
+## 🤝 貢獻指南
+
+歡迎貢獻！以下是一些可以貢獻的方向：
+
+### 新功能
+- 支援新的社交媒體平台
+- 新增實用功能
+- 改進使用者介面
+
+### Bug 修復
+- 回報問題
+- 提交修復
+- 改進錯誤處理
+
+### 文檔
+- 改進 README
+- 新增使用教學
+- 翻譯成其他語言
+
+### 程式碼品質
+- 重構程式碼
+- 新增測試
+- 效能優化
+
+## 📄 授權
+
+MIT License - 所有子專案均採用 MIT 授權
+
+## 📞 聯絡方式
+
+如有問題或建議，歡迎：
+- 提交 Issue
+- 發起 Pull Request
+- 聯絡專案維護者
+
+---
+
+**讓社交媒體體驗更美好** 🚀
 
 最後更新: 2025-11-16
-狀態: 🚧 開發中
+狀態: ✅ 可用
+版本: 1.0.0

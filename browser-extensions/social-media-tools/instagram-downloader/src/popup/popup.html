@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram Downloader</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📸 Instagram Downloader</h1>
+      <p class="subtitle">快速下載 Instagram 媒體</p>
+    </header>
+
+    <main>
+      <!-- 快速下載區域 -->
+      <section class="quick-download">
+        <h2>快速下載</h2>
+        <button id="downloadCurrent" class="btn btn-primary">
+          <span class="icon">⬇️</span>
+          下載當前貼文
+        </button>
+        <button id="downloadStory" class="btn btn-secondary">
+          <span class="icon">📖</span>
+          下載當前 Story
+        </button>
+      </section>
+
+      <!-- 統計資訊 -->
+      <section class="stats">
+        <h2>下載統計</h2>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value" id="totalDownloads">0</div>
+            <div class="stat-label">總下載數</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="successDownloads">0</div>
+            <div class="stat-label">成功</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="failedDownloads">0</div>
+            <div class="stat-label">失敗</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 最近下載 -->
+      <section class="recent-downloads">
+        <h2>最近下載</h2>
+        <div id="historyList" class="history-list">
+          <p class="empty-state">尚無下載記錄</p>
+        </div>
+      </section>
+
+      <!-- 操作按鈕 -->
+      <section class="actions">
+        <button id="clearHistory" class="btn btn-text">清除歷史記錄</button>
+        <button id="openSettings" class="btn btn-text">設定</button>
+      </section>
+    </main>
+
+    <footer>
+      <p>v1.0.0 | Made with ❤️ by Vibe Coding Apps</p>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

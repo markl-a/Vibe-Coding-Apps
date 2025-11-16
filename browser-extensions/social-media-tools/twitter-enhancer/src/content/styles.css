@@ -1,0 +1,104 @@
+/**
+ * Twitter/X Enhancer 自訂樣式
+ */
+
+/* 下載按鈕 */
+.twitter-download-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  transition: background-color 0.2s;
+  color: rgb(113, 118, 123);
+}
+
+.twitter-download-btn:hover {
+  background-color: rgba(29, 155, 240, 0.1);
+  color: rgb(29, 155, 240);
+}
+
+.twitter-download-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.twitter-download-btn svg {
+  fill: currentColor;
+}
+
+/* 隱藏的廣告標記 */
+[data-twitter-enhancer-hidden="true"] {
+  display: none !important;
+}
+
+/* 下載進度提示 */
+.twitter-download-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 成功和失敗狀態 */
+.twitter-download-toast.success {
+  background: rgb(0, 186, 124);
+}
+
+.twitter-download-toast.error {
+  background: rgb(244, 33, 46);
+}
+
+/* 廣告隱藏指示器 */
+.twitter-ad-hidden-indicator {
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  background: rgba(29, 155, 240, 0.9);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 1000;
+  display: none;
+}
+
+.twitter-ad-hidden-indicator.show {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 自訂主題覆蓋 */
+.twitter-enhancer-theme-active {
+  /* 主題相關樣式會由 ThemeManager 動態注入 */
+}
