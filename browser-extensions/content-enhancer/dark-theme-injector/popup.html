@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dark Theme Injector</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 360px;
+      padding: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: 20px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 50px;
+      height: 26px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.3s;
+      border-radius: 26px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #2196F3;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+
+    .section {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .section h3 {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .theme-option {
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .theme-option:hover {
+      border-color: #2196F3;
+      background-color: #f0f7ff;
+    }
+
+    .theme-option.active {
+      border-color: #2196F3;
+      background-color: #e3f2fd;
+      font-weight: 600;
+    }
+
+    .theme-preview {
+      width: 100%;
+      height: 40px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+
+    .slider-group {
+      margin-bottom: 12px;
+    }
+
+    .slider-group label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .slider-group input[type="range"] {
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .slider-group input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #2196F3;
+      cursor: pointer;
+    }
+
+    .slider-group input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #2196F3;
+      cursor: pointer;
+      border: none;
+    }
+
+    .status-bar {
+      padding: 12px;
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+
+    .status-bar.inactive {
+      background: #fff3e0;
+      color: #e65100;
+    }
+
+    .shortcuts {
+      background: #f5f5f5;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .shortcuts h4 {
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: #333;
+    }
+
+    .shortcuts ul {
+      list-style: none;
+    }
+
+    .shortcuts li {
+      margin-bottom: 4px;
+    }
+
+    kbd {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      padding: 2px 6px;
+      font-family: monospace;
+      font-size: 11px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+
+    .btn-primary {
+      background-color: #2196F3;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #1976D2;
+    }
+
+    .btn-secondary {
+      background-color: #e0e0e0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background-color: #d0d0d0;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>🌙 Dark Theme</h2>
+    <label class="toggle-switch">
+      <input type="checkbox" id="mainToggle">
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <div id="statusBar" class="status-bar inactive">
+    深色主題已停用
+  </div>
+
+  <div class="section">
+    <h3>主題選擇</h3>
+    <div class="theme-grid">
+      <div class="theme-option" data-theme="classic">
+        <div class="theme-preview" style="background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);"></div>
+        經典深色
+      </div>
+      <div class="theme-option" data-theme="midnight">
+        <div class="theme-preview" style="background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);"></div>
+        午夜藍
+      </div>
+      <div class="theme-option" data-theme="warm">
+        <div class="theme-preview" style="background: linear-gradient(135deg, #2b2420 0%, #3a322b 100%);"></div>
+        暖色調
+      </div>
+      <div class="theme-option" data-theme="highContrast">
+        <div class="theme-preview" style="background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);"></div>
+        高對比
+      </div>
+      <div class="theme-option" data-theme="oled">
+        <div class="theme-preview" style="background: linear-gradient(135deg, #000000 0%, #0a0a0a 100%);"></div>
+        OLED 黑
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>調整設定</h3>
+
+    <div class="slider-group">
+      <label>
+        <span>亮度</span>
+        <span id="brightnessValue">100%</span>
+      </label>
+      <input type="range" id="brightness" min="50" max="150" value="100">
+    </div>
+
+    <div class="slider-group">
+      <label>
+        <span>對比度</span>
+        <span id="contrastValue">100%</span>
+      </label>
+      <input type="range" id="contrast" min="50" max="150" value="100">
+    </div>
+
+    <div class="slider-group">
+      <label>
+        <span>灰階</span>
+        <span id="grayscaleValue">0%</span>
+      </label>
+      <input type="range" id="grayscale" min="0" max="100" value="0">
+    </div>
+
+    <div class="slider-group">
+      <label>
+        <span>棕褐色</span>
+        <span id="sepiaValue">0%</span>
+      </label>
+      <input type="range" id="sepia" min="0" max="100" value="0">
+    </div>
+  </div>
+
+  <div class="shortcuts">
+    <h4>⌨️ 快捷鍵</h4>
+    <ul>
+      <li><kbd>Alt</kbd> + <kbd>D</kbd> 切換深色模式</li>
+    </ul>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

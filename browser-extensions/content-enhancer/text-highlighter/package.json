@@ -1,0 +1,17 @@
+{
+  "name": "text-highlighter-pro",
+  "version": "1.0.0",
+  "description": "Advanced text highlighting and annotation browser extension",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint src/**/*.js"
+  },
+  "keywords": [
+    "browser-extension",
+    "text-highlighter",
+    "annotation",
+    "content-enhancer"
+  ],
+  "author": "",
+  "license": "MIT"
+}
