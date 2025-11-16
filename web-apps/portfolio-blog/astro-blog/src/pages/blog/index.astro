@@ -1,0 +1,63 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<Layout title="技術部落格">
+  <div class="container mx-auto px-4 py-20">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4 text-center">技術部落格</h1>
+      <p class="text-xl text-gray-600 dark:text-gray-400 text-center mb-12">
+        分享我的開發經驗與技術學習筆記
+      </p>
+
+      <div class="space-y-8">
+        {sortedPosts.map((post) => (
+          <article class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow p-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+              <h2 class="text-2xl font-bold mb-2 md:mb-0">
+                <a
+                  href={`/blog/${post.slug}`}
+                  class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                >
+                  {post.data.title}
+                </a>
+              </h2>
+              <time class="text-sm text-gray-500 dark:text-gray-400">
+                {post.data.pubDate.toLocaleDateString('zh-TW', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </time>
+            </div>
+
+            <p class="text-gray-600 dark:text-gray-400 mb-4">
+              {post.data.description}
+            </p>
+
+            <div class="flex flex-wrap gap-2 mb-4">
+              {post.data.tags.map((tag: string) => (
+                <span class="px-3 py-1 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 text-sm rounded-full">
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            <a
+              href={`/blog/${post.slug}`}
+              class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-500 font-medium"
+            >
+              閱讀全文 →
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>

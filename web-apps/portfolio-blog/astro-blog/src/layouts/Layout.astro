@@ -1,0 +1,49 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = '使用 Astro 打造的現代化技術部落格' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <header class="sticky top-0 z-50 bg-white dark:bg-gray-800 shadow-sm">
+      <nav class="container mx-auto px-4 py-4">
+        <div class="flex justify-between items-center">
+          <a href="/" class="text-2xl font-bold text-primary-600">
+            Astro Blog
+          </a>
+          <div class="flex gap-6">
+            <a href="/" class="hover:text-primary-600 transition-colors">首頁</a>
+            <a href="/blog" class="hover:text-primary-600 transition-colors">部落格</a>
+            <a href="/about" class="hover:text-primary-600 transition-colors">關於</a>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="min-h-screen">
+      <slot />
+    </main>
+
+    <footer class="bg-gray-900 text-white py-12 mt-20">
+      <div class="container mx-auto px-4 text-center">
+        <p>&copy; {new Date().getFullYear()} Astro Blog. All rights reserved.</p>
+        <p class="text-gray-400 mt-2">Built with Astro + React + Tailwind CSS</p>
+      </div>
+    </footer>
+  </body>
+</html>
