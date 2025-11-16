@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 虛擬環境
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# 資料和模型
+*.pkl
+*.h5
+data/models/
+*.csv.bak
+
+# 電路模擬檔案
+*.net
+*.raw
+*.cir.bak
+
+# 日誌
+*.log
+logs/
+
+# 測試
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 作業系統
+.DS_Store
+Thumbs.db
