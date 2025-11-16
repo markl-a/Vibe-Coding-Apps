@@ -1,0 +1,29 @@
+{
+  "name": "form-handler-service",
+  "version": "1.0.0",
+  "description": "Serverless form processing and handling service",
+  "main": "handler.js",
+  "scripts": {
+    "deploy": "serverless deploy",
+    "deploy:prod": "serverless deploy --stage prod",
+    "invoke:contact": "serverless invoke local -f submitContact",
+    "invoke:newsletter": "serverless invoke local -f submitNewsletter",
+    "logs": "serverless logs -f",
+    "remove": "serverless remove",
+    "test": "jest"
+  },
+  "keywords": [
+    "serverless",
+    "form-handler",
+    "lambda",
+    "aws",
+    "contact-form"
+  ],
+  "dependencies": {
+    "joi": "^17.11.0"
+  },
+  "devDependencies": {
+    "serverless": "^3.38.0",
+    "jest": "^29.7.0"
+  }
+}

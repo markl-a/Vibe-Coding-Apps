@@ -45,36 +45,67 @@ Serverless (無伺服器) 是一種雲端運算模式，開發者只需專注於
 - **多種觸發器**
 - **Durable Functions**
 
-## 📁 專案範例
+## 📁 專案列表
 
 ### 1️⃣ AWS Lambda Functions
-```
-aws-lambda-functions/
-├── hello-world/          # 基礎函數
-├── image-resize/         # 圖片處理
-├── email-sender/         # 郵件發送
-└── data-processor/       # 數據處理
-```
+完整的 AWS Lambda 函數集合，使用 Serverless Framework 部署
+
+**功能**:
+- Hello World API
+- 用戶管理 CRUD
+- S3 觸發的圖片處理
+- SES 郵件發送
+- SQS 數據處理
+- 定時任務
+
+[查看詳情 →](./aws-lambda-functions/)
 
 ### 2️⃣ Vercel Functions
-```
-vercel-functions/
-├── api/
-│   ├── hello.js         # GET /api/hello
-│   ├── users.js         # /api/users
-│   └── posts.js         # /api/posts
-└── package.json
-```
+適用於 Vercel 平台的無伺服器 API 端點
+
+**功能**:
+- RESTful API (Hello, Users, Posts)
+- 天氣資訊 API
+- QR Code 生成
+- URL 縮短服務
+- 分析追蹤
+
+[查看詳情 →](./vercel-functions/)
 
 ### 3️⃣ Netlify Functions
-```
-netlify-functions/
-├── functions/
-│   ├── hello.js
-│   ├── form-submit.js
-│   └── webhook.js
-└── netlify.toml
-```
+Netlify 平台的 serverless 函數
+
+**功能**:
+- Hello World
+- 表單提交處理
+- Webhook 處理器 (支援 GitHub, Stripe 等)
+
+[查看詳情 →](./netlify-functions/)
+
+### 4️⃣ 圖片處理服務
+專業的圖片處理 API 服務
+
+**功能**:
+- 圖片上傳
+- 尺寸調整
+- 格式轉換 (JPEG, PNG, WebP, AVIF)
+- 圖片優化壓縮
+- 批次處理
+
+[查看詳情 →](./image-processing-service/)
+
+### 5️⃣ 表單處理服務
+完整的表單處理和管理系統
+
+**功能**:
+- 聯絡表單
+- 電子報訂閱
+- 意見回饋
+- 活動報名
+- reCAPTCHA 驗證
+- 郵件通知
+
+[查看詳情 →](./form-handler-service/)
 
 ## 🚀 快速開始
 

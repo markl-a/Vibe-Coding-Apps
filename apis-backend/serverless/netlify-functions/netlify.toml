@@ -1,0 +1,27 @@
+[build]
+  # Functions directory
+  functions = "functions"
+
+[functions]
+  # Use esbuild for faster builds
+  node_bundler = "esbuild"
+
+  # Included files pattern
+  included_files = ["data/**"]
+
+# Environment variables (set in Netlify UI or .env for local dev)
+# WEBHOOK_SECRET=your-secret-here
+
+# Redirect rules
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
