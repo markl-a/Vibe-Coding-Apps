@@ -1,0 +1,62 @@
+{
+  "name": "pomodoro-tracker",
+  "version": "1.0.0",
+  "description": "專注時間管理工具 - 番茄鐘應用",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
+  },
+  "keywords": [
+    "pomodoro",
+    "productivity",
+    "time-management",
+    "electron",
+    "focus"
+  ],
+  "author": "Vibe Coding Apps",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.1",
+    "date-fns": "^3.0.6",
+    "electron-store": "^8.1.0",
+    "howler": "^2.2.4",
+    "node-notifier": "^10.0.1"
+  },
+  "build": {
+    "appId": "com.vibecoding.pomodoro-tracker",
+    "productName": "Pomodoro Tracker",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "styles.css",
+      "renderer.js",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": ["nsis"],
+      "icon": "assets/icon.png"
+    },
+    "mac": {
+      "target": ["dmg"],
+      "icon": "assets/icon.png",
+      "category": "public.app-category.productivity"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "assets/icon.png",
+      "category": "Utility"
+    }
+  }
+}

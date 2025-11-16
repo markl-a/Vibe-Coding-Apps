@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: blob:">
+  <title>編輯截圖</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #1a1a1a;
+      overflow: hidden;
+    }
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background: #2a2a2a;
+      border-bottom: 1px solid #404040;
+    }
+    .toolbar-left, .toolbar-right {
+      display: flex;
+      gap: 10px;
+    }
+    button {
+      padding: 8px 16px;
+      background: #404040;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #505050;
+    }
+    button.primary {
+      background: #0d6efd;
+    }
+    button.primary:hover {
+      background: #0b5ed7;
+    }
+    .canvas-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: calc(100vh - 61px);
+      background: #1a1a1a;
+    }
+    canvas {
+      max-width: 100%;
+      max-height: 100%;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <button id="saveBtn" class="primary">💾 儲存</button>
+      <button id="copyBtn">📋 複製</button>
+      <button id="closeBtn">✕ 關閉</button>
+    </div>
+    <div class="toolbar-right">
+      <span style="color: white; font-size: 12px;">截圖編輯器 - 按 ESC 關閉</span>
+    </div>
+  </div>
+  <div class="canvas-container">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <script src="editor.js"></script>
+</body>
+</html>

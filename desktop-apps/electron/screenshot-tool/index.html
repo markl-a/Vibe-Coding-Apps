@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
+  <title>Screenshot Tool</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <div class="header">
+      <h1>📸 Screenshot Tool</h1>
+      <div class="header-buttons">
+        <button id="settingsBtn" class="icon-btn" title="設定">⚙️</button>
+        <button id="themeBtn" class="icon-btn" title="切換主題">🌙</button>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <!-- 快速操作 -->
+      <div class="quick-actions">
+        <button id="fullScreenBtn" class="action-btn">
+          <div class="icon">🖥️</div>
+          <div class="label">全螢幕截圖</div>
+          <div class="shortcut">Ctrl+Shift+A</div>
+        </button>
+
+        <button id="regionBtn" class="action-btn">
+          <div class="icon">🎯</div>
+          <div class="label">區域截圖</div>
+          <div class="shortcut">Ctrl+Shift+S</div>
+        </button>
+
+        <button id="windowBtn" class="action-btn">
+          <div class="icon">🪟</div>
+          <div class="label">視窗截圖</div>
+          <div class="shortcut">Ctrl+Shift+W</div>
+        </button>
+      </div>
+
+      <!-- 歷史記錄 -->
+      <div class="history-section">
+        <div class="section-header">
+          <h3>📚 最近截圖</h3>
+          <button id="clearHistoryBtn" class="icon-btn-small">🗑️</button>
+        </div>
+        <div class="history-grid" id="historyGrid">
+          <div class="empty-state">尚無截圖記錄</div>
+        </div>
+      </div>
+
+      <!-- 設定面板 -->
+      <div class="settings-section" id="settingsSection" style="display:none;">
+        <div class="section-header">
+          <h3>⚙️ 設定</h3>
+          <button id="closeSettingsBtn" class="icon-btn-small">✕</button>
+        </div>
+
+        <div class="settings-form">
+          <div class="setting-item">
+            <label>儲存位置</label>
+            <input type="text" id="saveFolder" readonly />
+            <button id="chooseFolderBtn" class="small-btn">選擇</button>
+          </div>
+
+          <div class="setting-item">
+            <label>檔案格式</label>
+            <select id="fileFormat">
+              <option value="png">PNG</option>
+              <option value="jpeg">JPEG</option>
+              <option value="webp">WebP</option>
+            </select>
+          </div>
+
+          <div class="setting-item">
+            <label>檔案名稱</label>
+            <input type="text" id="fileName" placeholder="Screenshot_%Y%m%d_%H%M%S" />
+            <small>使用 %Y, %m, %d, %H, %M, %S 作為時間占位符</small>
+          </div>
+
+          <div class="setting-item">
+            <label>
+              <input type="checkbox" id="autoCopy" checked />
+              自動複製到剪貼簿
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <label>
+              <input type="checkbox" id="showNotification" checked />
+              顯示通知
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <label>
+              <input type="checkbox" id="showCursor" />
+              截圖顯示游標
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <label>圖片品質 (1-100)</label>
+            <input type="range" id="quality" min="1" max="100" value="100" />
+            <span id="qualityValue">100</span>
+          </div>
+
+          <button id="saveSettingsBtn" class="primary-btn">儲存設定</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-info">
+        快捷鍵已全域註冊,可在任何時候使用
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
