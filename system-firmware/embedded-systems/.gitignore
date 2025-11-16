@@ -1,0 +1,36 @@
+# PlatformIO
+.pio/
+.vscode/
+.pioenvs/
+.piolibdeps/
+
+# Build files
+*.o
+*.elf
+*.bin
+*.hex
+*.map
+*.lst
+
+# IDE
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Credentials
+secrets.h
+credentials.h
+config_private.h
+
+# Logs
+*.log
+
+# Temp files
+tmp/
+temp/
