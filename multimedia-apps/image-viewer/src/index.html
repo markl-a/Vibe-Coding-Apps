@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Image Viewer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- 頂部工具列 -->
+    <div class="toolbar">
+      <div class="toolbar-group">
+        <button id="openBtn" class="btn" title="開啟圖片 (Ctrl+O)">
+          📂 開啟
+        </button>
+        <button id="saveBtn" class="btn" title="儲存圖片 (Ctrl+S)">
+          💾 儲存
+        </button>
+      </div>
+
+      <div class="toolbar-group">
+        <button id="zoomOutBtn" class="btn" title="縮小 (Ctrl+-)">🔍-</button>
+        <span id="zoomLevel" class="zoom-level">100%</span>
+        <button id="zoomInBtn" class="btn" title="放大 (Ctrl++)">🔍+</button>
+        <button id="fitBtn" class="btn" title="適應視窗 (F)">⬜ 適應</button>
+        <button id="resetBtn" class="btn" title="重置 (Ctrl+0)">🔄 重置</button>
+      </div>
+
+      <div class="toolbar-group">
+        <button id="rotateLBtn" class="btn" title="逆時針旋轉 (Shift+R)">↶</button>
+        <button id="rotateRBtn" class="btn" title="順時針旋轉 (R)">↷</button>
+        <button id="flipHBtn" class="btn" title="水平翻轉">⇆</button>
+        <button id="flipVBtn" class="btn" title="垂直翻轉">⇅</button>
+      </div>
+
+      <div class="toolbar-group">
+        <button id="grayscaleBtn" class="btn filter-btn" title="灰階">⚫ 灰階</button>
+        <button id="sepiaBtn" class="btn filter-btn" title="復古">🟤 復古</button>
+        <button id="invertBtn" class="btn filter-btn" title="反相">⚪ 反相</button>
+        <button id="clearFilterBtn" class="btn" title="清除濾鏡">✖ 清除</button>
+      </div>
+
+      <div class="toolbar-group">
+        <button id="prevBtn" class="btn" title="上一張 (←)">◀</button>
+        <button id="nextBtn" class="btn" title="下一張 (→)">▶</button>
+      </div>
+    </div>
+
+    <!-- 主要顯示區 -->
+    <div class="canvas-container">
+      <div id="dropZone" class="drop-zone">
+        <div class="drop-zone-content">
+          <div class="drop-icon">🖼️</div>
+          <h2>拖放圖片至此</h2>
+          <p>或點擊「開啟」按鈕選擇圖片</p>
+          <p class="supported-formats">
+            支援格式: JPG, PNG, GIF, BMP, WebP, SVG
+          </p>
+        </div>
+      </div>
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <!-- 底部狀態列 -->
+    <div class="statusbar">
+      <div id="imageInfo" class="image-info">
+        準備就緒
+      </div>
+      <div class="app-info">
+        AI Image Viewer v1.0.0
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

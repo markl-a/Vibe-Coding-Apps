@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Music Player</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- 頂部：可視化區域 -->
+    <div class="visualizer-section">
+      <canvas id="visualizer"></canvas>
+      <div class="now-playing">
+        <h2 id="trackTitle">未播放</h2>
+        <p id="trackInfo">請選擇音樂</p>
+      </div>
+      <div class="viz-controls">
+        <select id="vizMode">
+          <option value="bars">頻譜條</option>
+          <option value="waveform">波形</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 主要控制區 -->
+    <div class="controls-section">
+      <!-- 進度條 -->
+      <div class="progress-container">
+        <span id="currentTime" class="time">0:00</span>
+        <input type="range" id="progressBar" class="progress-bar" min="0" max="100" value="0">
+        <span id="totalTime" class="time">0:00</span>
+      </div>
+
+      <!-- 播放控制 -->
+      <div class="playback-controls">
+        <button id="shuffleBtn" class="control-btn" title="隨機播放 (S)">🔀</button>
+        <button id="prevBtn" class="control-btn" title="上一首 (←)">⏮</button>
+        <button id="playBtn" class="control-btn play-btn" title="播放/暫停 (Space)">▶</button>
+        <button id="nextBtn" class="control-btn" title="下一首 (→)">⏭</button>
+        <button id="repeatBtn" class="control-btn" title="循環模式 (R)">🔁</button>
+      </div>
+
+      <!-- 音量控制 -->
+      <div class="volume-controls">
+        <button id="muteBtn" class="control-btn">🔊</button>
+        <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="0.7">
+        <button id="eqToggle" class="control-btn" title="均衡器 (Ctrl+E)">🎚️</button>
+      </div>
+    </div>
+
+    <!-- 均衡器面板 -->
+    <div id="eqPanel" class="eq-panel hidden">
+      <div class="eq-header">
+        <h3>均衡器</h3>
+        <select id="eqPreset" class="eq-preset">
+          <option value="flat">平坦</option>
+          <option value="rock">搖滾</option>
+          <option value="classical">古典</option>
+          <option value="jazz">爵士</option>
+          <option value="pop">流行</option>
+          <option value="bass">重低音</option>
+          <option value="vocal">人聲</option>
+        </select>
+      </div>
+      <div class="eq-sliders">
+        <div class="eq-slider-container">
+          <input type="range" id="eq0" class="eq-slider" min="-12" max="12" step="1" value="0" orient="vertical">
+          <label>32</label>
+        </div>
+        <div class="eq-slider-container">
+          <input type="range" id="eq1" class="eq-slider" min="-12" max="12" step="1" value="0" orient="vertical">
+          <label>64</label>
+        </div>
+        <div class="eq-slider-container">
+          <input type="range" id="eq2" class="eq-slider" min="-12" max="12" step="1" value="0" orient="vertical">
+          <label>125</label>
+        </div>
+        <div class="eq-slider-container">
+          <input type="range" id="eq3" class="eq-slider" min="-12" max="12" step="1" value="0" orient="vertical">
+          <label>250</label>
+        </div>
+        <div class="eq-slider-container">
+          <input type="range" id="eq4" class="eq-slider" min="-12" max="12" step="1" value="0" orient="vertical">
+          <label>500</label>
+        </div>
+        <div class="eq-slider-container">
+          <input type="range" id="eq5" class="eq-slider" min="-12" max="12" step="1" value="0" orient="vertical">
+          <label>1K</label>
+        </div>
+        <div class="eq-slider-container">
+          <input type="range" id="eq6" class="eq-slider" min="-12" max="12" step="1" value="0" orient="vertical">
+          <label>2K</label>
+        </div>
+        <div class="eq-slider-container">
+          <input type="range" id="eq7" class="eq-slider" min="-12" max="12" step="1" value="0" orient="vertical">
+          <label>4K</label>
+        </div>
+        <div class="eq-slider-container">
+          <input type="range" id="eq8" class="eq-slider" min="-12" max="12" step="1" value="0" orient="vertical">
+          <label>8K</label>
+        </div>
+        <div class="eq-slider-container">
+          <input type="range" id="eq9" class="eq-slider" min="-12" max="12" step="1" value="0" orient="vertical">
+          <label>16K</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 播放列表區域 -->
+    <div class="playlist-section">
+      <div class="playlist-header">
+        <h3>播放列表 (<span id="playlistCount">0</span> 首)</h3>
+        <div class="playlist-controls">
+          <button id="addFilesBtn" class="btn-small" title="新增檔案 (Ctrl+O)">📄 新增檔案</button>
+          <button id="addFolderBtn" class="btn-small" title="新增資料夾">📁 新增資料夾</button>
+          <button id="savePlaylistBtn" class="btn-small" title="儲存播放列表">💾 儲存</button>
+          <button id="loadPlaylistBtn" class="btn-small" title="載入播放列表">📂 載入</button>
+          <button id="clearBtn" class="btn-small" title="清空播放列表 (Ctrl+L)">🗑️ 清空</button>
+        </div>
+      </div>
+      <div id="playlistItems" class="playlist-items">
+        <div class="empty-playlist">
+          <p>播放列表為空</p>
+          <p class="hint">點擊「新增檔案」或「新增資料夾」來新增音樂</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 隱藏的音頻元素 -->
+  <audio id="audio"></audio>
+
+  <script src="audioEngine.js"></script>
+  <script src="visualizer.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
