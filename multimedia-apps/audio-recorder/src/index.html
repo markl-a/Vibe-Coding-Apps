@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 音頻錄製工具</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 頭部 -->
+    <header class="header">
+      <h1>🎤 AI 音頻錄製工具</h1>
+      <div class="header-info">
+        <div class="timer" id="timer">00:00:00</div>
+      </div>
+    </header>
+
+    <!-- 主要內容區 -->
+    <div class="main-content">
+      <!-- 左側：設置面板 -->
+      <aside class="sidebar">
+        <div class="section">
+          <h2>⚙️ 錄製設置</h2>
+          <div class="settings">
+            <div class="setting-item">
+              <label for="audioSource">音頻源：</label>
+              <select id="audioSource">
+                <option value="microphone">麥克風</option>
+                <option value="system">系統音頻</option>
+                <option value="both">麥克風 + 系統</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <label for="sampleRate">採樣率：</label>
+              <select id="sampleRate">
+                <option value="44100">44.1 kHz (CD質量)</option>
+                <option value="48000" selected>48 kHz (標準)</option>
+                <option value="96000">96 kHz (高質量)</option>
+                <option value="192000">192 kHz (超高質量)</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <label for="channels">聲道：</label>
+              <select id="channels">
+                <option value="1">單聲道 (Mono)</option>
+                <option value="2" selected>立體聲 (Stereo)</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <label for="bitDepth">比特深度：</label>
+              <select id="bitDepth">
+                <option value="16">16-bit</option>
+                <option value="24" selected>24-bit</option>
+                <option value="32">32-bit</option>
+              </select>
+            </div>
+
+            <div class="setting-item checkbox">
+              <label>
+                <input type="checkbox" id="noiseReduction" checked>
+                降噪
+              </label>
+            </div>
+
+            <div class="setting-item checkbox">
+              <label>
+                <input type="checkbox" id="echoCancellation" checked>
+                回聲消除
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>🔊 音量控制</h2>
+          <div class="volume-control">
+            <input type="range" id="volumeSlider" min="0" max="100" value="100" class="slider">
+            <div class="volume-label">
+              音量: <span id="volumeValue">100</span>%
+            </div>
+            <div class="volume-meter-container">
+              <div id="volumeMeter" class="volume-meter"></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 中間：可視化區域 -->
+      <main class="visualization-area">
+        <div class="canvas-container">
+          <div class="canvas-section">
+            <h3>波形圖</h3>
+            <canvas id="waveformCanvas"></canvas>
+          </div>
+          <div class="canvas-section">
+            <h3>頻譜分析</h3>
+            <canvas id="spectrumCanvas"></canvas>
+          </div>
+        </div>
+
+        <!-- 控制按鈕 -->
+        <div class="controls">
+          <button id="recordBtn" class="btn btn-record">
+            ⏺ 錄製
+          </button>
+          <button id="pauseBtn" class="btn btn-pause" disabled>
+            ⏸ 暫停
+          </button>
+          <button id="stopBtn" class="btn btn-stop" disabled>
+            ⏹ 停止
+          </button>
+          <button id="playBtn" class="btn btn-play" disabled>
+            ▶ 播放
+          </button>
+          <button id="saveBtn" class="btn btn-save" disabled>
+            💾 保存
+          </button>
+          <button id="openBtn" class="btn btn-open">
+            📁 打開
+          </button>
+        </div>
+
+        <!-- 狀態欄 -->
+        <div class="status-bar">
+          <div id="status" class="status info">準備就緒</div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

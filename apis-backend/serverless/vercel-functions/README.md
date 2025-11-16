@@ -46,6 +46,59 @@
 }
 ```
 
+### GET /api/weather
+獲取天氣資訊
+
+**查詢參數**:
+- `city` - 城市名稱 (預設: London)
+- `units` - 溫度單位 (metric/imperial)
+
+### GET /api/posts
+獲取文章列表 (支援分頁和標籤過濾)
+
+**查詢參數**:
+- `page` - 頁碼
+- `limit` - 每頁數量
+- `tag` - 標籤過濾
+- `id` - 獲取單篇文章
+
+### POST /api/posts
+創建新文章
+
+### POST /api/qrcode
+生成 QR Code
+
+**請求範例**:
+```json
+{
+  "text": "https://example.com",
+  "size": 200
+}
+```
+
+### POST /api/shorten
+縮短網址
+
+**請求範例**:
+```json
+{
+  "url": "https://very-long-url.com/..."
+}
+```
+
+### POST /api/analytics
+追蹤分析事件
+
+**請求範例**:
+```json
+{
+  "event": "page_view",
+  "properties": {
+    "page": "/home"
+  }
+}
+```
+
 ## 🚀 本地開發
 
 ```bash
@@ -75,9 +128,15 @@ vercel --prod
 ```
 vercel-functions/
 ├── api/
-│   ├── hello.js      # GET /api/hello
-│   └── users.js      # GET/POST /api/users
+│   ├── hello.js       # GET /api/hello
+│   ├── users.js       # GET/POST /api/users
+│   ├── weather.js     # GET /api/weather
+│   ├── posts.js       # GET/POST /api/posts
+│   ├── qrcode.js      # POST /api/qrcode
+│   ├── shorten.js     # GET/POST /api/shorten
+│   └── analytics.js   # GET/POST /api/analytics
 ├── package.json
+├── .env.example
 └── README.md
 ```
 

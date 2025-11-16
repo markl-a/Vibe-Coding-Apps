@@ -1,0 +1,14 @@
+{
+  "name": "netlify-functions-demo",
+  "version": "1.0.0",
+  "description": "Serverless functions for Netlify",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "netlify build",
+    "deploy": "netlify deploy --prod"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  }
+}

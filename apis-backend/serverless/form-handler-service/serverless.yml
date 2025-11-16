@@ -1,0 +1,126 @@
+service: form-handler-service
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ${opt:region, 'us-east-1'}
+  stage: ${opt:stage, 'dev'}
+  memorySize: 256
+  timeout: 30
+
+  # IAM permissions
+  iam:
+    role:
+      statements:
+        # DynamoDB permissions
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:Query
+            - dynamodb:Scan
+          Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.submissionsTable}"
+
+        # SES permissions
+        - Effect: Allow
+          Action:
+            - ses:SendEmail
+            - ses:SendRawEmail
+          Resource: "*"
+
+  # Environment variables
+  environment:
+    STAGE: ${self:provider.stage}
+    SUBMISSIONS_TABLE: ${self:custom.submissionsTable}
+    FROM_EMAIL: ${env:FROM_EMAIL, 'noreply@example.com'}
+    ADMIN_EMAIL: ${env:ADMIN_EMAIL, 'admin@example.com'}
+    RECAPTCHA_SECRET_KEY: ${env:RECAPTCHA_SECRET_KEY, ''}
+    ALLOWED_ORIGINS: ${env:ALLOWED_ORIGINS, '*'}
+
+# Custom variables
+custom:
+  submissionsTable: ${self:service}-submissions-${self:provider.stage}
+
+# Functions
+functions:
+  submitContact:
+    handler: handler.submitContact
+    events:
+      - httpApi:
+          path: /submit/contact
+          method: post
+
+  submitNewsletter:
+    handler: handler.submitNewsletter
+    events:
+      - httpApi:
+          path: /submit/newsletter
+          method: post
+
+  submitFeedback:
+    handler: handler.submitFeedback
+    events:
+      - httpApi:
+          path: /submit/feedback
+          method: post
+
+  submitRegistration:
+    handler: handler.submitRegistration
+    events:
+      - httpApi:
+          path: /submit/registration
+          method: post
+
+  getSubmissions:
+    handler: handler.getSubmissions
+    events:
+      - httpApi:
+          path: /submissions
+          method: get
+
+  validateForm:
+    handler: handler.validateForm
+    events:
+      - httpApi:
+          path: /validate
+          method: post
+
+# CloudFormation resources
+resources:
+  Resources:
+    # DynamoDB Table for submissions
+    SubmissionsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.submissionsTable}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: formType
+            AttributeType: S
+          - AttributeName: submittedAt
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: FormTypeIndex
+            KeySchema:
+              - AttributeName: formType
+                KeyType: HASH
+              - AttributeName: submittedAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+
+# Package configuration
+package:
+  exclude:
+    - .git/**
+    - .gitignore
+    - README.md
+    - node_modules/**
+    - test/**

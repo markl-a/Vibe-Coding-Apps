@@ -563,17 +563,123 @@ AI 會提供完整的實現方案。
 ```
 multimedia-apps/
 ├── README.md (本文檔)
-├── image-viewer/          # 圖片查看器
-├── music-player/          # 音樂播放器
+├── image-viewer/          # 圖片查看器 ✅
+├── music-player/          # 音樂播放器 ✅
 ├── video-player/          # 視頻播放器
-├── screenshot-tool/       # 截圖工具
-├── image-converter/       # 圖片轉檔工具
-├── gif-maker/            # GIF 製作工具
-├── audio-editor/         # 音頻編輯器
+├── screenshot-tool/       # 截圖工具 ✅ (新增)
+├── image-converter/       # 圖片轉檔工具 ✅ (新增)
+├── gif-maker/            # GIF 製作工具 ✅ (新增)
+├── audio-editor/         # 音頻編輯器 ✅ (新增)
+├── audio-recorder/       # 音頻錄製工具 ✅
 ├── video-editor/         # 視頻編輯器
-├── video-converter/      # 視頻轉檔工具
+├── video-converter/      # 視頻轉檔工具 ✅ (新增)
+├── video-recorder/       # 屏幕錄製工具 ✅
+├── webcam-capture/       # 攝像頭捕捉工具 ✅
 └── live-streaming/       # 直播應用
 ```
+
+### 🆕 新增專案
+
+#### 📹 video-recorder - 屏幕錄製工具 ✅
+基於 Electron 的跨平台屏幕錄製應用，支持全屏、窗口和區域錄製。
+
+**主要功能**：
+- 多種錄製模式（全屏/窗口/區域）
+- 支持音頻錄製（系統音頻 + 麥克風）
+- 實時預覽和暫停/繼續功能
+- 自定義幀率和質量設置
+- 支持 WebM、MP4 格式輸出
+
+**技術棧**：Electron + MediaRecorder API + desktopCapturer API
+
+#### 🎤 audio-recorder - 音頻錄製工具 ✅
+基於 Electron 的跨平台音頻錄製與編輯應用，支持高質量錄音和實時波形顯示。
+
+**主要功能**：
+- 高質量音頻錄製（最高 192kHz / 24-bit）
+- 實時音量監控和波形顯示
+- 降噪和回聲消除
+- 音頻編輯（剪切、複製、合併）
+- 支持 WAV、MP3、OGG 等多種格式
+
+**技術棧**：Electron + Web Audio API + MediaRecorder API + Canvas
+
+#### 📸 webcam-capture - 攝像頭捕捉工具 ✅
+基於 Electron 的跨平台攝像頭拍照與錄像應用，支持多種濾鏡效果和實時預覽。
+
+**主要功能**：
+- 高清照片拍攝（最高 4K）
+- 倒數計時拍照和連拍模式
+- 8 種實時濾鏡效果
+- 視頻錄製功能
+- 照片圖庫管理
+
+**技術棧**：Electron + MediaStream API + Canvas API
+
+#### 📷 screenshot-tool - 專業截圖工具 ✅
+基於 Electron 的跨平台截圖與標註應用，支持多種截圖模式和豐富的標註工具。
+
+**主要功能**：
+- 全螢幕、視窗、區域三種截圖模式
+- 延遲截圖功能
+- 標註工具（箭頭、矩形、文字、畫筆、模糊）
+- 支持 PNG、JPG、WebP 格式
+- 最近截圖圖庫管理
+- 快捷鍵支持（Ctrl+Shift+3/4/5）
+
+**技術棧**：Electron + desktopCapturer API + Canvas API
+
+#### 🖼️ image-converter - 圖片格式轉換工具 ✅
+基於 Electron 的跨平台批次圖片處理應用，支持多種格式轉換和圖片處理功能。
+
+**主要功能**：
+- 支持 JPG、PNG、WebP、BMP、GIF 等多種格式
+- 批次轉換和處理
+- 調整大小（百分比/像素/預設尺寸）
+- 品質調整和壓縮
+- 圖片效果（灰階、翻轉、旋轉）
+- 拖放操作界面
+
+**技術棧**：Electron + Canvas API + Node.js
+
+#### 🎬 gif-maker - GIF 動畫製作工具 ✅
+基於 Electron 的 GIF 動畫製作應用，支持從圖片或視頻製作 GIF。
+
+**主要功能**：
+- 從圖片序列製作 GIF
+- 從視頻片段提取幀製作 GIF
+- 可調整幀率、延遲、循環次數
+- 特效支持（反向、來回、灰階、旋轉）
+- 顏色優化和檔案壓縮
+- 實時預覽功能
+
+**技術棧**：Electron + GIF Encoder + Canvas API
+
+#### 🎥 video-converter - 視頻格式轉換工具 ✅
+基於 Electron 的跨平台視頻格式轉換應用，支持多種視頻格式之間的轉換。
+
+**主要功能**：
+- 支持 MP4、WebM、AVI、MKV、MOV 等格式
+- 批次轉換功能
+- 解析度調整（1080p、720p、480p等）
+- 品質預設（高/中/低）
+- 音頻和字幕選項
+- 轉換進度追蹤
+
+**技術棧**：Electron + FFmpeg (需安裝)
+
+#### 🎼 audio-editor - 音頻編輯器 ✅
+基於 Electron 的跨平台音頻編輯應用，支持音頻剪輯、效果處理和格式轉換。
+
+**主要功能**：
+- 音頻波形可視化
+- 播放控制（播放/暫停/停止）
+- 音量和速度調整
+- 淡入淡出效果
+- 音效處理（標準化、反轉、回音、濾波）
+- 支持 WAV、MP3、OGG、FLAC 等格式
+
+**技術棧**：Electron + Web Audio API + Canvas API
 
 ---
 

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 攝像頭捕捉工具</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 頭部 -->
+    <header class="header">
+      <h1>📸 AI 攝像頭捕捉工具</h1>
+      <div class="header-info">
+        <div class="recording-time" id="recordingTime" style="display: none;">00:00</div>
+      </div>
+    </header>
+
+    <!-- 主要內容區 -->
+    <div class="main-content">
+      <!-- 左側：設置面板 -->
+      <aside class="sidebar">
+        <div class="section">
+          <h2>⚙️ 設置</h2>
+          <div class="settings">
+            <div class="setting-item">
+              <label for="cameraSelect">攝像頭：</label>
+              <select id="cameraSelect">
+                <!-- 動態填充 -->
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <label for="resolution">分辨率：</label>
+              <select id="resolution">
+                <option value="640x480">640x480 (VGA)</option>
+                <option value="1280x720">1280x720 (HD)</option>
+                <option value="1920x1080" selected>1920x1080 (Full HD)</option>
+                <option value="3840x2160">3840x2160 (4K)</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <label for="photoFormat">照片格式：</label>
+              <select id="photoFormat">
+                <option value="jpg" selected>JPG</option>
+                <option value="png">PNG</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <label for="videoQuality">視頻質量：</label>
+              <select id="videoQuality">
+                <option value="low">低</option>
+                <option value="medium" selected>中</option>
+                <option value="high">高</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>🎨 濾鏡效果</h2>
+          <div class="filters">
+            <button class="filter-btn active" data-filter="none">無</button>
+            <button class="filter-btn" data-filter="grayscale">黑白</button>
+            <button class="filter-btn" data-filter="sepia">復古</button>
+            <button class="filter-btn" data-filter="invert">反色</button>
+            <button class="filter-btn" data-filter="blur">模糊</button>
+            <button class="filter-btn" data-filter="brightness">增亮</button>
+            <button class="filter-btn" data-filter="contrast">高對比</button>
+            <button class="filter-btn" data-filter="saturate">飽和</button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 中間：攝像頭預覽 -->
+      <main class="preview-area">
+        <div class="camera-container">
+          <video id="video" autoplay playsinline></video>
+          <canvas id="canvas" style="display: none;"></canvas>
+          <canvas id="photoCanvas" style="display: none;"></canvas>
+
+          <!-- 倒計時顯示 -->
+          <div class="countdown" id="countdown" style="display: none;">
+            <div class="countdown-number">3</div>
+          </div>
+        </div>
+
+        <!-- 控制按鈕 -->
+        <div class="controls">
+          <button id="captureBtn" class="btn btn-capture">
+            📷 拍照
+          </button>
+          <button id="recordBtn" class="btn btn-record">
+            🎥 錄像
+          </button>
+          <button id="timerCaptureBtn" class="btn btn-timer">
+            ⏱️ 定時拍照
+          </button>
+          <button id="burstBtn" class="btn btn-burst">
+            📸 連拍
+          </button>
+        </div>
+
+        <!-- 狀態欄 -->
+        <div class="status-bar">
+          <div id="status" class="status info">準備就緒</div>
+        </div>
+      </main>
+
+      <!-- 右側：圖庫 -->
+      <aside class="gallery-sidebar">
+        <div class="section">
+          <h2>🖼️ 圖庫</h2>
+          <div class="gallery-controls">
+            <button id="deleteSelectedBtn" class="btn-small btn-danger">
+              🗑️ 刪除選中
+            </button>
+            <button id="exportSelectedBtn" class="btn-small btn-primary">
+              📤 導出選中
+            </button>
+            <button id="clearAllBtn" class="btn-small btn-warning">
+              🧹 清空
+            </button>
+          </div>
+          <div id="gallery" class="gallery">
+            <!-- 動態填充 -->
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
