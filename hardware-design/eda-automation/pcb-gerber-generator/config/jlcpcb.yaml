@@ -1,0 +1,55 @@
+# JLCPCB Gerber 配置
+
+manufacturer: JLCPCB
+
+format:
+  units: mm
+  coordinate_format: "4.6"
+  zero_suppression: leading
+  gerber_precision: 6
+
+layers:
+  top_copper: F.Cu
+  bottom_copper: B.Cu
+  top_silkscreen: F.SilkS
+  bottom_silkscreen: B.SilkS
+  top_mask: F.Mask
+  bottom_mask: B.Mask
+  top_paste: F.Paste
+  bottom_paste: B.Paste
+  outline: Edge.Cuts
+
+drill:
+  format: excellon
+  units: mm
+  precision: "3.3"
+  zero_suppression: leading
+
+naming:
+  # {project} - 專案名稱
+  # {layer} - 層名稱
+  # {ext} - 副檔名
+  pattern: "{project}-{layer}.{ext}"
+  drill_file: "{project}.drl"
+
+extensions:
+  F.Cu: gtl
+  B.Cu: gbl
+  F.SilkS: gto
+  B.SilkS: gbo
+  F.Mask: gts
+  B.Mask: gbs
+  F.Paste: gtp
+  B.Paste: gbp
+  Edge.Cuts: gm1
+
+output:
+  zip_output: true
+  include_readme: true
+  include_bom: false
+
+options:
+  use_gerber_attributes: true
+  use_protel_extensions: true
+  subtract_mask_from_silk: false
+  create_job_file: true
