@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "name": "張三",
+    "email": "zhang@example.com",
+    "age": 28,
+    "city": "台北",
+    "salary": 50000,
+    "join_date": "2023-01-15",
+    "department": "工程部",
+    "skills": ["Python", "JavaScript", "SQL"]
+  },
+  {
+    "id": 2,
+    "name": "李四",
+    "email": "li@example.com",
+    "age": 35,
+    "city": "台中",
+    "salary": 65000,
+    "join_date": "2022-05-20",
+    "department": "設計部",
+    "skills": ["Photoshop", "Illustrator", "Figma"]
+  },
+  {
+    "id": 3,
+    "name": "王五",
+    "email": "wang@example.com",
+    "age": 42,
+    "city": "高雄",
+    "salary": 75000,
+    "join_date": "2021-11-03",
+    "department": "管理部",
+    "skills": ["管理", "溝通", "策略"]
+  },
+  {
+    "id": 4,
+    "name": "趙六",
+    "email": "zhao@example.com",
+    "age": 31,
+    "city": "台南",
+    "salary": 55000,
+    "join_date": "2023-03-10",
+    "department": "行銷部",
+    "skills": ["SEO", "社群媒體", "內容行銷"]
+  },
+  {
+    "id": 5,
+    "name": "陳七",
+    "email": "chen@example.com",
+    "age": 26,
+    "city": "桃園",
+    "salary": 48000,
+    "join_date": "2023-06-01",
+    "department": "工程部",
+    "skills": ["Java", "Spring", "Docker"]
+  }
+]
