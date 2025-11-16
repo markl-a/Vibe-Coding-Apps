@@ -1,0 +1,6 @@
+# PCB Layer Optimizer 依賴套件
+
+numpy>=1.24.0
+pyyaml>=6.0
+matplotlib>=3.7.0
+pytest>=7.3.0
