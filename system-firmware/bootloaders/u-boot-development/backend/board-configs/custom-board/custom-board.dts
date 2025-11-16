@@ -1,0 +1,288 @@
+/*
+ * Device Tree for Custom Board
+ *
+ * Copyright (C) 2025 AI-Assisted Development Team
+ * SPDX-License-Identifier: GPL-2.0+
+ */
+
+/dts-v1/;
+
+#include "skeleton.dtsi"
+
+/ {
+    model = "Custom Development Board";
+    compatible = "vendor,custom-board", "vendor,soc";
+
+    aliases {
+        serial0 = &uart0;
+        mmc0 = &mmc0;
+        ethernet0 = &eth0;
+    };
+
+    chosen {
+        stdout-path = "serial0:115200n8";
+        bootargs = "console=ttyS0,115200 root=/dev/mmcblk0p2 rootwait rw";
+    };
+
+    memory@80000000 {
+        device_type = "memory";
+        reg = <0x80000000 0x40000000>; /* 1GB DDR3 */
+    };
+
+    cpus {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        cpu@0 {
+            device_type = "cpu";
+            compatible = "arm,cortex-a7";
+            reg = <0>;
+            clock-frequency = <1000000000>; /* 1GHz */
+        };
+
+        cpu@1 {
+            device_type = "cpu";
+            compatible = "arm,cortex-a7";
+            reg = <1>;
+            clock-frequency = <1000000000>;
+        };
+    };
+
+    clocks {
+        osc24M: osc24M_clk {
+            #clock-cells = <0>;
+            compatible = "fixed-clock";
+            clock-frequency = <24000000>;
+            clock-output-names = "osc24M";
+        };
+
+        osc32k: osc32k_clk {
+            #clock-cells = <0>;
+            compatible = "fixed-clock";
+            clock-frequency = <32768>;
+            clock-output-names = "osc32k";
+        };
+    };
+
+    soc {
+        compatible = "simple-bus";
+        #address-cells = <1>;
+        #size-cells = <1>;
+        ranges;
+
+        uart0: serial@01c28000 {
+            compatible = "snps,dw-apb-uart";
+            reg = <0x01c28000 0x400>;
+            interrupts = <0 0 4>;
+            reg-shift = <2>;
+            reg-io-width = <4>;
+            clocks = <&osc24M>;
+            status = "okay";
+        };
+
+        uart1: serial@01c28400 {
+            compatible = "snps,dw-apb-uart";
+            reg = <0x01c28400 0x400>;
+            interrupts = <0 1 4>;
+            reg-shift = <2>;
+            reg-io-width = <4>;
+            clocks = <&osc24M>;
+            status = "disabled";
+        };
+
+        mmc0: mmc@01c0f000 {
+            compatible = "vendor,soc-mmc";
+            reg = <0x01c0f000 0x1000>;
+            interrupts = <0 32 4>;
+            clocks = <&osc24M>;
+            bus-width = <4>;
+            cap-sd-highspeed;
+            cap-mmc-highspeed;
+            non-removable;
+            status = "okay";
+        };
+
+        mmc1: mmc@01c10000 {
+            compatible = "vendor,soc-mmc";
+            reg = <0x01c10000 0x1000>;
+            interrupts = <0 33 4>;
+            clocks = <&osc24M>;
+            bus-width = <4>;
+            cd-gpios = <&pio 5 6 0>; /* PF6 */
+            status = "okay";
+        };
+
+        eth0: ethernet@01c30000 {
+            compatible = "vendor,soc-gmac";
+            reg = <0x01c30000 0x10000>;
+            interrupts = <0 82 4>;
+            interrupt-names = "macirq";
+            clocks = <&osc24M>;
+            clock-names = "stmmaceth";
+            phy-mode = "rgmii";
+            phy-handle = <&phy1>;
+            status = "okay";
+
+            mdio {
+                #address-cells = <1>;
+                #size-cells = <0>;
+                compatible = "snps,dwmac-mdio";
+
+                phy1: ethernet-phy@1 {
+                    reg = <1>;
+                    reset-gpios = <&pio 0 17 0>; /* PA17 */
+                    reset-assert-us = <10000>;
+                    reset-deassert-us = <50000>;
+                };
+            };
+        };
+
+        usb_otg: usb@01c19000 {
+            compatible = "vendor,soc-otg";
+            reg = <0x01c19000 0x1000>;
+            interrupts = <0 71 4>;
+            clocks = <&osc24M>;
+            dr_mode = "otg";
+            status = "okay";
+        };
+
+        usb0: usb@01c1a000 {
+            compatible = "vendor,soc-ehci";
+            reg = <0x01c1a000 0x1000>;
+            interrupts = <0 72 4>;
+            clocks = <&osc24M>;
+            status = "okay";
+        };
+
+        pio: pinctrl@01c20800 {
+            compatible = "vendor,soc-pinctrl";
+            reg = <0x01c20800 0x400>;
+            interrupts = <0 28 4>;
+            clocks = <&osc24M>;
+            gpio-controller;
+            #gpio-cells = <3>;
+            interrupt-controller;
+            #interrupt-cells = <3>;
+
+            uart0_pins: uart0-pins {
+                pins = "PA4", "PA5";
+                function = "uart0";
+            };
+
+            mmc0_pins: mmc0-pins {
+                pins = "PF0", "PF1", "PF2", "PF3", "PF4", "PF5";
+                function = "mmc0";
+                drive-strength = <30>;
+                bias-pull-up;
+            };
+
+            gmac_pins: gmac-pins {
+                pins = "PA0", "PA1", "PA2", "PA3", "PA4",
+                       "PA5", "PA6", "PA7", "PA8", "PA9",
+                       "PA10", "PA11", "PA12", "PA13", "PA14",
+                       "PA15", "PA16";
+                function = "gmac";
+                drive-strength = <40>;
+            };
+        };
+
+        i2c0: i2c@01c2ac00 {
+            compatible = "vendor,soc-i2c";
+            reg = <0x01c2ac00 0x400>;
+            interrupts = <0 7 4>;
+            clocks = <&osc24M>;
+            clock-frequency = <400000>;
+            #address-cells = <1>;
+            #size-cells = <0>;
+            status = "okay";
+
+            eeprom@50 {
+                compatible = "atmel,24c02";
+                reg = <0x50>;
+                pagesize = <16>;
+            };
+        };
+
+        spi0: spi@01c68000 {
+            compatible = "vendor,soc-spi";
+            reg = <0x01c68000 0x1000>;
+            interrupts = <0 65 4>;
+            clocks = <&osc24M>;
+            #address-cells = <1>;
+            #size-cells = <0>;
+            status = "okay";
+
+            flash@0 {
+                compatible = "jedec,spi-nor";
+                reg = <0>;
+                spi-max-frequency = <50000000>;
+                m25p,fast-read;
+            };
+        };
+
+        watchdog: watchdog@01c20c90 {
+            compatible = "vendor,soc-wdt";
+            reg = <0x01c20c90 0x10>;
+            clocks = <&osc24M>;
+        };
+
+        rtc: rtc@01c20d00 {
+            compatible = "vendor,soc-rtc";
+            reg = <0x01c20d00 0x20>;
+            interrupts = <0 24 4>;
+            clocks = <&osc32k>;
+        };
+    };
+
+    leds {
+        compatible = "gpio-leds";
+
+        status_led: led-status {
+            label = "status";
+            gpios = <&pio 7 20 0>; /* PH20 */
+            default-state = "on";
+            linux,default-trigger = "heartbeat";
+        };
+
+        power_led: led-power {
+            label = "power";
+            gpios = <&pio 7 21 0>; /* PH21 */
+            default-state = "on";
+        };
+    };
+
+    gpio-keys {
+        compatible = "gpio-keys";
+        autorepeat;
+
+        reset {
+            label = "Reset Button";
+            linux,code = <0x198>; /* KEY_RESTART */
+            gpios = <&pio 7 24 1>; /* PH24, active low */
+        };
+    };
+
+    regulators {
+        compatible = "simple-bus";
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        reg_vcc3v3: regulator@0 {
+            compatible = "regulator-fixed";
+            reg = <0>;
+            regulator-name = "vcc3v3";
+            regulator-min-microvolt = <3300000>;
+            regulator-max-microvolt = <3300000>;
+            regulator-always-on;
+        };
+
+        reg_vcc5v0: regulator@1 {
+            compatible = "regulator-fixed";
+            reg = <1>;
+            regulator-name = "vcc5v0";
+            regulator-min-microvolt = <5000000>;
+            regulator-max-microvolt = <5000000>;
+            regulator-always-on;
+        };
+    };
+};
