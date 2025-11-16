@@ -1,0 +1,14 @@
+{
+  "name": "vercel-functions-demo",
+  "version": "1.0.0",
+  "description": "Serverless API functions for Vercel",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "vercel": "^33.0.0"
+  }
+}
