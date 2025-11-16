@@ -1,0 +1,30 @@
+{
+  "name": "snake-game",
+  "version": "1.0.0",
+  "description": "經典貪吃蛇遊戲 - 使用原生 HTML5 Canvas 開發",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "python -m http.server 8000"
+  },
+  "keywords": [
+    "snake",
+    "game",
+    "canvas",
+    "html5",
+    "javascript",
+    "web-game",
+    "貪吃蛇"
+  ],
+  "author": "Vibe Coding Apps",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/markl-a/Vibe-Coding-Apps"
+  },
+  "devDependencies": {},
+  "dependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

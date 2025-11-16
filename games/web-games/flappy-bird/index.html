@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird - 快樂小鳥</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #4ec0ca 0%, #87ceeb 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #game-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+        }
+
+        canvas {
+            border-radius: 10px;
+            display: block;
+        }
+
+        .game-info {
+            text-align: center;
+            margin-top: 15px;
+            color: #333;
+        }
+
+        .game-info h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .instructions {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .instructions p {
+            margin: 5px 0;
+        }
+
+        @media (max-width: 600px) {
+            #game-container {
+                padding: 10px;
+            }
+
+            .game-info h2 {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="game"></div>
+        <div class="game-info">
+            <h2>🐦 Flappy Bird</h2>
+            <div class="instructions">
+                <p>🎮 <strong>操作:</strong> 點擊滑鼠或按空白鍵讓小鳥飛起來</p>
+                <p>🎯 <strong>目標:</strong> 穿過管道,獲得高分</p>
+                <p>⚠️ <strong>注意:</strong> 避免撞到管道或地面!</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
+    <script src="src/game.js"></script>
+</body>
+</html>
