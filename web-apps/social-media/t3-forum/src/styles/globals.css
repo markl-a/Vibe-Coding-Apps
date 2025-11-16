@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Markdown 樣式 */
+.markdown {
+  @apply text-gray-800 leading-relaxed;
+}
+
+.markdown h1 {
+  @apply text-3xl font-bold mt-6 mb-4;
+}
+
+.markdown h2 {
+  @apply text-2xl font-bold mt-5 mb-3;
+}
+
+.markdown h3 {
+  @apply text-xl font-bold mt-4 mb-2;
+}
+
+.markdown p {
+  @apply mb-4;
+}
+
+.markdown ul,
+.markdown ol {
+  @apply mb-4 ml-6;
+}
+
+.markdown li {
+  @apply mb-2;
+}
+
+.markdown code {
+  @apply bg-gray-100 px-1 py-0.5 rounded text-sm font-mono;
+}
+
+.markdown pre {
+  @apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4;
+}
+
+.markdown blockquote {
+  @apply border-l-4 border-purple-500 pl-4 italic my-4;
+}
+
+.markdown a {
+  @apply text-purple-600 hover:underline;
+}
