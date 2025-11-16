@@ -1,0 +1,43 @@
+# 預設 DRC 規則
+
+clearance:
+  track_to_track: 0.2      # mm
+  track_to_pad: 0.2
+  pad_to_pad: 0.2
+  track_to_copper: 0.2
+  hole_to_hole: 0.5
+
+track:
+  width:
+    min: 0.15              # mm
+    max: 5.0
+  length:
+    max: 500               # mm (警告)
+
+via:
+  diameter:
+    min: 0.4               # mm
+    max: 2.0
+  drill:
+    min: 0.3
+    max: 1.5
+  annular_ring:
+    min: 0.15              # mm
+
+pad:
+  to_edge:
+    min: 0.5               # mm
+  size:
+    min: 0.4
+
+board:
+  edge_clearance: 0.3      # mm
+  min_copper_area: 0.1     # mm²
+
+drill:
+  min_diameter: 0.3        # mm
+  max_diameter: 6.35
+
+silkscreen:
+  to_pad_clearance: 0.15   # mm
+  min_width: 0.15
