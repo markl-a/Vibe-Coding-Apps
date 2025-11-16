@@ -1,0 +1,34 @@
+{
+  "name": "flappy-bird",
+  "version": "1.0.0",
+  "description": "經典 Flappy Bird 遊戲 - 使用 Phaser 3 開發",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "python -m http.server 8000",
+    "dev": "python -m http.server 8000"
+  },
+  "keywords": [
+    "flappy-bird",
+    "phaser",
+    "game",
+    "html5",
+    "javascript",
+    "web-game",
+    "快樂小鳥"
+  ],
+  "author": "Vibe Coding Apps",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/markl-a/Vibe-Coding-Apps"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "cdn": {
+    "phaser": "https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"
+  }
+}
