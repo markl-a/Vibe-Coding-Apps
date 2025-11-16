@@ -1,0 +1,42 @@
+[
+  {
+    "code": "S001",
+    "name": "ABC電子科技有限公司",
+    "contact_person": "張志明",
+    "phone": "02-12345678",
+    "email": "zhang@abc-tech.com",
+    "address": "台北市信義區信義路五段7號",
+    "payment_terms": "月結30天",
+    "rating": 5
+  },
+  {
+    "code": "S002",
+    "name": "XYZ電腦股份有限公司",
+    "contact_person": "李美玲",
+    "phone": "02-87654321",
+    "email": "li@xyz-computer.com",
+    "address": "新北市板橋區文化路一段188號",
+    "payment_terms": "月結45天",
+    "rating": 4
+  },
+  {
+    "code": "S003",
+    "name": "DEF辦公用品商行",
+    "contact_person": "王大偉",
+    "phone": "03-3456789",
+    "email": "wang@def-office.com",
+    "address": "桃園市中壢區中正路123號",
+    "payment_terms": "貨到付款",
+    "rating": 4
+  },
+  {
+    "code": "S004",
+    "name": "GHI網路設備公司",
+    "contact_person": "陳小華",
+    "phone": "04-23456789",
+    "email": "chen@ghi-network.com",
+    "address": "台中市西屯區台灣大道三段99號",
+    "payment_terms": "月結60天",
+    "rating": 5
+  }
+]

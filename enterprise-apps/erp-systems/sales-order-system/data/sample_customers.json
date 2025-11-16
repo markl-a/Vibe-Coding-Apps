@@ -1,0 +1,42 @@
+[
+  {
+    "code": "C001",
+    "name": "優質客戶股份有限公司",
+    "contact_person": "陳建國",
+    "phone": "02-12345678",
+    "email": "chen@goodcustomer.com",
+    "address": "台北市中山區民生東路100號12樓",
+    "credit_limit": 500000,
+    "payment_terms": "月結30天"
+  },
+  {
+    "code": "C002",
+    "name": "長期合作夥伴企業",
+    "contact_person": "林美玲",
+    "phone": "03-9876543",
+    "email": "lin@partner.com",
+    "address": "新竹市東區光復路二段101號",
+    "credit_limit": 1000000,
+    "payment_terms": "月結45天"
+  },
+  {
+    "code": "C003",
+    "name": "南部貿易公司",
+    "contact_person": "王大明",
+    "phone": "06-5432109",
+    "email": "wang@southern.com",
+    "address": "台南市東區中華東路三段88號",
+    "credit_limit": 300000,
+    "payment_terms": "月結30天"
+  },
+  {
+    "code": "C004",
+    "name": "中部經銷商",
+    "contact_person": "張小華",
+    "phone": "04-23456789",
+    "email": "chang@central.com",
+    "address": "台中市西屯區台灣大道四段1727號",
+    "credit_limit": 800000,
+    "payment_terms": "月結60天"
+  }
+]
