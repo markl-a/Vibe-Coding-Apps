@@ -1,0 +1,6 @@
+plotly>=5.17.0
+pandas>=2.0.0
+networkx>=3.1
+openpyxl>=3.1.0
+python-dateutil>=2.8.0
+dash>=2.14.0

@@ -1,0 +1,251 @@
+{
+  "project_name": "網站開發專案",
+  "start_date": "2025-01-15T00:00:00",
+  "tasks": [
+    {
+      "id": "task_001",
+      "name": "需求分析",
+      "duration": 5,
+      "start_date": "2025-01-15T00:00:00",
+      "end_date": "2025-01-19T00:00:00",
+      "assignee": "產品經理",
+      "progress": 100,
+      "is_milestone": false,
+      "is_critical": true,
+      "early_start": "2025-01-15T00:00:00",
+      "early_finish": "2025-01-19T00:00:00",
+      "late_start": "2025-01-15T00:00:00",
+      "late_finish": "2025-01-19T00:00:00",
+      "total_float": 0,
+      "dependencies": [],
+      "successors": ["task_002", "task_005"]
+    },
+    {
+      "id": "task_002",
+      "name": "UI 設計",
+      "duration": 7,
+      "start_date": "2025-01-20T00:00:00",
+      "end_date": "2025-01-26T00:00:00",
+      "assignee": "設計師",
+      "progress": 80,
+      "is_milestone": true,
+      "is_critical": true,
+      "early_start": "2025-01-20T00:00:00",
+      "early_finish": "2025-01-26T00:00:00",
+      "late_start": "2025-01-20T00:00:00",
+      "late_finish": "2025-01-26T00:00:00",
+      "total_float": 0,
+      "dependencies": [
+        {
+          "predecessor_id": "task_001",
+          "type": "FS",
+          "lag": 0
+        }
+      ],
+      "successors": ["task_003"]
+    },
+    {
+      "id": "task_003",
+      "name": "前端開發",
+      "duration": 10,
+      "start_date": "2025-01-27T00:00:00",
+      "end_date": "2025-02-05T00:00:00",
+      "assignee": "前端工程師",
+      "progress": 40,
+      "is_milestone": false,
+      "is_critical": true,
+      "early_start": "2025-01-27T00:00:00",
+      "early_finish": "2025-02-05T00:00:00",
+      "late_start": "2025-01-27T00:00:00",
+      "late_finish": "2025-02-05T00:00:00",
+      "total_float": 0,
+      "dependencies": [
+        {
+          "predecessor_id": "task_002",
+          "type": "FS",
+          "lag": 0
+        }
+      ],
+      "successors": ["task_007"]
+    },
+    {
+      "id": "task_004",
+      "name": "後端開發",
+      "duration": 12,
+      "start_date": "2025-01-22T00:00:00",
+      "end_date": "2025-02-02T00:00:00",
+      "assignee": "後端工程師",
+      "progress": 30,
+      "is_milestone": true,
+      "is_critical": false,
+      "early_start": "2025-01-22T00:00:00",
+      "early_finish": "2025-02-02T00:00:00",
+      "late_start": "2025-01-25T00:00:00",
+      "late_finish": "2025-02-05T00:00:00",
+      "total_float": 3,
+      "dependencies": [
+        {
+          "predecessor_id": "task_006",
+          "type": "SS",
+          "lag": 2
+        }
+      ],
+      "successors": ["task_007"]
+    },
+    {
+      "id": "task_005",
+      "name": "數據庫設計",
+      "duration": 4,
+      "start_date": "2025-01-20T00:00:00",
+      "end_date": "2025-01-23T00:00:00",
+      "assignee": "DBA",
+      "progress": 100,
+      "is_milestone": false,
+      "is_critical": false,
+      "early_start": "2025-01-20T00:00:00",
+      "early_finish": "2025-01-23T00:00:00",
+      "late_start": "2025-01-20T00:00:00",
+      "late_finish": "2025-01-23T00:00:00",
+      "total_float": 0,
+      "dependencies": [
+        {
+          "predecessor_id": "task_001",
+          "type": "FS",
+          "lag": 0
+        }
+      ],
+      "successors": ["task_006"]
+    },
+    {
+      "id": "task_006",
+      "name": "API 開發",
+      "duration": 8,
+      "start_date": "2025-01-24T00:00:00",
+      "end_date": "2025-01-31T00:00:00",
+      "assignee": "後端工程師",
+      "progress": 60,
+      "is_milestone": false,
+      "is_critical": false,
+      "early_start": "2025-01-24T00:00:00",
+      "early_finish": "2025-01-31T00:00:00",
+      "late_start": "2025-01-24T00:00:00",
+      "late_finish": "2025-01-31T00:00:00",
+      "total_float": 0,
+      "dependencies": [
+        {
+          "predecessor_id": "task_005",
+          "type": "FS",
+          "lag": 0
+        }
+      ],
+      "successors": ["task_004"]
+    },
+    {
+      "id": "task_007",
+      "name": "整合測試",
+      "duration": 5,
+      "start_date": "2025-02-06T00:00:00",
+      "end_date": "2025-02-10T00:00:00",
+      "assignee": "測試工程師",
+      "progress": 0,
+      "is_milestone": false,
+      "is_critical": true,
+      "early_start": "2025-02-06T00:00:00",
+      "early_finish": "2025-02-10T00:00:00",
+      "late_start": "2025-02-06T00:00:00",
+      "late_finish": "2025-02-10T00:00:00",
+      "total_float": 0,
+      "dependencies": [
+        {
+          "predecessor_id": "task_003",
+          "type": "FS",
+          "lag": 0
+        },
+        {
+          "predecessor_id": "task_004",
+          "type": "FS",
+          "lag": 0
+        }
+      ],
+      "successors": ["task_008"]
+    },
+    {
+      "id": "task_008",
+      "name": "性能優化",
+      "duration": 3,
+      "start_date": "2025-02-11T00:00:00",
+      "end_date": "2025-02-13T00:00:00",
+      "assignee": "後端工程師",
+      "progress": 0,
+      "is_milestone": false,
+      "is_critical": true,
+      "early_start": "2025-02-11T00:00:00",
+      "early_finish": "2025-02-13T00:00:00",
+      "late_start": "2025-02-11T00:00:00",
+      "late_finish": "2025-02-13T00:00:00",
+      "total_float": 0,
+      "dependencies": [
+        {
+          "predecessor_id": "task_007",
+          "type": "FS",
+          "lag": 0
+        }
+      ],
+      "successors": ["task_009"]
+    },
+    {
+      "id": "task_009",
+      "name": "用戶驗收測試",
+      "duration": 4,
+      "start_date": "2025-02-14T00:00:00",
+      "end_date": "2025-02-17T00:00:00",
+      "assignee": "產品經理",
+      "progress": 0,
+      "is_milestone": true,
+      "is_critical": true,
+      "early_start": "2025-02-14T00:00:00",
+      "early_finish": "2025-02-17T00:00:00",
+      "late_start": "2025-02-14T00:00:00",
+      "late_finish": "2025-02-17T00:00:00",
+      "total_float": 0,
+      "dependencies": [
+        {
+          "predecessor_id": "task_008",
+          "type": "FS",
+          "lag": 0
+        }
+      ],
+      "successors": ["task_010"]
+    },
+    {
+      "id": "task_010",
+      "name": "部署上線",
+      "duration": 2,
+      "start_date": "2025-02-18T00:00:00",
+      "end_date": "2025-02-19T00:00:00",
+      "assignee": "運維工程師",
+      "progress": 0,
+      "is_milestone": true,
+      "is_critical": true,
+      "early_start": "2025-02-18T00:00:00",
+      "early_finish": "2025-02-19T00:00:00",
+      "late_start": "2025-02-18T00:00:00",
+      "late_finish": "2025-02-19T00:00:00",
+      "total_float": 0,
+      "dependencies": [
+        {
+          "predecessor_id": "task_009",
+          "type": "FS",
+          "lag": 0
+        }
+      ],
+      "successors": []
+    }
+  ],
+  "milestones": {
+    "設計完成": "task_002",
+    "開發完成": "task_004",
+    "測試完成": "task_009",
+    "專案上線": "task_010"
+  }
+}
