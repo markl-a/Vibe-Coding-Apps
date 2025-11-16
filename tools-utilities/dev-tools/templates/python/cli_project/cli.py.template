@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+"""
+{{ project_name }} - 命令列工具
+使用 AI 輔助開發
+"""
+
+import argparse
+import sys
+
+
+def main():
+    """主函數"""
+    parser = argparse.ArgumentParser(
+        description="{{ project_name }} - {{ description }}"
+    )
+
+    parser.add_argument('command', help='要執行的命令')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                       help='詳細輸出')
+    parser.add_argument('--version', action='version',
+                       version='%(prog)s {{ version }}')
+
+    args = parser.parse_args()
+
+    print(f"執行命令: {args.command}")
+
+    if args.verbose:
+        print("詳細模式已啟用")
+
+
+if __name__ == '__main__':
+    main()

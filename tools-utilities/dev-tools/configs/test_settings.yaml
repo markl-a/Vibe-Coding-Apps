@@ -1,0 +1,57 @@
+# 測試設定
+
+# 測試框架設定
+framework:
+  name: pytest
+  config_file: pytest.ini
+
+# 測試目錄
+test_directories:
+  - tests/
+  - test/
+
+# 測試檔案模式
+test_patterns:
+  - test_*.py
+  - "*_test.py"
+
+# 覆蓋率設定
+coverage:
+  enabled: true
+  minimum: 80
+  report_formats:
+    - term
+    - html
+    - xml
+  omit:
+    - "*/tests/*"
+    - "*/test_*.py"
+    - "*/__pycache__/*"
+
+# 平行執行設定
+parallel:
+  enabled: false
+  workers: 4
+
+# 失敗重試設定
+retry:
+  enabled: false
+  max_retries: 3
+  delay: 1
+
+# 測試標記
+markers:
+  - slow: "標記慢速測試"
+  - integration: "標記整合測試"
+  - unit: "標記單元測試"
+
+# 忽略的測試
+ignore:
+  - tests/integration/*
+  - tests/e2e/*
+
+# 輸出設定
+output:
+  verbose: true
+  show_capture: true
+  show_warnings: true

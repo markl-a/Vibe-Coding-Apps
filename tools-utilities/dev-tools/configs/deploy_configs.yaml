@@ -1,0 +1,49 @@
+# 部署配置
+
+# 環境設定
+environments:
+  staging:
+    host: staging.example.com
+    port: 22
+    user: deploy
+    path: /var/www/staging
+    branch: develop
+
+  production:
+    host: production.example.com
+    port: 22
+    user: deploy
+    path: /var/www/production
+    branch: main
+
+# Docker 設定
+docker:
+  image_name: myapp
+  registry: docker.io
+  dockerfile: Dockerfile
+  build_args:
+    - NODE_ENV=production
+
+# 健康檢查設定
+health_check:
+  url: /health
+  timeout: 30
+  retries: 3
+  interval: 5
+
+# 部署前檢查
+pre_deploy:
+  - run_tests: true
+  - check_linting: true
+  - security_scan: false
+
+# 部署後動作
+post_deploy:
+  - health_check: true
+  - smoke_test: false
+  - notify_team: false
+
+# 回滾設定
+rollback:
+  keep_versions: 5
+  auto_rollback_on_failure: false
