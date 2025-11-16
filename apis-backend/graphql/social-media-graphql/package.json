@@ -1,0 +1,33 @@
+{
+  "name": "social-media-graphql",
+  "version": "1.0.0",
+  "description": "Social Media GraphQL API with Apollo Server and PostgreSQL",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "graphql",
+    "apollo-server",
+    "social-media",
+    "postgresql",
+    "subscriptions",
+    "real-time"
+  ],
+  "author": "AI-Driven Development",
+  "license": "MIT",
+  "dependencies": {
+    "@apollo/server": "^4.9.5",
+    "graphql": "^16.8.1",
+    "graphql-subscriptions": "^2.0.0",
+    "pg": "^8.11.3",
+    "dotenv": "^16.3.1",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
