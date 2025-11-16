@@ -1,0 +1,149 @@
+/**
+ * Instagram Downloader 自訂樣式
+ */
+
+/* 下載按鈕基礎樣式 */
+.insta-download-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  margin: 0 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.insta-download-btn:hover {
+  transform: scale(1.1);
+}
+
+.insta-download-btn:active {
+  transform: scale(0.95);
+}
+
+.insta-download-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.insta-download-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* 適配暗色模式 */
+@media (prefers-color-scheme: dark) {
+  .insta-download-btn svg {
+    fill: #ffffff;
+  }
+}
+
+/* 適配亮色模式 */
+@media (prefers-color-scheme: light) {
+  .insta-download-btn svg {
+    fill: #000000;
+  }
+}
+
+/* Story 下載按鈕 */
+.insta-download-btn-story {
+  position: fixed !important;
+  top: 70px !important;
+  right: 20px !important;
+  z-index: 10000 !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  color: white !important;
+  border: 2px solid white !important;
+  border-radius: 50% !important;
+  width: 48px !important;
+  height: 48px !important;
+  font-size: 24px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.insta-download-btn-story:hover {
+  background: rgba(0, 0, 0, 0.8) !important;
+  transform: scale(1.1) !important;
+}
+
+.insta-download-btn-story:active {
+  transform: scale(0.95) !important;
+}
+
+/* Reel 下載按鈕 */
+.insta-download-btn-reel {
+  margin-bottom: 16px;
+}
+
+/* 下載進度提示 */
+.insta-download-progress {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.insta-download-progress.success {
+  background: rgba(46, 160, 67, 0.9);
+}
+
+.insta-download-progress.error {
+  background: rgba(237, 73, 86, 0.9);
+}
+
+/* 批次下載選擇器 */
+.insta-batch-selector {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  z-index: 100;
+}
+
+.insta-batch-selector input[type="checkbox"] {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+/* 下載統計徽章 */
+.insta-download-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ed4956;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
