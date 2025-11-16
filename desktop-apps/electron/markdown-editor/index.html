@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
+  <title>Markdown Editor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- 工具列 -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <button id="newFileBtn" class="toolbar-btn" title="新增檔案 (Ctrl+N)">
+          📄 新增
+        </button>
+        <button id="openFileBtn" class="toolbar-btn" title="開啟檔案 (Ctrl+O)">
+          📁 開啟
+        </button>
+        <button id="saveFileBtn" class="toolbar-btn" title="儲存 (Ctrl+S)">
+          💾 儲存
+        </button>
+        <div class="toolbar-divider"></div>
+        <button id="boldBtn" class="toolbar-btn format-btn" title="粗體 (Ctrl+B)">
+          <strong>B</strong>
+        </button>
+        <button id="italicBtn" class="toolbar-btn format-btn" title="斜體 (Ctrl+I)">
+          <em>I</em>
+        </button>
+        <button id="linkBtn" class="toolbar-btn format-btn" title="插入連結 (Ctrl+K)">
+          🔗
+        </button>
+        <button id="imageBtn" class="toolbar-btn format-btn" title="插入圖片 (Ctrl+Shift+I)">
+          🖼️
+        </button>
+        <button id="codeBtn" class="toolbar-btn format-btn" title="程式碼區塊 (Ctrl+Shift+C)">
+          💻
+        </button>
+        <div class="toolbar-divider"></div>
+        <button id="exportHtmlBtn" class="toolbar-btn" title="匯出 HTML">
+          📤 HTML
+        </button>
+        <button id="exportPdfBtn" class="toolbar-btn" title="匯出 PDF">
+          📤 PDF
+        </button>
+      </div>
+      <div class="toolbar-right">
+        <div id="stats" class="stats">
+          <span id="charCount">0 字元</span>
+          <span class="stats-divider">|</span>
+          <span id="wordCount">0 字</span>
+          <span class="stats-divider">|</span>
+          <span id="lineCount">0 行</span>
+        </div>
+        <div class="toolbar-divider"></div>
+        <button id="themeToggleBtn" class="toolbar-btn" title="切換主題 (Ctrl+T)">
+          🌙
+        </button>
+      </div>
+    </div>
+
+    <!-- 主要內容區域 -->
+    <div class="main-content">
+      <!-- 側邊欄 - 最近檔案 -->
+      <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <h3>最近檔案</h3>
+          <button id="toggleSidebarBtn" class="icon-btn" title="隱藏側邊欄">◀</button>
+        </div>
+        <div class="recent-files" id="recentFiles">
+          <div class="empty-state">尚無最近開啟的檔案</div>
+        </div>
+      </div>
+
+      <!-- 編輯器和預覽區域 -->
+      <div class="editor-container">
+        <!-- 編輯器 -->
+        <div class="editor-panel">
+          <div class="panel-header">
+            <h3>✍️ 編輯器</h3>
+            <div id="currentFile" class="current-file">未命名文件</div>
+          </div>
+          <textarea id="editor" placeholder="開始輸入 Markdown...
+
+# 歡迎使用 Markdown Editor
+
+這是一個簡潔優雅的 Markdown 編輯器。
+
+## 功能特色
+
+- 即時預覽
+- 語法高亮
+- 自動儲存
+- 匯出 HTML/PDF
+
+## Markdown 語法範例
+
+### 標題
+使用 # 來建立標題
+
+### 格式
+**粗體文字**
+*斜體文字*
+~~刪除線~~
+
+### 列表
+- 項目 1
+- 項目 2
+- 項目 3
+
+### 程式碼
+\`\`\`javascript
+function hello() {
+  console.log('Hello World!');
+}
+\`\`\`
+
+### 連結和圖片
+[連結文字](https://example.com)
+![圖片描述](image.png)
+
+開始編輯吧！"></textarea>
+        </div>
+
+        <!-- 分隔線 -->
+        <div class="resizer" id="resizer"></div>
+
+        <!-- 預覽 -->
+        <div class="preview-panel">
+          <div class="panel-header">
+            <h3>👁️ 預覽</h3>
+            <button id="copyHtmlBtn" class="icon-btn" title="複製 HTML">📋</button>
+          </div>
+          <div id="preview" class="preview-content"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 狀態列 -->
+    <div class="statusbar">
+      <div class="statusbar-left">
+        <span id="statusMessage">就緒</span>
+      </div>
+      <div class="statusbar-right">
+        <span id="autoSaveIndicator" class="auto-save-indicator">自動儲存: 開啟</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 載入腳本 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.0/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net">
+  <title>Pomodoro Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- 標題列 -->
+    <div class="header">
+      <h1>🍅 Pomodoro Tracker</h1>
+      <div class="header-buttons">
+        <button id="statsBtn" class="icon-btn" title="統計">📊</button>
+        <button id="settingsBtn" class="icon-btn" title="設定">⚙️</button>
+        <button id="themeBtn" class="icon-btn" title="切換主題">🌙</button>
+      </div>
+    </div>
+
+    <!-- 主要內容 -->
+    <div class="main-content">
+      <!-- 計時器區域 -->
+      <div class="timer-section">
+        <div class="timer-status" id="timerStatus">工作時間</div>
+        <div class="timer-display" id="timerDisplay">25:00</div>
+        <div class="timer-controls">
+          <button id="startBtn" class="control-btn primary">開始</button>
+          <button id="pauseBtn" class="control-btn" style="display:none;">暫停</button>
+          <button id="resetBtn" class="control-btn">重置</button>
+          <button id="skipBtn" class="control-btn">跳過</button>
+        </div>
+        <div class="pomodoro-count">
+          <span id="pomodoroCount">0</span> / <span id="dailyGoal">8</span> 番茄鐘
+        </div>
+      </div>
+
+      <!-- 任務列表 -->
+      <div class="tasks-section">
+        <div class="section-header">
+          <h3>📝 今日任務</h3>
+          <button id="addTaskBtn" class="icon-btn-small">+</button>
+        </div>
+        <div class="task-input" style="display:none;">
+          <input type="text" id="newTaskInput" placeholder="輸入任務..." />
+          <button id="saveTaskBtn" class="icon-btn-small">✓</button>
+          <button id="cancelTaskBtn" class="icon-btn-small">✕</button>
+        </div>
+        <div class="tasks-list" id="tasksList">
+          <div class="empty-state">尚無任務,點擊 + 新增</div>
+        </div>
+      </div>
+
+      <!-- 統計資訊 -->
+      <div class="stats-section" id="statsSection" style="display:none;">
+        <div class="section-header">
+          <h3>📊 統計資訊</h3>
+          <button id="closeStatsBtn" class="icon-btn-small">✕</button>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="totalPomodoros">0</div>
+            <div class="stat-label">總番茄鐘</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="todayPomodoros">0</div>
+            <div class="stat-label">今日完成</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="weekPomodoros">0</div>
+            <div class="stat-label">本週完成</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="completionRate">0%</div>
+            <div class="stat-label">目標達成率</div>
+          </div>
+        </div>
+        <div class="achievements" id="achievements"></div>
+      </div>
+
+      <!-- 設定面板 -->
+      <div class="settings-section" id="settingsSection" style="display:none;">
+        <div class="section-header">
+          <h3>⚙️ 設定</h3>
+          <button id="closeSettingsBtn" class="icon-btn-small">✕</button>
+        </div>
+        <div class="settings-form">
+          <div class="setting-item">
+            <label>工作時長 (分鐘)</label>
+            <input type="number" id="workDuration" min="1" max="60" value="25" />
+          </div>
+          <div class="setting-item">
+            <label>短休息 (分鐘)</label>
+            <input type="number" id="shortBreak" min="1" max="30" value="5" />
+          </div>
+          <div class="setting-item">
+            <label>長休息 (分鐘)</label>
+            <input type="number" id="longBreak" min="1" max="60" value="15" />
+          </div>
+          <div class="setting-item">
+            <label>每日目標</label>
+            <input type="number" id="dailyGoalInput" min="1" max="20" value="8" />
+          </div>
+          <div class="setting-item">
+            <label>
+              <input type="checkbox" id="autoStartBreaks" checked />
+              自動開始休息
+            </label>
+          </div>
+          <div class="setting-item">
+            <label>
+              <input type="checkbox" id="soundEnabled" checked />
+              啟用音效
+            </label>
+          </div>
+          <div class="setting-item">
+            <label>
+              <input type="checkbox" id="notificationsEnabled" checked />
+              啟用通知
+            </label>
+          </div>
+          <button id="saveSettingsBtn" class="control-btn primary">儲存設定</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

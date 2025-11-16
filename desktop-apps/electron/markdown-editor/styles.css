@@ -1,0 +1,523 @@
+/* ===== 全域樣式 ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* 淺色主題 */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-tertiary: #e8e8e8;
+  --text-primary: #1a1a1a;
+  --text-secondary: #666666;
+  --border-color: #d0d0d0;
+  --accent-color: #0066cc;
+  --accent-hover: #0052a3;
+  --toolbar-bg: #fafafa;
+  --sidebar-bg: #f9f9f9;
+  --editor-bg: #ffffff;
+  --preview-bg: #ffffff;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme {
+  /* 深色主題 */
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #252525;
+  --bg-tertiary: #2d2d2d;
+  --text-primary: #e4e4e4;
+  --text-secondary: #a0a0a0;
+  --border-color: #404040;
+  --accent-color: #4da6ff;
+  --accent-hover: #3d96ef;
+  --toolbar-bg: #252525;
+  --sidebar-bg: #1e1e1e;
+  --editor-bg: #1e1e1e;
+  --preview-bg: #252525;
+  --shadow: rgba(0, 0, 0, 0.3);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC',
+               'Microsoft JhengHei', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ===== 應用程式容器 ===== */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ===== 工具列 ===== */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: var(--toolbar-bg);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.toolbar-left,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toolbar-btn {
+  padding: 6px 12px;
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.toolbar-btn:hover {
+  background-color: var(--bg-tertiary);
+  border-color: var(--accent-color);
+}
+
+.toolbar-btn:active {
+  transform: scale(0.95);
+}
+
+.format-btn {
+  min-width: 32px;
+  padding: 6px 8px;
+  font-weight: bold;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 24px;
+  background-color: var(--border-color);
+  margin: 0 8px;
+}
+
+/* ===== 統計資訊 ===== */
+.stats {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.stats-divider {
+  color: var(--border-color);
+}
+
+/* ===== 主要內容區域 ===== */
+.main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ===== 側邊欄 ===== */
+.sidebar {
+  width: 220px;
+  background-color: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: width 0.3s, margin-left 0.3s;
+}
+
+.sidebar.collapsed {
+  width: 0;
+  margin-left: -220px;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.icon-btn:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.recent-files {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.recent-file-item {
+  padding: 8px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  margin-bottom: 4px;
+  color: var(--text-primary);
+  transition: background-color 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recent-file-item:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.empty-state {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+/* ===== 編輯器容器 ===== */
+.editor-container {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.editor-panel,
+.preview-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.panel-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.current-file {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* ===== 編輯器 ===== */
+#editor {
+  flex: 1;
+  padding: 20px;
+  background-color: var(--editor-bg);
+  color: var(--text-primary);
+  border: none;
+  outline: none;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: none;
+  user-select: text;
+}
+
+#editor::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
+/* ===== 分隔線 ===== */
+.resizer {
+  width: 6px;
+  background-color: var(--bg-secondary);
+  cursor: col-resize;
+  flex-shrink: 0;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.resizer:hover {
+  background-color: var(--accent-color);
+}
+
+.resizer::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 40px;
+  background-color: var(--border-color);
+  border-radius: 1px;
+}
+
+/* ===== 預覽 ===== */
+.preview-content {
+  flex: 1;
+  padding: 20px;
+  background-color: var(--preview-bg);
+  overflow-y: auto;
+  user-select: text;
+  line-height: 1.7;
+}
+
+/* Markdown 預覽樣式 */
+.preview-content h1,
+.preview-content h2,
+.preview-content h3,
+.preview-content h4,
+.preview-content h5,
+.preview-content h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+.preview-content h1 {
+  font-size: 2em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.3em;
+}
+
+.preview-content h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.3em;
+}
+
+.preview-content h3 {
+  font-size: 1.25em;
+}
+
+.preview-content h4 {
+  font-size: 1em;
+}
+
+.preview-content h5 {
+  font-size: 0.875em;
+}
+
+.preview-content h6 {
+  font-size: 0.85em;
+  color: var(--text-secondary);
+}
+
+.preview-content p {
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.preview-content a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.preview-content a:hover {
+  text-decoration: underline;
+}
+
+.preview-content code {
+  background-color: var(--bg-tertiary);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 85%;
+}
+
+.preview-content pre {
+  background-color: var(--bg-secondary);
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+
+.preview-content pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-size: 85%;
+}
+
+.preview-content blockquote {
+  border-left: 4px solid var(--accent-color);
+  padding-left: 16px;
+  margin-left: 0;
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.preview-content ul,
+.preview-content ol {
+  margin-bottom: 16px;
+  padding-left: 2em;
+}
+
+.preview-content li {
+  margin-bottom: 8px;
+}
+
+.preview-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.preview-content table th,
+.preview-content table td {
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.preview-content table th {
+  background-color: var(--bg-secondary);
+  font-weight: 600;
+}
+
+.preview-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin: 16px 0;
+}
+
+.preview-content hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 24px 0;
+}
+
+/* ===== 狀態列 ===== */
+.statusbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 12px;
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.auto-save-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ===== 捲軸樣式 ===== */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* ===== 動畫 ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* ===== 響應式設計 ===== */
+@media (max-width: 768px) {
+  .sidebar {
+    position: absolute;
+    height: 100%;
+    z-index: 10;
+    box-shadow: 2px 0 8px var(--shadow);
+  }
+
+  .editor-container {
+    flex-direction: column;
+  }
+
+  .resizer {
+    width: 100%;
+    height: 6px;
+    cursor: row-resize;
+  }
+
+  .resizer::before {
+    width: 40px;
+    height: 2px;
+  }
+}
+
+/* ===== 列印樣式 ===== */
+@media print {
+  .toolbar,
+  .sidebar,
+  .statusbar,
+  .resizer,
+  .editor-panel {
+    display: none !important;
+  }
+
+  .preview-panel {
+    width: 100% !important;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+}
