@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 測試工具 - API Tester</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌐 API 測試工具</h1>
+            <p class="subtitle">快速測試 RESTful API 端點</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Request Section -->
+            <section class="request-section">
+                <h2>請求設定</h2>
+
+                <div class="form-group">
+                    <label>HTTP 方法</label>
+                    <select id="method" class="method-select">
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="PATCH">PATCH</option>
+                        <option value="DELETE">DELETE</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>URL</label>
+                    <input type="text" id="url" placeholder="https://api.example.com/endpoint" class="url-input">
+                </div>
+
+                <div class="tabs">
+                    <button class="tab-button active" data-tab="headers">Headers</button>
+                    <button class="tab-button" data-tab="body">Body</button>
+                    <button class="tab-button" data-tab="auth">Auth</button>
+                </div>
+
+                <div class="tab-content">
+                    <!-- Headers Tab -->
+                    <div id="headers-tab" class="tab-panel active">
+                        <div class="header-item">
+                            <input type="text" placeholder="Key" class="header-key">
+                            <input type="text" placeholder="Value" class="header-value">
+                            <button class="btn-add-header">+</button>
+                        </div>
+                        <div id="headers-list"></div>
+                    </div>
+
+                    <!-- Body Tab -->
+                    <div id="body-tab" class="tab-panel">
+                        <select id="body-type" class="body-type-select">
+                            <option value="none">None</option>
+                            <option value="json">JSON</option>
+                            <option value="form">Form Data</option>
+                            <option value="text">Plain Text</option>
+                        </select>
+                        <textarea id="request-body" placeholder='{"key": "value"}' rows="10"></textarea>
+                    </div>
+
+                    <!-- Auth Tab -->
+                    <div id="auth-tab" class="tab-panel">
+                        <select id="auth-type" class="auth-type-select">
+                            <option value="none">No Auth</option>
+                            <option value="bearer">Bearer Token</option>
+                            <option value="basic">Basic Auth</option>
+                            <option value="apikey">API Key</option>
+                        </select>
+                        <div id="auth-fields"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="send-btn" class="btn-primary">發送請求</button>
+                    <button id="clear-btn" class="btn-secondary">清除</button>
+                    <button id="copy-curl-btn" class="btn-secondary">複製 cURL</button>
+                </div>
+            </section>
+
+            <!-- Response Section -->
+            <section class="response-section">
+                <h2>回應結果</h2>
+
+                <div id="response-status" class="response-status"></div>
+
+                <div class="response-tabs">
+                    <button class="response-tab-button active" data-tab="response-body">Body</button>
+                    <button class="response-tab-button" data-tab="response-headers">Headers</button>
+                </div>
+
+                <div class="response-content">
+                    <div id="response-body-tab" class="response-tab-panel active">
+                        <pre id="response-body" class="response-body">等待發送請求...</pre>
+                    </div>
+                    <div id="response-headers-tab" class="response-tab-panel">
+                        <pre id="response-headers" class="response-headers"></pre>
+                    </div>
+                </div>
+
+                <div class="response-info">
+                    <span id="response-time"></span>
+                    <span id="response-size"></span>
+                </div>
+            </section>
+        </div>
+
+        <!-- History Section -->
+        <section class="history-section">
+            <h3>請求歷史</h3>
+            <div id="history-list" class="history-list"></div>
+            <button id="clear-history-btn" class="btn-secondary">清除歷史</button>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

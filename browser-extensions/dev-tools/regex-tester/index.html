@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正規表示式測試器 - Regex Tester</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 正規表示式測試器</h1>
+            <p class="subtitle">測試和學習正規表示式</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Regex Input Section -->
+            <section class="regex-section">
+                <h2>正規表示式</h2>
+                <div class="regex-input-group">
+                    <span class="regex-delimiter">/</span>
+                    <input type="text" id="regex-input" placeholder="輸入正規表示式，例如：\d{3}-\d{4}" autocomplete="off">
+                    <span class="regex-delimiter">/</span>
+                    <input type="text" id="flags-input" placeholder="flags" maxlength="5" style="width: 80px;">
+                </div>
+
+                <div class="flags-options">
+                    <label><input type="checkbox" id="flag-g" value="g"> g (全域)</label>
+                    <label><input type="checkbox" id="flag-i" value="i"> i (忽略大小寫)</label>
+                    <label><input type="checkbox" id="flag-m" value="m"> m (多行)</label>
+                    <label><input type="checkbox" id="flag-s" value="s"> s (dotAll)</label>
+                    <label><input type="checkbox" id="flag-u" value="u"> u (unicode)</label>
+                </div>
+
+                <div id="regex-error" class="error-message"></div>
+                <div id="regex-info" class="info-message"></div>
+            </section>
+
+            <!-- Test String Section -->
+            <section class="test-section">
+                <h2>測試字串</h2>
+                <textarea id="test-input" placeholder="輸入要測試的文字..." rows="10"></textarea>
+                <div class="test-info">
+                    <span id="match-count">符合: 0</span>
+                    <button id="clear-test-btn" class="btn-secondary">清除</button>
+                </div>
+            </section>
+
+            <!-- Matches Section -->
+            <section class="matches-section">
+                <h2>符合結果</h2>
+                <div id="matches-output" class="matches-output">
+                    <div class="no-matches">輸入正規表示式和測試字串開始測試...</div>
+                </div>
+            </section>
+
+            <!-- Explanation Section -->
+            <section class="explanation-section">
+                <h2>正規表示式說明</h2>
+                <div id="regex-explanation" class="explanation-content">
+                    <p>輸入正規表示式後將顯示說明...</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- Quick Reference -->
+        <section class="reference-section">
+            <h2>📚 快速參考</h2>
+            <div class="reference-tabs">
+                <button class="ref-tab active" data-tab="basic">基本</button>
+                <button class="ref-tab" data-tab="char-classes">字元類別</button>
+                <button class="ref-tab" data-tab="quantifiers">數量詞</button>
+                <button class="ref-tab" data-tab="groups">群組</button>
+                <button class="ref-tab" data-tab="anchors">錨點</button>
+            </div>
+            <div id="reference-content" class="reference-content"></div>
+        </section>
+
+        <!-- Common Patterns -->
+        <section class="patterns-section">
+            <h2>🎯 常用模式</h2>
+            <div class="pattern-grid">
+                <button class="pattern-card" data-pattern="[a-zA-Z]+" data-desc="英文字母">
+                    <div class="pattern-title">英文字母</div>
+                    <code>[a-zA-Z]+</code>
+                </button>
+                <button class="pattern-card" data-pattern="\d+" data-desc="數字">
+                    <div class="pattern-title">數字</div>
+                    <code>\d+</code>
+                </button>
+                <button class="pattern-card" data-pattern="[0-9]{3}-[0-9]{4}" data-desc="電話號碼">
+                    <div class="pattern-title">電話號碼</div>
+                    <code>[0-9]{3}-[0-9]{4}</code>
+                </button>
+                <button class="pattern-card" data-pattern="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$" data-desc="Email">
+                    <div class="pattern-title">Email</div>
+                    <code>email@example.com</code>
+                </button>
+                <button class="pattern-card" data-pattern="^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b" data-desc="URL">
+                    <div class="pattern-title">URL</div>
+                    <code>https://example.com</code>
+                </button>
+                <button class="pattern-card" data-pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" data-desc="強密碼">
+                    <div class="pattern-title">強密碼</div>
+                    <code>含字母數字8+字元</code>
+                </button>
+                <button class="pattern-card" data-pattern="#?([a-f0-9]{6}|[a-f0-9]{3})" data-desc="HEX 顏色">
+                    <div class="pattern-title">HEX 顏色</div>
+                    <code>#FFFFFF</code>
+                </button>
+                <button class="pattern-card" data-pattern="^(\d{4})-(\d{2})-(\d{2})$" data-desc="日期 YYYY-MM-DD">
+                    <div class="pattern-title">日期</div>
+                    <code>2024-01-15</code>
+                </button>
+            </div>
+        </section>
+
+        <!-- Test Cases -->
+        <section class="test-cases-section">
+            <h2>✓ 測試案例</h2>
+            <div id="test-cases" class="test-cases">
+                <p style="color: var(--text-secondary)">選擇常用模式後將顯示測試案例</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

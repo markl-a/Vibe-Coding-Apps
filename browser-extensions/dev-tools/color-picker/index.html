@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>顏色選擇器 - Color Picker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 顏色選擇器</h1>
+            <p class="subtitle">選擇、轉換、管理顏色</p>
+        </header>
+
+        <div class="main-layout">
+            <!-- Color Picker Section -->
+            <section class="picker-section">
+                <h2>顏色選擇</h2>
+
+                <!-- Color Display -->
+                <div class="color-display" id="color-display">
+                    <div class="color-preview" id="color-preview"></div>
+                    <div class="color-info">
+                        <div class="color-name" id="color-name">#3b82f6</div>
+                        <button id="copy-color-btn" class="btn-copy">📋 複製</button>
+                    </div>
+                </div>
+
+                <!-- Native Color Picker -->
+                <div class="native-picker">
+                    <label>選擇顏色</label>
+                    <input type="color" id="color-input" value="#3b82f6">
+                </div>
+
+                <!-- RGB Sliders -->
+                <div class="sliders-section">
+                    <h3>RGB 調整</h3>
+                    <div class="slider-group">
+                        <label>
+                            <span class="slider-label">R</span>
+                            <input type="range" id="r-slider" min="0" max="255" value="59">
+                            <span class="slider-value" id="r-value">59</span>
+                        </label>
+                    </div>
+                    <div class="slider-group">
+                        <label>
+                            <span class="slider-label">G</span>
+                            <input type="range" id="g-slider" min="0" max="255" value="130">
+                            <span class="slider-value" id="g-value">130</span>
+                        </label>
+                    </div>
+                    <div class="slider-group">
+                        <label>
+                            <span class="slider-label">B</span>
+                            <input type="range" id="b-slider" min="0" max="255" value="246">
+                            <span class="slider-value" id="b-value">246</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- HSL Sliders -->
+                <div class="sliders-section">
+                    <h3>HSL 調整</h3>
+                    <div class="slider-group">
+                        <label>
+                            <span class="slider-label">H</span>
+                            <input type="range" id="h-slider" min="0" max="360" value="217">
+                            <span class="slider-value" id="h-value">217°</span>
+                        </label>
+                    </div>
+                    <div class="slider-group">
+                        <label>
+                            <span class="slider-label">S</span>
+                            <input type="range" id="s-slider" min="0" max="100" value="91">
+                            <span class="slider-value" id="s-value">91%</span>
+                        </label>
+                    </div>
+                    <div class="slider-group">
+                        <label>
+                            <span class="slider-label">L</span>
+                            <input type="range" id="l-slider" min="0" max="100" value="60">
+                            <span class="slider-value" id="l-value">60%</span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Formats Section -->
+            <section class="formats-section">
+                <h2>顏色格式</h2>
+
+                <div class="format-item">
+                    <label>HEX</label>
+                    <div class="format-value-group">
+                        <input type="text" id="hex-input" value="#3b82f6" readonly>
+                        <button class="btn-copy-format" data-format="hex">📋</button>
+                    </div>
+                </div>
+
+                <div class="format-item">
+                    <label>RGB</label>
+                    <div class="format-value-group">
+                        <input type="text" id="rgb-input" value="rgb(59, 130, 246)" readonly>
+                        <button class="btn-copy-format" data-format="rgb">📋</button>
+                    </div>
+                </div>
+
+                <div class="format-item">
+                    <label>RGBA</label>
+                    <div class="format-value-group">
+                        <input type="text" id="rgba-input" value="rgba(59, 130, 246, 1)" readonly>
+                        <button class="btn-copy-format" data-format="rgba">📋</button>
+                    </div>
+                    <div class="alpha-slider">
+                        <label>
+                            <span>Alpha:</span>
+                            <input type="range" id="alpha-slider" min="0" max="100" value="100">
+                            <span id="alpha-value">1.0</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="format-item">
+                    <label>HSL</label>
+                    <div class="format-value-group">
+                        <input type="text" id="hsl-input" value="hsl(217, 91%, 60%)" readonly>
+                        <button class="btn-copy-format" data-format="hsl">📋</button>
+                    </div>
+                </div>
+
+                <div class="format-item">
+                    <label>HSLA</label>
+                    <div class="format-value-group">
+                        <input type="text" id="hsla-input" value="hsla(217, 91%, 60%, 1)" readonly>
+                        <button class="btn-copy-format" data-format="hsla">📋</button>
+                    </div>
+                </div>
+
+                <div class="format-item">
+                    <label>CSS Filter</label>
+                    <div class="format-value-group">
+                        <input type="text" id="filter-input" value="brightness(100%) contrast(100%)" readonly>
+                        <button class="btn-copy-format" data-format="filter">📋</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Color Harmonies -->
+        <section class="harmonies-section">
+            <h2>色彩調和</h2>
+            <div class="harmony-tabs">
+                <button class="harmony-tab active" data-harmony="complementary">互補色</button>
+                <button class="harmony-tab" data-harmony="analogous">類似色</button>
+                <button class="harmony-tab" data-harmony="triadic">三角色</button>
+                <button class="harmony-tab" data-harmony="tetradic">四角色</button>
+                <button class="harmony-tab" data-harmony="shades">深淺色</button>
+            </div>
+            <div id="harmony-colors" class="harmony-colors"></div>
+        </section>
+
+        <!-- Contrast Checker -->
+        <section class="contrast-section">
+            <h2>對比度檢查器 (WCAG)</h2>
+            <div class="contrast-checker">
+                <div class="contrast-input-group">
+                    <div class="contrast-color">
+                        <label>前景色</label>
+                        <div class="color-select">
+                            <input type="color" id="fg-color" value="#3b82f6">
+                            <input type="text" id="fg-hex" value="#3b82f6">
+                        </div>
+                    </div>
+                    <div class="contrast-color">
+                        <label>背景色</label>
+                        <div class="color-select">
+                            <input type="color" id="bg-color" value="#ffffff">
+                            <input type="text" id="bg-hex" value="#ffffff">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contrast-result">
+                    <div class="contrast-preview" id="contrast-preview">
+                        <span>文字範例</span>
+                    </div>
+                    <div class="contrast-ratio">
+                        <div class="ratio-value">
+                            <span>對比度:</span>
+                            <strong id="ratio-value">3.14:1</strong>
+                        </div>
+                        <div class="wcag-results">
+                            <div class="wcag-item">
+                                <span>AA (大字)</span>
+                                <span class="wcag-badge" id="aa-large">✓</span>
+                            </div>
+                            <div class="wcag-item">
+                                <span>AA (小字)</span>
+                                <span class="wcag-badge" id="aa-normal">✗</span>
+                            </div>
+                            <div class="wcag-item">
+                                <span>AAA (大字)</span>
+                                <span class="wcag-badge" id="aaa-large">✗</span>
+                            </div>
+                            <div class="wcag-item">
+                                <span>AAA (小字)</span>
+                                <span class="wcag-badge" id="aaa-normal">✗</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        <!-- Color History -->
+        <section class="history-section">
+            <div class="section-header">
+                <h2>顏色歷史</h2>
+                <button id="clear-history-btn" class="btn-secondary">清除</button>
+            </div>
+            <div id="color-history" class="color-history"></div>
+        </section>
+
+        <!-- Preset Colors -->
+        <section class="presets-section">
+            <h2>預設顏色</h2>
+            <div class="preset-categories">
+                <button class="preset-tab active" data-category="material">Material Design</button>
+                <button class="preset-tab" data-category="tailwind">Tailwind CSS</button>
+                <button class="preset-tab" data-category="web">Web Safe</button>
+            </div>
+            <div id="preset-colors" class="preset-colors"></div>
+        </section>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON 格式化工具 - JSON Formatter</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📝 JSON 格式化工具</h1>
+            <p class="subtitle">格式化、驗證、壓縮 JSON 資料</p>
+        </header>
+
+        <div class="main-layout">
+            <!-- Left Panel - Input -->
+            <section class="input-section">
+                <div class="section-header">
+                    <h2>JSON 輸入</h2>
+                    <div class="actions">
+                        <button id="paste-btn" class="btn-icon" title="從剪貼簿貼上">📋</button>
+                        <button id="clear-input-btn" class="btn-icon" title="清除">🗑️</button>
+                    </div>
+                </div>
+                <textarea id="json-input" placeholder='在此輸入 JSON 資料... 例如:
+{
+  "name": "John Doe",
+  "age": 30,
+  "email": "john@example.com"
+}'></textarea>
+                <div class="input-info">
+                    <span id="input-chars">字元數: 0</span>
+                    <span id="input-lines">行數: 0</span>
+                </div>
+            </section>
+
+            <!-- Right Panel - Output -->
+            <section class="output-section">
+                <div class="section-header">
+                    <h2>格式化結果</h2>
+                    <div class="actions">
+                        <button id="copy-btn" class="btn-icon" title="複製">📄</button>
+                        <button id="download-btn" class="btn-icon" title="下載">💾</button>
+                    </div>
+                </div>
+                <pre id="json-output" class="json-output">等待輸入 JSON...</pre>
+                <div class="output-info">
+                    <span id="output-chars">字元數: 0</span>
+                    <span id="validation-status" class="status-badge"></span>
+                </div>
+            </section>
+        </div>
+
+        <!-- Tools Panel -->
+        <section class="tools-panel">
+            <h3>工具</h3>
+            <div class="tool-buttons">
+                <button id="format-btn" class="btn-tool btn-primary">
+                    ✨ 格式化
+                    <span class="tool-desc">美化 JSON</span>
+                </button>
+                <button id="minify-btn" class="btn-tool">
+                    📦 壓縮
+                    <span class="tool-desc">最小化大小</span>
+                </button>
+                <button id="validate-btn" class="btn-tool">
+                    ✅ 驗證
+                    <span class="tool-desc">檢查語法</span>
+                </button>
+                <button id="escape-btn" class="btn-tool">
+                    🔐 轉義
+                    <span class="tool-desc">JSON 字串轉義</span>
+                </button>
+                <button id="unescape-btn" class="btn-tool">
+                    🔓 反轉義
+                    <span class="tool-desc">還原轉義字串</span>
+                </button>
+                <button id="sort-btn" class="btn-tool">
+                    🔤 排序
+                    <span class="tool-desc">按鍵排序</span>
+                </button>
+            </div>
+
+            <div class="tool-options">
+                <div class="option-group">
+                    <label>縮排空格數</label>
+                    <select id="indent-size">
+                        <option value="2" selected>2 空格</option>
+                        <option value="4">4 空格</option>
+                        <option value="8">8 空格</option>
+                        <option value="tab">Tab</option>
+                    </select>
+                </div>
+
+                <div class="option-group">
+                    <label>
+                        <input type="checkbox" id="sort-keys-option">
+                        格式化時自動排序
+                    </label>
+                </div>
+
+                <div class="option-group">
+                    <label>
+                        <input type="checkbox" id="real-time-option">
+                        即時格式化
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- JSON Path Tool -->
+        <section class="jsonpath-section">
+            <h3>🔍 JSONPath 查詢</h3>
+            <div class="jsonpath-input-group">
+                <input type="text" id="jsonpath-input" placeholder="輸入 JSONPath (例如: $.users[0].name)">
+                <button id="jsonpath-query-btn" class="btn-primary">查詢</button>
+            </div>
+            <div id="jsonpath-result" class="jsonpath-result"></div>
+            <div class="jsonpath-examples">
+                <span class="example-label">範例:</span>
+                <button class="example-btn" data-path="$">$ (根)</button>
+                <button class="example-btn" data-path="$.name">$.name</button>
+                <button class="example-btn" data-path="$.*">$.* (所有)</button>
+                <button class="example-btn" data-path="$..name">$..name (遞迴)</button>
+            </div>
+        </section>
+
+        <!-- Examples -->
+        <section class="examples-section">
+            <h3>📚 範例 JSON</h3>
+            <div class="example-cards">
+                <button class="example-card" data-example="simple">
+                    <div class="example-title">簡單物件</div>
+                    <div class="example-desc">基本的 JSON 物件</div>
+                </button>
+                <button class="example-card" data-example="array">
+                    <div class="example-title">陣列</div>
+                    <div class="example-desc">包含陣列的 JSON</div>
+                </button>
+                <button class="example-card" data-example="nested">
+                    <div class="example-title">巢狀結構</div>
+                    <div class="example-desc">複雜的巢狀物件</div>
+                </button>
+                <button class="example-card" data-example="api">
+                    <div class="example-title">API 回應</div>
+                    <div class="example-desc">典型的 API 資料</div>
+                </button>
+            </div>
+        </section>
+
+        <!-- Error Display -->
+        <div id="error-display" class="error-display"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

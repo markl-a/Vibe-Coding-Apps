@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>編碼工具 - Encoding Tools</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔐 編碼工具</h1>
+            <p class="subtitle">Base64、URL、Hash 等編碼轉換工具</p>
+        </header>
+
+        <!-- Tool Tabs -->
+        <div class="tool-tabs">
+            <button class="tool-tab active" data-tool="base64">Base64</button>
+            <button class="tool-tab" data-tool="url">URL 編碼</button>
+            <button class="tool-tab" data-tool="hash">Hash</button>
+            <button class="tool-tab" data-tool="html">HTML 實體</button>
+            <button class="tool-tab" data-tool="uuid">UUID/GUID</button>
+            <button class="tool-tab" data-tool="jwt">JWT</button>
+        </div>
+
+        <!-- Base64 Tool -->
+        <div id="base64-tool" class="tool-panel active">
+            <div class="panel-layout">
+                <section class="input-section">
+                    <div class="section-header">
+                        <h2>輸入</h2>
+                        <div class="actions">
+                            <button class="btn-action" onclick="encodingTools.pasteInput('base64')">📋 貼上</button>
+                            <button class="btn-action" onclick="encodingTools.clearInput('base64')">🗑️ 清除</button>
+                        </div>
+                    </div>
+                    <textarea id="base64-input" placeholder="輸入要編碼/解碼的文字..." rows="10"></textarea>
+                    <div class="actions-row">
+                        <button class="btn-primary" onclick="encodingTools.base64Encode()">編碼 →</button>
+                        <button class="btn-secondary" onclick="encodingTools.base64Decode()">← 解碼</button>
+                    </div>
+                </section>
+
+                <section class="output-section">
+                    <div class="section-header">
+                        <h2>輸出</h2>
+                        <div class="actions">
+                            <button class="btn-action" onclick="encodingTools.copyOutput('base64')">📄 複製</button>
+                            <button class="btn-action" onclick="encodingTools.downloadOutput('base64')">💾 下載</button>
+                        </div>
+                    </div>
+                    <textarea id="base64-output" placeholder="結果將顯示在這裡..." rows="10" readonly></textarea>
+                </section>
+            </div>
+        </div>
+
+        <!-- URL Encoding Tool -->
+        <div id="url-tool" class="tool-panel">
+            <div class="panel-layout">
+                <section class="input-section">
+                    <div class="section-header">
+                        <h2>輸入</h2>
+                        <div class="actions">
+                            <button class="btn-action" onclick="encodingTools.pasteInput('url')">📋 貼上</button>
+                            <button class="btn-action" onclick="encodingTools.clearInput('url')">🗑️ 清除</button>
+                        </div>
+                    </div>
+                    <textarea id="url-input" placeholder="輸入 URL 或文字..." rows="10"></textarea>
+                    <div class="actions-row">
+                        <button class="btn-primary" onclick="encodingTools.urlEncode()">編碼 →</button>
+                        <button class="btn-secondary" onclick="encodingTools.urlDecode()">← 解碼</button>
+                    </div>
+                </section>
+
+                <section class="output-section">
+                    <div class="section-header">
+                        <h2>輸出</h2>
+                        <div class="actions">
+                            <button class="btn-action" onclick="encodingTools.copyOutput('url')">📄 複製</button>
+                        </div>
+                    </div>
+                    <textarea id="url-output" placeholder="結果將顯示在這裡..." rows="10" readonly></textarea>
+                </section>
+            </div>
+        </div>
+
+        <!-- Hash Tool -->
+        <div id="hash-tool" class="tool-panel">
+            <section class="input-section">
+                <div class="section-header">
+                    <h2>輸入文字</h2>
+                    <div class="actions">
+                        <button class="btn-action" onclick="encodingTools.pasteInput('hash')">📋 貼上</button>
+                        <button class="btn-action" onclick="encodingTools.clearInput('hash')">🗑️ 清除</button>
+                    </div>
+                </div>
+                <textarea id="hash-input" placeholder="輸入要產生 Hash 的文字..." rows="6"></textarea>
+                <button class="btn-primary" onclick="encodingTools.generateHashes()">產生 Hash 值</button>
+            </section>
+
+            <section class="hash-results">
+                <h2>Hash 結果</h2>
+                <div class="hash-item">
+                    <label>MD5</label>
+                    <div class="hash-value-group">
+                        <input type="text" id="hash-md5" readonly>
+                        <button class="btn-copy" onclick="encodingTools.copyHash('md5')">📋</button>
+                    </div>
+                </div>
+                <div class="hash-item">
+                    <label>SHA-1</label>
+                    <div class="hash-value-group">
+                        <input type="text" id="hash-sha1" readonly>
+                        <button class="btn-copy" onclick="encodingTools.copyHash('sha1')">📋</button>
+                    </div>
+                </div>
+                <div class="hash-item">
+                    <label>SHA-256</label>
+                    <div class="hash-value-group">
+                        <input type="text" id="hash-sha256" readonly>
+                        <button class="btn-copy" onclick="encodingTools.copyHash('sha256')">📋</button>
+                    </div>
+                </div>
+                <div class="hash-item">
+                    <label>SHA-512</label>
+                    <div class="hash-value-group">
+                        <input type="text" id="hash-sha512" readonly>
+                        <button class="btn-copy" onclick="encodingTools.copyHash('sha512')">📋</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- HTML Entity Tool -->
+        <div id="html-tool" class="tool-panel">
+            <div class="panel-layout">
+                <section class="input-section">
+                    <div class="section-header">
+                        <h2>輸入</h2>
+                        <div class="actions">
+                            <button class="btn-action" onclick="encodingTools.pasteInput('html')">📋 貼上</button>
+                            <button class="btn-action" onclick="encodingTools.clearInput('html')">🗑️ 清除</button>
+                        </div>
+                    </div>
+                    <textarea id="html-input" placeholder="輸入 HTML 文字..." rows="10"></textarea>
+                    <div class="actions-row">
+                        <button class="btn-primary" onclick="encodingTools.htmlEncode()">編碼 →</button>
+                        <button class="btn-secondary" onclick="encodingTools.htmlDecode()">← 解碼</button>
+                    </div>
+                </section>
+
+                <section class="output-section">
+                    <div class="section-header">
+                        <h2>輸出</h2>
+                        <div class="actions">
+                            <button class="btn-action" onclick="encodingTools.copyOutput('html')">📄 複製</button>
+                        </div>
+                    </div>
+                    <textarea id="html-output" placeholder="結果將顯示在這裡..." rows="10" readonly></textarea>
+                </section>
+            </div>
+        </div>
+
+        <!-- UUID Tool -->
+        <div id="uuid-tool" class="tool-panel">
+            <section>
+                <h2>UUID/GUID 產生器</h2>
+
+                <div class="uuid-options">
+                    <label>
+                        <input type="radio" name="uuid-version" value="v4" checked> UUID v4 (隨機)
+                    </label>
+                    <label>
+                        <input type="radio" name="uuid-version" value="simple"> Simple GUID
+                    </label>
+                </div>
+
+                <div class="uuid-generator">
+                    <button class="btn-primary" onclick="encodingTools.generateUUID()">🎲 產生 UUID</button>
+                    <input type="number" id="uuid-count" value="1" min="1" max="100" style="width: 80px;">
+                    <span>個</span>
+                </div>
+
+                <div class="uuid-results">
+                    <h3>產生的 UUID</h3>
+                    <div id="uuid-list" class="uuid-list"></div>
+                </div>
+            </section>
+        </div>
+
+        <!-- JWT Tool -->
+        <div id="jwt-tool" class="tool-panel">
+            <section class="input-section">
+                <div class="section-header">
+                    <h2>JWT Token</h2>
+                    <div class="actions">
+                        <button class="btn-action" onclick="encodingTools.pasteInput('jwt')">📋 貼上</button>
+                        <button class="btn-action" onclick="encodingTools.clearInput('jwt')">🗑️ 清除</button>
+                    </div>
+                </div>
+                <textarea id="jwt-input" placeholder="貼上 JWT Token..." rows="6"></textarea>
+                <button class="btn-primary" onclick="encodingTools.decodeJWT()">解碼 JWT</button>
+            </section>
+
+            <section class="jwt-results">
+                <h2>解碼結果</h2>
+                <div class="jwt-part">
+                    <h3>Header</h3>
+                    <pre id="jwt-header" class="jwt-output"></pre>
+                </div>
+                <div class="jwt-part">
+                    <h3>Payload</h3>
+                    <pre id="jwt-payload" class="jwt-output"></pre>
+                </div>
+                <div class="jwt-info">
+                    <p><strong>注意:</strong> 此工具僅解碼 JWT，不驗證簽名。</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
