@@ -1,0 +1,106 @@
+version: '3.8'
+
+services:
+  # MongoDB for User Service
+  user-db:
+    image: mongo:7
+    container_name: user-db
+    environment:
+      MONGO_INITDB_DATABASE: users
+    ports:
+      - "27017:27017"
+    volumes:
+      - user-data:/data/db
+
+  # MongoDB for Product Service
+  product-db:
+    image: mongo:7
+    container_name: product-db
+    environment:
+      MONGO_INITDB_DATABASE: products
+    ports:
+      - "27018:27017"
+    volumes:
+      - product-data:/data/db
+
+  # PostgreSQL for Order Service
+  order-db:
+    image: postgres:16
+    container_name: order-db
+    environment:
+      POSTGRES_DB: orders
+      POSTGRES_USER: orderuser
+      POSTGRES_PASSWORD: orderpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - order-data:/var/lib/postgresql/data
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  # User Service
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    environment:
+      PORT: 3001
+      MONGODB_URI: mongodb://user-db:27017/users
+      JWT_SECRET: your-secret-key
+    ports:
+      - "3001:3001"
+    depends_on:
+      - user-db
+
+  # Product Service
+  product-service:
+    build: ./product-service
+    container_name: product-service
+    environment:
+      PORT: 3002
+      MONGODB_URI: mongodb://product-db:27017/products
+    ports:
+      - "3002:3002"
+    depends_on:
+      - product-db
+
+  # Order Service
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    environment:
+      PORT: 3003
+      DATABASE_URL: postgresql://orderuser:orderpass@order-db:5432/orders
+      USER_SERVICE_URL: http://user-service:3001
+      PRODUCT_SERVICE_URL: http://product-service:3002
+    ports:
+      - "3003:3003"
+    depends_on:
+      - order-db
+      - user-service
+      - product-service
+
+  # API Gateway
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    environment:
+      PORT: 3000
+      USER_SERVICE_URL: http://user-service:3001
+      PRODUCT_SERVICE_URL: http://product-service:3002
+      ORDER_SERVICE_URL: http://order-service:3003
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+
+volumes:
+  user-data:
+  product-data:
+  order-data:
