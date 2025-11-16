@@ -15,22 +15,32 @@
 
 ## 專案結構
 
+這個目錄包含多個 NLP 子專案和共用工具：
+
+### 子專案（獨立的完整專案）
+
 ```
 nlp/
+├── sentiment-analyzer/    # 情感分析器（使用 Transformers）
+├── text-summarizer/       # 文本摘要工具（使用 BART/T5）
+├── spam-classifier/       # 垃圾郵件分類器（傳統 ML）
+└── ner-extractor/         # 命名實體識別器（spaCy/Transformers）
+```
+
+### 共用工具和快速原型
+
+```
 ├── README.md              # 專案說明
 ├── requirements.txt       # 依賴套件
-├── text_classifier.py     # 文本分類器
-├── sentiment_analyzer.py  # 情感分析
-├── ner_extractor.py      # 命名實體識別
-├── summarizer.py         # 文本摘要
+├── text_classifier.py     # 通用文本分類器
+├── sentiment_analyzer.py  # 快速情感分析
 ├── keyword_extractor.py  # 關鍵字提取
-├── similarity.py         # 文本相似度
 ├── app.py                # Streamlit UI
 ├── models/               # 模型儲存
 └── data/                 # 資料集
-    ├── train.csv
-    └── test.csv
 ```
+
+每個子專案都包含完整的功能、文檔和範例，可獨立使用。
 
 ## 安裝
 
@@ -316,6 +326,44 @@ print(f"Confidence: {answer['score']:.2%}")
    - 使用多個指標
    - 測試邊緣案例
    - 持續監控性能
+
+## 子專案介紹
+
+### 1. sentiment-analyzer (情感分析器)
+功能完整的情感分析工具，使用 Hugging Face Transformers。
+- 支援多語言情感分析
+- 提供 CLI 和 API 介面
+- 批量處理支援
+- 詳細文檔和範例
+
+查看 `sentiment-analyzer/README.md` 了解更多。
+
+### 2. text-summarizer (文本摘要工具)
+自動生成文本摘要的工具。
+- 使用 BART/T5 等先進模型
+- 支援長文本分段摘要
+- 可調整摘要長度和比例
+- REST API 服務
+
+查看 `text-summarizer/README.md` 了解更多。
+
+### 3. spam-classifier (垃圾郵件分類器)
+基於傳統機器學習的垃圾郵件過濾器。
+- 使用 TF-IDF + 機器學習
+- 支援多種分類算法（NB, LR, RF, SVM）
+- 可訓練自定義數據集
+- 模型保存和載入功能
+
+查看 `spam-classifier/README.md` 了解更多。
+
+### 4. ner-extractor (命名實體識別器)
+提取文本中的命名實體（人名、地名、組織等）。
+- 支援 spaCy 和 Transformers 兩種後端
+- 實體可視化功能
+- 批量處理支援
+- 實體類型過濾
+
+查看 `ner-extractor/README.md` 了解更多。
 
 ## 授權
 
