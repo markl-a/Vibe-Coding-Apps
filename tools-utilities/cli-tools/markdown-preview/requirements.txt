@@ -1,0 +1,26 @@
+# Markdown Preview - Markdown 預覽工具
+# 此工具使用 Python 標準庫，無需額外依賴
+
+# Python 版本需求: Python 3.6+
+# 所有需要的模組都是 Python 標準庫的一部分:
+# - argparse
+# - os
+# - sys
+# - webbrowser
+# - http.server
+# - socketserver
+# - threading
+# - pathlib
+# - typing
+
+# 瀏覽器預覽模式使用 CDN 載入的 JavaScript 庫:
+# - marked.js (https://cdn.jsdelivr.net/npm/marked/marked.min.js)
+
+# 可選的增強功能（如需要）:
+# markdown>=3.4.0  # 如果需要在終端更好的渲染
+# rich>=12.0.0     # 如果需要更豐富的終端輸出
+# pygments>=2.13.0 # 如果需要語法高亮
+
+# 開發依賴（可選）
+# pytest>=7.0.0
+# black>=22.0.0

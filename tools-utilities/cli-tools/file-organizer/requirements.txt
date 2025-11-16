@@ -1,0 +1,19 @@
+# File Organizer - 智能檔案整理工具
+# 此工具使用 Python 標準庫，無需額外依賴
+
+# Python 版本需求: Python 3.6+
+# 所有需要的模組都是 Python 標準庫的一部分:
+# - os
+# - shutil
+# - argparse
+# - pathlib
+# - typing
+# - datetime
+
+# 如果需要彩色輸出（可選），可以安裝:
+# colorama>=0.4.6
+
+# 開發依賴（可選）
+# pytest>=7.0.0
+# black>=22.0.0
+# mypy>=0.991
