@@ -1,0 +1,236 @@
+/* Reading Mode Styles */
+
+.reading-mode-active {
+  margin: 0;
+  padding: 0;
+}
+
+#reading-mode-container {
+  min-height: 100vh;
+  padding: 20px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Light Theme */
+.reading-mode-theme-light {
+  background-color: #ffffff;
+  color: #333333;
+}
+
+/* Dark Theme */
+.reading-mode-theme-dark {
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+}
+
+.reading-mode-theme-dark .reading-mode-header {
+  border-bottom-color: #333;
+}
+
+.reading-mode-theme-dark .reading-mode-controls button {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+.reading-mode-theme-dark .reading-mode-controls button:hover {
+  background-color: #3a3a3a;
+}
+
+/* Sepia Theme */
+.reading-mode-theme-sepia {
+  background-color: #f4ecd8;
+  color: #5c4a3a;
+}
+
+.reading-mode-theme-sepia .reading-mode-header {
+  border-bottom-color: #d4c4a8;
+}
+
+.reading-mode-theme-sepia .reading-mode-controls button {
+  background-color: #e4dcb8;
+  color: #5c4a3a;
+  border-color: #d4c4a8;
+}
+
+.reading-mode-theme-sepia .reading-mode-controls button:hover {
+  background-color: #d4ccb8;
+}
+
+/* Header */
+.reading-mode-header {
+  max-width: 800px;
+  margin: 0 auto 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reading-mode-title h1 {
+  margin: 0;
+  font-size: 2em;
+  font-weight: 600;
+}
+
+.reading-mode-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px 10px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.reading-mode-close:hover {
+  opacity: 1;
+}
+
+/* Content */
+.reading-mode-content {
+  max-width: 700px;
+  margin: 0 auto;
+  font-size: 18px;
+  line-height: 1.6;
+  font-family: Georgia, serif;
+}
+
+.reading-mode-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 20px auto;
+}
+
+.reading-mode-content h1,
+.reading-mode-content h2,
+.reading-mode-content h3,
+.reading-mode-content h4,
+.reading-mode-content h5,
+.reading-mode-content h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+}
+
+.reading-mode-content p {
+  margin-bottom: 1em;
+}
+
+.reading-mode-content a {
+  color: #0066cc;
+  text-decoration: underline;
+}
+
+.reading-mode-theme-dark .reading-mode-content a {
+  color: #4da6ff;
+}
+
+.reading-mode-theme-sepia .reading-mode-content a {
+  color: #8b6914;
+}
+
+.reading-mode-content blockquote {
+  margin: 1.5em 0;
+  padding-left: 20px;
+  border-left: 4px solid #ccc;
+  font-style: italic;
+}
+
+.reading-mode-content pre {
+  background-color: #f5f5f5;
+  padding: 15px;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+
+.reading-mode-theme-dark .reading-mode-content pre {
+  background-color: #2a2a2a;
+}
+
+.reading-mode-theme-sepia .reading-mode-content pre {
+  background-color: #e4dcb8;
+}
+
+.reading-mode-content code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+.reading-mode-content ul,
+.reading-mode-content ol {
+  margin-bottom: 1em;
+  padding-left: 30px;
+}
+
+.reading-mode-content li {
+  margin-bottom: 0.5em;
+}
+
+/* Controls */
+.reading-mode-controls {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  gap: 10px;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10000;
+}
+
+.reading-mode-theme-dark .reading-mode-controls {
+  background-color: rgba(42, 42, 42, 0.95);
+}
+
+.reading-mode-theme-sepia .reading-mode-controls {
+  background-color: rgba(228, 220, 184, 0.95);
+}
+
+.reading-mode-controls .control-group {
+  display: flex;
+  gap: 5px;
+}
+
+.reading-mode-controls button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.reading-mode-controls button:hover {
+  background-color: #e0e0e0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #reading-mode-container {
+    padding: 15px;
+  }
+
+  .reading-mode-header {
+    margin-bottom: 20px;
+  }
+
+  .reading-mode-title h1 {
+    font-size: 1.5em;
+  }
+
+  .reading-mode-content {
+    font-size: 16px;
+  }
+
+  .reading-mode-controls {
+    bottom: 15px;
+    right: 15px;
+    flex-direction: column;
+  }
+}

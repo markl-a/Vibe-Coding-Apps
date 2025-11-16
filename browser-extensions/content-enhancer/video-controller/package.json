@@ -1,0 +1,16 @@
+{
+  "name": "video-controller-pro",
+  "version": "1.0.0",
+  "description": "Enhanced video playback control browser extension",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint src/**/*.js"
+  },
+  "keywords": [
+    "browser-extension",
+    "video-controller",
+    "content-enhancer"
+  ],
+  "author": "",
+  "license": "MIT"
+}
