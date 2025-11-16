@@ -1,0 +1,28 @@
+# CLI Tools Requirements
+# 使用 AI 輔助開發的命令列工具依賴
+
+# 核心 CLI 框架
+click>=8.1.0
+typer>=0.9.0
+
+# 美化終端輸出
+rich>=13.0.0
+colorama>=0.4.6
+
+# 系統監控（sysmon）
+psutil>=5.9.0
+
+# JSON 處理（jsonql）
+jsonpath-ng>=1.6.0
+
+# 測試框架
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# 程式碼品質
+black>=23.0.0
+ruff>=0.0.290
+mypy>=1.5.0
+
+# 類型提示
+types-psutil>=5.9.0

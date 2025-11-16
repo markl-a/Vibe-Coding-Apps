@@ -1,0 +1,22 @@
+# Automation Scripts Requirements
+# 使用 AI 輔助開發的自動化腳本依賴
+
+# 任務排程
+schedule>=1.2.0
+
+# 系統資訊
+psutil>=5.9.0
+
+# YAML 配置
+PyYAML>=6.0
+
+# 郵件通知
+secure-smtplib>=0.1.1
+
+# 測試框架
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# 程式碼品質
+black>=23.0.0
+ruff>=0.0.290
