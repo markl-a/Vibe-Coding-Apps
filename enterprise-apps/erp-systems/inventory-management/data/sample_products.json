@@ -1,0 +1,58 @@
+[
+  {
+    "code": "P001",
+    "name": "筆記本電腦",
+    "unit": "台",
+    "min_quantity": 10,
+    "description": "Dell Latitude 5520, 15.6吋商務筆電"
+  },
+  {
+    "code": "P002",
+    "name": "無線滑鼠",
+    "unit": "個",
+    "min_quantity": 50,
+    "description": "羅技 M720 多設備無線滑鼠"
+  },
+  {
+    "code": "P003",
+    "name": "機械鍵盤",
+    "unit": "個",
+    "min_quantity": 30,
+    "description": "Cherry MX 茶軸機械鍵盤"
+  },
+  {
+    "code": "P004",
+    "name": "顯示器",
+    "unit": "台",
+    "min_quantity": 15,
+    "description": "Dell 27吋 4K IPS 顯示器"
+  },
+  {
+    "code": "P005",
+    "name": "USB-C 擴充座",
+    "unit": "個",
+    "min_quantity": 25,
+    "description": "7合1 USB-C 多功能擴充座"
+  },
+  {
+    "code": "P006",
+    "name": "網路線",
+    "unit": "箱",
+    "min_quantity": 5,
+    "description": "CAT6 網路線 305米/箱"
+  },
+  {
+    "code": "P007",
+    "name": "印表機碳粉匣",
+    "unit": "盒",
+    "min_quantity": 20,
+    "description": "HP LaserJet 黑色碳粉匣"
+  },
+  {
+    "code": "P008",
+    "name": "外接硬碟",
+    "unit": "個",
+    "min_quantity": 10,
+    "description": "WD 2TB USB 3.0 外接硬碟"
+  }
+]

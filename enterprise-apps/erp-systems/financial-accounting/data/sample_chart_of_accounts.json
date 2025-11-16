@@ -1,0 +1,92 @@
+[
+  {
+    "code": "1001",
+    "name": "現金",
+    "type": "ASSET",
+    "description": "庫存現金"
+  },
+  {
+    "code": "1002",
+    "name": "銀行存款",
+    "type": "ASSET",
+    "description": "銀行活期存款"
+  },
+  {
+    "code": "1101",
+    "name": "應收帳款",
+    "type": "ASSET",
+    "description": "客戶應收款項"
+  },
+  {
+    "code": "1201",
+    "name": "存貨",
+    "type": "ASSET",
+    "description": "商品存貨"
+  },
+  {
+    "code": "1501",
+    "name": "固定資產",
+    "type": "ASSET",
+    "description": "房屋、設備等固定資產"
+  },
+  {
+    "code": "2101",
+    "name": "應付帳款",
+    "type": "LIABILITY",
+    "description": "供應商應付款項"
+  },
+  {
+    "code": "2201",
+    "name": "短期借款",
+    "type": "LIABILITY",
+    "description": "一年內到期借款"
+  },
+  {
+    "code": "2301",
+    "name": "應付薪資",
+    "type": "LIABILITY",
+    "description": "員工薪資應付款"
+  },
+  {
+    "code": "3001",
+    "name": "股本",
+    "type": "EQUITY",
+    "description": "股東投資本金"
+  },
+  {
+    "code": "3101",
+    "name": "保留盈餘",
+    "type": "EQUITY",
+    "description": "累積未分配盈餘"
+  },
+  {
+    "code": "4001",
+    "name": "銷售收入",
+    "type": "REVENUE",
+    "description": "商品銷售收入"
+  },
+  {
+    "code": "4101",
+    "name": "其他收入",
+    "type": "REVENUE",
+    "description": "其他營業外收入"
+  },
+  {
+    "code": "5001",
+    "name": "銷售成本",
+    "type": "EXPENSE",
+    "description": "商品銷售成本"
+  },
+  {
+    "code": "5101",
+    "name": "管理費用",
+    "type": "EXPENSE",
+    "description": "管理部門費用"
+  },
+  {
+    "code": "5201",
+    "name": "財務費用",
+    "type": "EXPENSE",
+    "description": "利息支出等財務費用"
+  }
+]
