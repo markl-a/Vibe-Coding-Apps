@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>待辦事項 | Simple Todo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <h1>✅ 我的待辦事項</h1>
+            <div class="header-stats">
+                <span class="stat" id="totalTasks">0 個任務</span>
+                <span class="stat" id="completedTasks">0 已完成</span>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <!-- 側邊欄 -->
+            <aside class="sidebar">
+                <div class="filter-section">
+                    <h3>📋 列表</h3>
+                    <ul class="filter-list">
+                        <li class="filter-item active" data-filter="all">
+                            <span class="filter-icon">📝</span>
+                            <span class="filter-name">所有任務</span>
+                            <span class="filter-count" id="countAll">0</span>
+                        </li>
+                        <li class="filter-item" data-filter="today">
+                            <span class="filter-icon">📅</span>
+                            <span class="filter-name">今天</span>
+                            <span class="filter-count" id="countToday">0</span>
+                        </li>
+                        <li class="filter-item" data-filter="upcoming">
+                            <span class="filter-icon">📆</span>
+                            <span class="filter-name">即將到來</span>
+                            <span class="filter-count" id="countUpcoming">0</span>
+                        </li>
+                        <li class="filter-item" data-filter="completed">
+                            <span class="filter-icon">✅</span>
+                            <span class="filter-name">已完成</span>
+                            <span class="filter-count" id="countCompleted">0</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="priority-section">
+                    <h3>🎯 優先級</h3>
+                    <ul class="priority-list">
+                        <li class="priority-item" data-priority="urgent">
+                            <span class="priority-badge urgent">🔴 緊急</span>
+                            <span class="filter-count" id="countUrgent">0</span>
+                        </li>
+                        <li class="priority-item" data-priority="high">
+                            <span class="priority-badge high">🟠 高</span>
+                            <span class="filter-count" id="countHigh">0</span>
+                        </li>
+                        <li class="priority-item" data-priority="medium">
+                            <span class="priority-badge medium">🟡 中</span>
+                            <span class="filter-count" id="countMedium">0</span>
+                        </li>
+                        <li class="priority-item" data-priority="low">
+                            <span class="priority-badge low">🟢 低</span>
+                            <span class="filter-count" id="countLow">0</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="actions-section">
+                    <button class="btn btn-outline" id="clearCompleted">
+                        <span>🗑️</span> 清除已完成
+                    </button>
+                    <button class="btn btn-outline" id="exportData">
+                        <span>💾</span> 匯出數據
+                    </button>
+                </div>
+            </aside>
+
+            <!-- 主要內容區 -->
+            <section class="content">
+                <!-- 添加任務表單 -->
+                <div class="add-task-card">
+                    <form id="addTaskForm">
+                        <input
+                            type="text"
+                            id="taskInput"
+                            class="task-input"
+                            placeholder="添加新任務...按 Enter 鍵提交"
+                            autocomplete="off"
+                        >
+                        <div class="task-options">
+                            <input type="date" id="taskDate" class="date-input">
+                            <select id="taskPriority" class="priority-select">
+                                <option value="low">🟢 低優先級</option>
+                                <option value="medium" selected>🟡 中優先級</option>
+                                <option value="high">🟠 高優先級</option>
+                                <option value="urgent">🔴 緊急</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary">添加任務</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 搜尋和排序 -->
+                <div class="toolbar">
+                    <div class="search-box">
+                        <input
+                            type="text"
+                            id="searchInput"
+                            class="search-input"
+                            placeholder="🔍 搜尋任務..."
+                        >
+                    </div>
+                    <div class="sort-box">
+                        <select id="sortSelect" class="sort-select">
+                            <option value="created">創建時間</option>
+                            <option value="dueDate">截止日期</option>
+                            <option value="priority">優先級</option>
+                            <option value="title">標題</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 任務列表 -->
+                <div class="tasks-container">
+                    <div id="tasksList" class="tasks-list">
+                        <!-- 任務將動態添加在這裡 -->
+                    </div>
+
+                    <div id="emptyState" class="empty-state">
+                        <div class="empty-icon">📝</div>
+                        <h3>還沒有任務</h3>
+                        <p>添加你的第一個任務開始使用吧！</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 編輯任務模態框 -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>編輯任務</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editTaskForm">
+                    <div class="form-group">
+                        <label for="editTaskTitle">任務標題</label>
+                        <input type="text" id="editTaskTitle" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editTaskDesc">任務描述</label>
+                        <textarea id="editTaskDesc" class="form-textarea" rows="3"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editTaskDate">截止日期</label>
+                            <input type="date" id="editTaskDate" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="editTaskPriority">優先級</label>
+                            <select id="editTaskPriority" class="form-select">
+                                <option value="low">🟢 低</option>
+                                <option value="medium">🟡 中</option>
+                                <option value="high">🟠 高</option>
+                                <option value="urgent">🔴 緊急</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelEdit">取消</button>
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
