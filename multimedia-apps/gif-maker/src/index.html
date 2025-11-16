@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIF Maker - GIF 動畫製作工具</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎬 GIF Maker</h1>
+            <div class="mode-switch">
+                <button class="mode-btn active" data-mode="images">從圖片製作</button>
+                <button class="mode-btn" data-mode="video">從視頻製作</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Images Mode -->
+            <div id="imagesMode" class="mode-panel">
+                <section class="upload-section">
+                    <div class="drop-zone" id="dropZone">
+                        <div class="drop-zone-content">
+                            <div class="upload-icon">🖼️</div>
+                            <h2>拖曳圖片至此</h2>
+                            <p>支援 JPG, PNG, WebP 等格式</p>
+                            <button class="btn btn-primary" id="selectImagesBtn">
+                                選擇圖片
+                            </button>
+                            <input type="file" id="imageInput" accept="image/*" multiple style="display: none;">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Image Timeline -->
+                <section class="timeline-section" id="timelineSection" style="display: none;">
+                    <h2>圖片時間軸</h2>
+                    <div class="timeline" id="timeline"></div>
+                    <div class="timeline-controls">
+                        <button class="btn btn-secondary" id="clearTimelineBtn">清除</button>
+                        <button class="btn btn-info" id="sortTimelineBtn">排序</button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Video Mode -->
+            <div id="videoMode" class="mode-panel" style="display: none;">
+                <section class="video-upload-section">
+                    <div class="video-drop-zone" id="videoDropZone">
+                        <div class="drop-zone-content">
+                            <div class="upload-icon">🎥</div>
+                            <h2>選擇視頻文件</h2>
+                            <p>支援 MP4, WebM, MOV 等格式</p>
+                            <button class="btn btn-primary" id="selectVideoBtn">
+                                選擇視頻
+                            </button>
+                            <input type="file" id="videoInput" accept="video/*" style="display: none;">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Video Preview -->
+                <section class="video-preview-section" id="videoPreviewSection" style="display: none;">
+                    <h2>視頻預覽</h2>
+                    <video id="videoPreview" controls></video>
+                    <div class="video-controls">
+                        <div class="time-range">
+                            <label>開始時間: <span id="startTime">0:00</span></label>
+                            <input type="range" id="startTimeSlider" min="0" max="100" value="0">
+                        </div>
+                        <div class="time-range">
+                            <label>結束時間: <span id="endTime">0:00</span></label>
+                            <input type="range" id="endTimeSlider" min="0" max="100" value="100">
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- GIF Settings -->
+            <section class="settings-section" id="settingsSection" style="display: none;">
+                <h2>GIF 設定</h2>
+
+                <div class="settings-grid">
+                    <!-- Size Settings -->
+                    <div class="setting-group">
+                        <h3>尺寸設定</h3>
+                        <div class="setting-item">
+                            <label>寬度:</label>
+                            <input type="number" id="widthInput" value="480" min="50" max="1920">
+                        </div>
+                        <div class="setting-item">
+                            <label>高度:</label>
+                            <input type="number" id="heightInput" value="360" min="50" max="1080">
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="maintainRatio" checked>
+                                保持比例
+                            </label>
+                        </div>
+                        <div class="preset-sizes">
+                            <button class="preset-size-btn" data-size="320x240">小 (320×240)</button>
+                            <button class="preset-size-btn" data-size="480x360">中 (480×360)</button>
+                            <button class="preset-size-btn" data-size="640x480">大 (640×480)</button>
+                        </div>
+                    </div>
+
+                    <!-- Animation Settings -->
+                    <div class="setting-group">
+                        <h3>動畫設定</h3>
+                        <div class="setting-item">
+                            <label>幀率 (FPS):</label>
+                            <input type="number" id="fpsInput" value="10" min="1" max="30">
+                        </div>
+                        <div class="setting-item">
+                            <label>延遲時間 (毫秒):</label>
+                            <input type="number" id="delayInput" value="100" min="20" max="5000">
+                        </div>
+                        <div class="setting-item">
+                            <label>循環次數:</label>
+                            <select id="loopSelect">
+                                <option value="0">無限循環</option>
+                                <option value="1">1次</option>
+                                <option value="3">3次</option>
+                                <option value="5">5次</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Quality Settings -->
+                    <div class="setting-group">
+                        <h3>品質設定</h3>
+                        <div class="setting-item">
+                            <label>顏色數量:</label>
+                            <input type="range" id="colorsSlider" min="2" max="256" value="256">
+                            <span id="colorsValue">256</span>
+                        </div>
+                        <div class="setting-item">
+                            <label>優化演算法:</label>
+                            <select id="optimizeSelect">
+                                <option value="none">無</option>
+                                <option value="basic">基本</option>
+                                <option value="advanced">進階</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Effects -->
+                    <div class="setting-group">
+                        <h3>特效</h3>
+                        <div class="effects-list">
+                            <label>
+                                <input type="checkbox" id="reverseEffect">
+                                反向播放
+                            </label>
+                            <label>
+                                <input type="checkbox" id="boomerangEffect">
+                                來回播放
+                            </label>
+                            <label>
+                                <input type="checkbox" id="grayscaleEffect">
+                                灰階
+                            </label>
+                            <label>
+                                <input type="checkbox" id="rotateEffect">
+                                旋轉 180°
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Preview -->
+            <section class="preview-section" id="previewSection" style="display: none;">
+                <h2>GIF 預覽</h2>
+                <div class="preview-container">
+                    <img id="gifPreview" alt="GIF預覽">
+                    <div class="preview-info" id="previewInfo"></div>
+                </div>
+            </section>
+
+            <!-- Action Buttons -->
+            <div class="action-panel" id="actionPanel" style="display: none;">
+                <button class="btn btn-success btn-large" id="createGifBtn">
+                    🎬 製作 GIF
+                </button>
+                <button class="btn btn-info btn-large" id="previewGifBtn">
+                    👁️ 預覽
+                </button>
+                <button class="btn btn-secondary" id="resetBtn">
+                    🔄 重置
+                </button>
+            </div>
+
+            <!-- Progress -->
+            <div class="progress-panel" id="progressPanel" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">處理中...</div>
+            </div>
+        </main>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

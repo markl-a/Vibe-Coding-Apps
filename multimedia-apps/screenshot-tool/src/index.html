@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screenshot Tool - 專業截圖工具</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>📸 Screenshot Tool</h1>
+            <div class="status-bar">
+                <span class="status-text" id="statusText">就緒</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Capture Options -->
+            <section class="capture-section">
+                <h2>截圖選項</h2>
+                <div class="capture-buttons">
+                    <button class="btn btn-primary" id="fullScreenBtn">
+                        🖥️ 全螢幕截圖
+                    </button>
+                    <button class="btn btn-primary" id="windowBtn">
+                        🪟 視窗截圖
+                    </button>
+                    <button class="btn btn-primary" id="regionBtn">
+                        ✂️ 區域截圖
+                    </button>
+                    <button class="btn btn-secondary" id="delayBtn">
+                        ⏱️ 延遲截圖 (5秒)
+                    </button>
+                </div>
+
+                <div class="options-panel">
+                    <div class="option-group">
+                        <label>
+                            <input type="checkbox" id="cursorCheck" checked>
+                            包含游標
+                        </label>
+                        <label>
+                            <input type="checkbox" id="soundCheck" checked>
+                            播放音效
+                        </label>
+                        <label>
+                            <input type="checkbox" id="clipboardCheck" checked>
+                            複製到剪貼簿
+                        </label>
+                    </div>
+
+                    <div class="format-group">
+                        <label>儲存格式：</label>
+                        <select id="formatSelect">
+                            <option value="png">PNG (無損)</option>
+                            <option value="jpg">JPG (壓縮)</option>
+                            <option value="webp">WebP (現代)</option>
+                        </select>
+                    </div>
+
+                    <div class="quality-group">
+                        <label>JPG 品質：</label>
+                        <input type="range" id="qualitySlider" min="50" max="100" value="90">
+                        <span id="qualityValue">90</span>%
+                    </div>
+                </div>
+            </section>
+
+            <!-- Preview Section -->
+            <section class="preview-section">
+                <h2>預覽與編輯</h2>
+                <div class="preview-container" id="previewContainer">
+                    <div class="preview-placeholder">
+                        <p>📷 截圖後將顯示預覽</p>
+                    </div>
+                    <canvas id="previewCanvas"></canvas>
+                </div>
+
+                <!-- Annotation Tools -->
+                <div class="annotation-tools" id="annotationTools" style="display: none;">
+                    <button class="tool-btn" id="arrowTool" title="箭頭">➡️</button>
+                    <button class="tool-btn" id="rectTool" title="矩形">▭</button>
+                    <button class="tool-btn" id="textTool" title="文字">T</button>
+                    <button class="tool-btn" id="penTool" title="畫筆">✏️</button>
+                    <button class="tool-btn" id="blurTool" title="模糊">🌫️</button>
+                    <input type="color" id="colorPicker" value="#ff0000">
+                    <button class="tool-btn" id="undoTool" title="復原">↶</button>
+                    <button class="tool-btn" id="clearTool" title="清除">🗑️</button>
+                </div>
+
+                <div class="action-buttons" id="actionButtons" style="display: none;">
+                    <button class="btn btn-success" id="saveBtn">💾 儲存</button>
+                    <button class="btn btn-info" id="copyBtn">📋 複製</button>
+                    <button class="btn btn-secondary" id="newBtn">🔄 新截圖</button>
+                </div>
+            </section>
+
+            <!-- Screenshot Gallery -->
+            <section class="gallery-section">
+                <h2>最近截圖</h2>
+                <div class="gallery" id="gallery">
+                    <p class="gallery-empty">尚無截圖</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Settings Panel -->
+        <div class="settings-panel">
+            <h3>⚙️ 設定</h3>
+            <div class="setting-item">
+                <label>預設儲存位置：</label>
+                <div class="path-selector">
+                    <input type="text" id="savePath" readonly>
+                    <button class="btn btn-small" id="browseBtn">瀏覽</button>
+                </div>
+            </div>
+            <div class="setting-item">
+                <label>檔案命名格式：</label>
+                <input type="text" id="nameFormat" value="Screenshot_%Y%m%d_%H%M%S">
+                <small>%Y=年 %m=月 %d=日 %H=時 %M=分 %S=秒</small>
+            </div>
+            <div class="setting-item">
+                <label>快捷鍵：</label>
+                <div class="hotkey-list">
+                    <div>全螢幕：<kbd>Ctrl+Shift+3</kbd></div>
+                    <div>區域：<kbd>Ctrl+Shift+4</kbd></div>
+                    <div>視窗：<kbd>Ctrl+Shift+5</kbd></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>
