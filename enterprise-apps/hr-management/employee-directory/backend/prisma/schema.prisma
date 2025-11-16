@@ -1,0 +1,120 @@
+// Prisma Schema for Employee Directory
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id               String   @id @default(uuid())
+  employeeNumber   String   @unique
+
+  // 基本資料
+  firstName        String
+  lastName         String
+  email            String   @unique
+  phone            String?
+  dateOfBirth      DateTime?
+  gender           Gender?
+  nationality      String?
+  idNumber         String?  @unique
+
+  // 職位資訊
+  departmentId     String?
+  department       Department? @relation(fields: [departmentId], references: [id])
+  position         String
+  jobTitle         String
+  employeeType     EmployeeType @default(FULL_TIME)
+  employmentStatus EmploymentStatus @default(ACTIVE)
+  hireDate         DateTime
+  probationEndDate DateTime?
+
+  // 主管關係
+  managerId        String?
+  manager          Employee? @relation("ManagerSubordinates", fields: [managerId], references: [id])
+  subordinates     Employee[] @relation("ManagerSubordinates")
+
+  // 薪資資訊
+  baseSalary       Decimal?
+  currency         String   @default("TWD")
+  payGrade         String?
+
+  // 聯絡資訊
+  address          String?
+  city             String?
+  state            String?
+  postalCode       String?
+  country          String?
+
+  // 緊急聯絡人
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  emergencyContactRelation String?
+
+  // 其他
+  avatar           String?
+  skills           String[] @default([])
+  notes            String?
+
+  // 時間戳
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // 關聯
+  managedDepartment Department[] @relation("DepartmentManager")
+
+  @@index([departmentId])
+  @@index([managerId])
+  @@index([employmentStatus])
+  @@map("employees")
+}
+
+model Department {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  code        String   @unique
+  description String?
+
+  // 層級結構
+  parentId    String?
+  parent      Department? @relation("DepartmentHierarchy", fields: [parentId], references: [id])
+  children    Department[] @relation("DepartmentHierarchy")
+
+  // 部門主管
+  managerId   String?
+  manager     Employee? @relation("DepartmentManager", fields: [managerId], references: [id])
+
+  // 員工
+  employees   Employee[]
+
+  // 時間戳
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([parentId])
+  @@map("departments")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum EmployeeType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERN
+}
+
+enum EmploymentStatus {
+  ACTIVE
+  ON_LEAVE
+  RESIGNED
+  TERMINATED
+}

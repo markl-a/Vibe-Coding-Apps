@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Payroll {
+  id           String   @id @default(uuid())
+  employeeId   String
+  period       String   // "2024-01"
+  currency     String   @default("TWD")
+
+  // 收入項目
+  baseSalary   Decimal
+  allowances   Json     @default("[]")
+  bonus        Decimal  @default(0)
+  overtimePay  Decimal  @default(0)
+  commission   Decimal  @default(0)
+  totalEarnings Decimal
+
+  // 扣除項目
+  tax          Decimal  @default(0)
+  socialInsurance Decimal @default(0)
+  housingFund  Decimal  @default(0)
+  deductions   Json     @default("[]")
+  totalDeductions Decimal
+
+  // 實發金額
+  netSalary    Decimal
+
+  // 狀態
+  status       PayrollStatus @default(DRAFT)
+
+  // 支付資訊
+  paymentMethod String?
+  paidAt       DateTime?
+  payslipUrl   String?
+
+  // 備註
+  notes        String?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([employeeId, period])
+  @@index([employeeId])
+  @@index([period])
+  @@map("payrolls")
+}
+
+model TaxBracket {
+  id           String   @id @default(uuid())
+  year         Int
+  minIncome    Decimal
+  maxIncome    Decimal?
+  rate         Decimal
+  deduction    Decimal  @default(0)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("tax_brackets")
+}
+
+enum PayrollStatus {
+  DRAFT
+  CALCULATED
+  APPROVED
+  PAID
+  CANCELLED
+}

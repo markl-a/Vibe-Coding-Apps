@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model LeaveRequest {
+  id           String      @id @default(uuid())
+  employeeId   String
+
+  // 請假資訊
+  leaveType    LeaveType
+  startDate    DateTime
+  endDate      DateTime
+  days         Float
+  reason       String
+  attachments  String[]    @default([])
+
+  // 審批資訊
+  status       LeaveStatus @default(PENDING)
+  approverId   String?
+  approvedAt   DateTime?
+  rejectionReason String?
+
+  // 時間戳
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([employeeId])
+  @@index([status])
+  @@map("leave_requests")
+}
+
+model LeaveBalance {
+  id           String      @id @default(uuid())
+  employeeId   String
+  year         Int
+  leaveType    LeaveType
+
+  // 餘額資訊
+  total        Float       // 總天數
+  used         Float       @default(0)
+  pending      Float       @default(0)
+  available    Float       // 可用天數
+
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@unique([employeeId, year, leaveType])
+  @@map("leave_balances")
+}
+
+enum LeaveType {
+  ANNUAL          // 年假
+  SICK            // 病假
+  PERSONAL        // 事假
+  MARRIAGE        // 婚假
+  MATERNITY       // 產假
+  PATERNITY       // 陪產假
+  BEREAVEMENT     // 喪假
+  UNPAID          // 無薪假
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}

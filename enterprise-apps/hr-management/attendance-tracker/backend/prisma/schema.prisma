@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Attendance {
+  id        String   @id @default(uuid())
+  employeeId String
+  date      DateTime @default(now())
+
+  // 打卡時間
+  checkIn   DateTime?
+  checkOut  DateTime?
+
+  // 工時計算
+  workHours     Float @default(0)
+  overtimeHours Float @default(0)
+
+  // 狀態
+  status    AttendanceStatus @default(PRESENT)
+
+  // 位置信息
+  checkInLocation  Json?
+  checkOutLocation Json?
+
+  // 備註
+  notes     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([employeeId, date])
+  @@map("attendances")
+}
+
+model AttendanceSummary {
+  id           String   @id @default(uuid())
+  employeeId   String
+  month        String   // "2024-01"
+
+  // 統計數據
+  totalDays    Int      @default(0)
+  presentDays  Int      @default(0)
+  absentDays   Int      @default(0)
+  lateDays     Int      @default(0)
+  workHours    Float    @default(0)
+  overtimeHours Float   @default(0)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([employeeId, month])
+  @@map("attendance_summaries")
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EARLY_LEAVE
+  ON_LEAVE
+}
