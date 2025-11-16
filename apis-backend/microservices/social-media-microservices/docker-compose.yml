@@ -1,0 +1,163 @@
+version: '3.8'
+
+services:
+  # MongoDB for User Service
+  user-db:
+    image: mongo:7
+    container_name: social-user-db
+    environment:
+      MONGO_INITDB_DATABASE: social_users
+    ports:
+      - "27019:27017"
+    volumes:
+      - user-data:/data/db
+    networks:
+      - social-network
+
+  # MongoDB for Post Service
+  post-db:
+    image: mongo:7
+    container_name: social-post-db
+    environment:
+      MONGO_INITDB_DATABASE: social_posts
+    ports:
+      - "27020:27017"
+    volumes:
+      - post-data:/data/db
+    networks:
+      - social-network
+
+  # PostgreSQL for Comment Service
+  comment-db:
+    image: postgres:16
+    container_name: social-comment-db
+    environment:
+      POSTGRES_DB: social_comments
+      POSTGRES_USER: commentuser
+      POSTGRES_PASSWORD: commentpass
+    ports:
+      - "5433:5432"
+    volumes:
+      - comment-data:/var/lib/postgresql/data
+    networks:
+      - social-network
+
+  # Redis for Notification Service & Caching
+  redis:
+    image: redis:7-alpine
+    container_name: social-redis
+    command: redis-server --appendonly yes
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - social-network
+
+  # User Service
+  user-service:
+    build: ./user-service
+    container_name: social-user-service
+    environment:
+      PORT: 4001
+      MONGODB_URI: mongodb://user-db:27017/social_users
+      JWT_SECRET: social-media-secret-key-2024
+      JWT_EXPIRES_IN: 7d
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "4001:4001"
+    depends_on:
+      - user-db
+      - redis
+    networks:
+      - social-network
+    restart: unless-stopped
+
+  # Post Service
+  post-service:
+    build: ./post-service
+    container_name: social-post-service
+    environment:
+      PORT: 4002
+      MONGODB_URI: mongodb://post-db:27017/social_posts
+      USER_SERVICE_URL: http://user-service:4001
+      NOTIFICATION_SERVICE_URL: http://notification-service:4004
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "4002:4002"
+    depends_on:
+      - post-db
+      - user-service
+      - redis
+    networks:
+      - social-network
+    restart: unless-stopped
+
+  # Comment Service
+  comment-service:
+    build: ./comment-service
+    container_name: social-comment-service
+    environment:
+      PORT: 4003
+      DATABASE_URL: postgresql://commentuser:commentpass@comment-db:5432/social_comments
+      USER_SERVICE_URL: http://user-service:4001
+      POST_SERVICE_URL: http://post-service:4002
+      NOTIFICATION_SERVICE_URL: http://notification-service:4004
+    ports:
+      - "4003:4003"
+    depends_on:
+      - comment-db
+      - user-service
+      - post-service
+    networks:
+      - social-network
+    restart: unless-stopped
+
+  # Notification Service
+  notification-service:
+    build: ./notification-service
+    container_name: social-notification-service
+    environment:
+      PORT: 4004
+      REDIS_URL: redis://redis:6379
+      USER_SERVICE_URL: http://user-service:4001
+    ports:
+      - "4004:4004"
+    depends_on:
+      - redis
+      - user-service
+    networks:
+      - social-network
+    restart: unless-stopped
+
+  # API Gateway
+  api-gateway:
+    build: ./api-gateway
+    container_name: social-api-gateway
+    environment:
+      PORT: 4000
+      USER_SERVICE_URL: http://user-service:4001
+      POST_SERVICE_URL: http://post-service:4002
+      COMMENT_SERVICE_URL: http://comment-service:4003
+      NOTIFICATION_SERVICE_URL: http://notification-service:4004
+      JWT_SECRET: social-media-secret-key-2024
+    ports:
+      - "4000:4000"
+    depends_on:
+      - user-service
+      - post-service
+      - comment-service
+      - notification-service
+    networks:
+      - social-network
+    restart: unless-stopped
+
+networks:
+  social-network:
+    driver: bridge
+
+volumes:
+  user-data:
+  post-data:
+  comment-data:
+  redis-data:
