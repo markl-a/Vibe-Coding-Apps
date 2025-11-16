@@ -1,0 +1,47 @@
+# 程式碼格式化規則配置
+
+# Python 格式化設定
+python:
+  formatter: black
+  line_length: 88
+  target_version: py38
+  skip_string_normalization: false
+
+  # isort 設定
+  isort:
+    profile: black
+    line_length: 88
+    multi_line_output: 3
+    include_trailing_comma: true
+
+# JavaScript 格式化設定
+javascript:
+  formatter: prettier
+  indent_size: 2
+  max_line_length: 100
+  semicolons: true
+  single_quotes: true
+
+# TypeScript 格式化設定
+typescript:
+  formatter: prettier
+  indent_size: 2
+  max_line_length: 100
+  semicolons: true
+
+# 忽略的檔案和目錄
+ignore:
+  - __pycache__
+  - node_modules
+  - .git
+  - .venv
+  - venv
+  - dist
+  - build
+  - "*.min.js"
+  - "*.min.css"
+
+# 自動修復設定
+auto_fix:
+  enabled: true
+  backup: false
