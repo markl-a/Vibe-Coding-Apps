@@ -563,17 +563,58 @@ AI 會提供完整的實現方案。
 ```
 multimedia-apps/
 ├── README.md (本文檔)
-├── image-viewer/          # 圖片查看器
-├── music-player/          # 音樂播放器
+├── image-viewer/          # 圖片查看器 ✅
+├── music-player/          # 音樂播放器 ✅
 ├── video-player/          # 視頻播放器
 ├── screenshot-tool/       # 截圖工具
 ├── image-converter/       # 圖片轉檔工具
 ├── gif-maker/            # GIF 製作工具
 ├── audio-editor/         # 音頻編輯器
+├── audio-recorder/       # 音頻錄製工具 ✅ (新增)
 ├── video-editor/         # 視頻編輯器
 ├── video-converter/      # 視頻轉檔工具
+├── video-recorder/       # 屏幕錄製工具 ✅ (新增)
+├── webcam-capture/       # 攝像頭捕捉工具 ✅ (新增)
 └── live-streaming/       # 直播應用
 ```
+
+### 🆕 新增專案
+
+#### 📹 video-recorder - 屏幕錄製工具
+基於 Electron 的跨平台屏幕錄製應用，支持全屏、窗口和區域錄製。
+
+**主要功能**：
+- 多種錄製模式（全屏/窗口/區域）
+- 支持音頻錄製（系統音頻 + 麥克風）
+- 實時預覽和暫停/繼續功能
+- 自定義幀率和質量設置
+- 支持 WebM、MP4 格式輸出
+
+**技術棧**：Electron + MediaRecorder API + desktopCapturer API
+
+#### 🎤 audio-recorder - 音頻錄製工具
+基於 Electron 的跨平台音頻錄製與編輯應用，支持高質量錄音和實時波形顯示。
+
+**主要功能**：
+- 高質量音頻錄製（最高 192kHz / 24-bit）
+- 實時音量監控和波形顯示
+- 降噪和回聲消除
+- 音頻編輯（剪切、複製、合併）
+- 支持 WAV、MP3、OGG 等多種格式
+
+**技術棧**：Electron + Web Audio API + MediaRecorder API + Canvas
+
+#### 📸 webcam-capture - 攝像頭捕捉工具
+基於 Electron 的跨平台攝像頭拍照與錄像應用，支持多種濾鏡效果和實時預覽。
+
+**主要功能**：
+- 高清照片拍攝（最高 4K）
+- 倒數計時拍照和連拍模式
+- 8 種實時濾鏡效果
+- 視頻錄製功能
+- 照片圖庫管理
+
+**技術棧**：Electron + MediaStream API + Canvas API
 
 ---
 

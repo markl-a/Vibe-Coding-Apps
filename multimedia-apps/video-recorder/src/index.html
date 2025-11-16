@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 屏幕錄製工具</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 頭部 -->
+    <header class="header">
+      <h1>🎬 AI 屏幕錄製工具</h1>
+      <div class="timer" id="timer">00:00:00</div>
+    </header>
+
+    <!-- 主要內容區 -->
+    <div class="main-content">
+      <!-- 左側：源選擇器 -->
+      <aside class="sidebar">
+        <div class="section">
+          <div class="section-header">
+            <h2>📺 選擇錄製源</h2>
+            <button id="refreshBtn" class="btn-icon" title="刷新">🔄</button>
+          </div>
+          <div id="sourcesList" class="sources-list">
+            <!-- 動態填充 -->
+          </div>
+        </div>
+
+        <!-- 設置面板 -->
+        <div class="section">
+          <h2>⚙️ 錄製設置</h2>
+          <div class="settings">
+            <div class="setting-item">
+              <label>
+                <input type="checkbox" id="includeAudio" checked>
+                錄製音頻
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <label for="audioSource">音頻源：</label>
+              <select id="audioSource">
+                <option value="microphone">麥克風</option>
+                <option value="system">系統音頻</option>
+                <option value="both">麥克風 + 系統</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <label for="quality">視頻質量：</label>
+              <select id="quality">
+                <option value="low">低 (2.5 Mbps)</option>
+                <option value="medium" selected>中 (5 Mbps)</option>
+                <option value="high">高 (8 Mbps)</option>
+                <option value="ultra">超高 (15 Mbps)</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <label for="fps">幀率 (FPS)：</label>
+              <select id="fps">
+                <option value="15">15</option>
+                <option value="24">24</option>
+                <option value="30" selected>30</option>
+                <option value="60">60</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 右側：預覽和控制 -->
+      <main class="preview-area">
+        <div class="preview-container">
+          <video id="preview" autoplay muted></video>
+          <div class="preview-overlay">
+            <div class="preview-message">選擇一個源並開始錄製</div>
+          </div>
+        </div>
+
+        <!-- 控制按鈕 -->
+        <div class="controls">
+          <button id="startBtn" class="btn btn-primary">
+            ⏺ 開始錄製
+          </button>
+          <button id="pauseBtn" class="btn btn-secondary" disabled>
+            ⏸ 暫停
+          </button>
+          <button id="stopBtn" class="btn btn-danger" disabled>
+            ⏹ 停止
+          </button>
+        </div>
+
+        <!-- 狀態欄 -->
+        <div class="status-bar">
+          <div id="status" class="status info">準備就緒</div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
