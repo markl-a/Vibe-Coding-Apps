@@ -12,6 +12,99 @@
 - GPU 加速計算
 - 視覺化介面
 
+## 📦 可用子專案
+
+此專案包含多個實際可用的子專案，每個專案專注於不同的元件擺放演算法或功能：
+
+### 1. [MCTS 演算法擺放器](./mcts-placer/)
+使用 Monte Carlo Tree Search 演算法進行元件擺放優化。
+
+**特點**:
+- 基於 UCB1 的智能搜索策略
+- 適合複雜佈局問題
+- 可調整探索/利用平衡
+- 支援約束條件
+
+**使用範例**:
+```bash
+cd mcts-placer
+pip install -r requirements.txt
+python examples/basic_example.py
+```
+
+### 2. [細胞自動機擺放器](./cellular-automata-placer/)
+基於細胞自動機的創新方法，受 RL_PCB 論文啟發。
+
+**特點**:
+- 快速收斂
+- 記憶體效率高
+- 基於局部規則的全局優化
+- 適合大規模問題
+
+**使用範例**:
+```bash
+cd cellular-automata-placer
+pip install -r requirements.txt
+python examples/basic_example.py
+```
+
+### 3. [遺傳演算法擺放器](./genetic-placer/)
+使用遺傳演算法模擬生物演化過程優化擺放。
+
+**特點**:
+- 強大的全域搜索能力
+- 不易陷入局部最優
+- 支援多種交叉和突變策略
+- 菁英保留機制
+
+**使用範例**:
+```bash
+cd genetic-placer
+pip install -r requirements.txt
+python examples/basic_example.py
+```
+
+### 4. [熱感知擺放器](./thermal-aware-placer/)
+考慮元件熱分佈的智能擺放優化工具。
+
+**特點**:
+- 2D 熱傳導模擬
+- 多目標優化（連線 + 散熱）
+- 散熱區域定義
+- 溫度約束檢查
+
+**使用範例**:
+```bash
+cd thermal-aware-placer
+pip install -r requirements.txt
+python examples/basic_example.py
+```
+
+### 5. [互動式視覺化工具](./interactive-viewer/)
+豐富的視覺化和分析功能。
+
+**特點**:
+- 2D/3D 互動視圖
+- 熱圖顯示
+- 統計分析
+- 支援多種輸出格式
+
+**使用範例**:
+```bash
+cd interactive-viewer
+pip install -r requirements.txt
+python examples/basic_example.py
+```
+
+## 🎯 演算法比較
+
+| 演算法 | 收斂速度 | 解品質 | 記憶體 | 適用場景 |
+|--------|---------|--------|--------|---------|
+| MCTS | 中 | 高 | 中 | 複雜約束問題 |
+| 細胞自動機 | 快 | 中 | 低 | 大規模快速佈局 |
+| 遺傳演算法 | 慢 | 高 | 中 | 多目標優化 |
+| 熱感知 | 中 | 高 | 中 | 高功耗設計 |
+
 ## 🎯 核心功能（規劃中）
 
 ### 1. 智能擺放演算法
