@@ -1,0 +1,36 @@
+{
+  "name": "astro-blog",
+  "version": "1.0.0",
+  "description": "現代化部落格系統 - 使用 Astro + React + Tailwind CSS",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/react": "^3.6.0",
+    "@astrojs/tailwind": "^5.1.0",
+    "@astrojs/sitemap": "^3.1.0",
+    "astro": "^4.15.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "tailwindcss": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.6.0"
+  },
+  "keywords": [
+    "blog",
+    "astro",
+    "react",
+    "tailwind",
+    "markdown"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

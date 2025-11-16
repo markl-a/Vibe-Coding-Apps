@@ -1,0 +1,102 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+// 獲取所有部落格文章
+const allPosts = await getCollection('blog');
+const recentPosts = allPosts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+---
+
+<Layout title="Astro Blog - 首頁">
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-br from-primary-600 to-primary-800 text-white py-32">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-5xl md:text-6xl font-bold mb-6">
+        歡迎來到我的技術部落格
+      </h1>
+      <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto opacity-90">
+        分享 Web 開發、JavaScript、框架學習與技術見解
+      </p>
+      <a
+        href="/blog"
+        class="inline-block bg-white text-primary-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+      >
+        閱讀文章
+      </a>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="py-20 bg-white dark:bg-gray-800">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12">為什麼選擇 Astro？</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="text-center p-6">
+          <div class="text-4xl mb-4">⚡</div>
+          <h3 class="text-xl font-semibold mb-2">極速載入</h3>
+          <p class="text-gray-600 dark:text-gray-400">
+            零 JS 預設，只在需要時載入互動組件
+          </p>
+        </div>
+        <div class="text-center p-6">
+          <div class="text-4xl mb-4">🎨</div>
+          <h3 class="text-xl font-semibold mb-2">UI 框架自由</h3>
+          <p class="text-gray-600 dark:text-gray-400">
+            支援 React、Vue、Svelte 等多種框架
+          </p>
+        </div>
+        <div class="text-center p-6">
+          <div class="text-4xl mb-4">📝</div>
+          <h3 class="text-xl font-semibold mb-2">內容優先</h3>
+          <p class="text-gray-600 dark:text-gray-400">
+            內建 Markdown/MDX 支援，完美用於部落格
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Posts -->
+  <section class="py-20">
+    <div class="container mx-auto px-4">
+      <div class="flex justify-between items-center mb-12">
+        <h2 class="text-3xl font-bold">最新文章</h2>
+        <a href="/blog" class="text-primary-600 hover:text-primary-700 font-medium">
+          查看全部 →
+        </a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {recentPosts.map((post) => (
+          <article class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
+            <div class="p-6">
+              <time class="text-sm text-gray-500 dark:text-gray-400">
+                {post.data.pubDate.toLocaleDateString('zh-TW', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </time>
+              <h3 class="text-xl font-bold mt-2 mb-3">
+                <a href={`/blog/${post.slug}`} class="hover:text-primary-600 transition-colors">
+                  {post.data.title}
+                </a>
+              </h3>
+              <p class="text-gray-600 dark:text-gray-400 mb-4">
+                {post.data.description}
+              </p>
+              <div class="flex flex-wrap gap-2">
+                {post.data.tags.map((tag: string) => (
+                  <span class="px-3 py-1 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 text-sm rounded-full">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
