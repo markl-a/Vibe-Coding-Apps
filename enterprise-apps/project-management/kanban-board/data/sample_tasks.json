@@ -1,0 +1,169 @@
+{
+  "name": "範例專案看板",
+  "created_at": "2025-01-15T10:00:00",
+  "tasks": [
+    {
+      "id": "task_001",
+      "title": "實現用戶登入功能",
+      "description": "使用 JWT 實現安全的用戶認證系統，包括註冊、登入、登出功能",
+      "status": "IN_PROGRESS",
+      "priority": "HIGH",
+      "assignee": "張三",
+      "tags": ["backend", "security", "authentication"],
+      "estimated_hours": 8,
+      "actual_hours": 3.5,
+      "created_at": "2025-01-15T10:00:00",
+      "updated_at": "2025-01-15T14:30:00",
+      "completed_at": null,
+      "comments": [
+        {
+          "author": "張三",
+          "content": "已完成 JWT 工具類的實現",
+          "timestamp": "2025-01-15T14:00:00"
+        }
+      ],
+      "history": [
+        {
+          "field": "created",
+          "old_value": null,
+          "new_value": "Task created",
+          "timestamp": "2025-01-15T10:00:00"
+        },
+        {
+          "field": "status",
+          "old_value": "TODO",
+          "new_value": "IN_PROGRESS",
+          "timestamp": "2025-01-15T11:00:00"
+        }
+      ]
+    },
+    {
+      "id": "task_002",
+      "title": "設計產品頁面 UI",
+      "description": "創建響應式的產品展示頁面，支持桌面和移動端",
+      "status": "IN_REVIEW",
+      "priority": "MEDIUM",
+      "assignee": "李四",
+      "tags": ["frontend", "design", "responsive"],
+      "estimated_hours": 12,
+      "actual_hours": 10,
+      "created_at": "2025-01-15T10:30:00",
+      "updated_at": "2025-01-16T09:00:00",
+      "completed_at": null,
+      "comments": [
+        {
+          "author": "李四",
+          "content": "初版設計已完成，請審查",
+          "timestamp": "2025-01-16T09:00:00"
+        }
+      ],
+      "history": [
+        {
+          "field": "created",
+          "old_value": null,
+          "new_value": "Task created",
+          "timestamp": "2025-01-15T10:30:00"
+        },
+        {
+          "field": "status",
+          "old_value": "TODO",
+          "new_value": "IN_PROGRESS",
+          "timestamp": "2025-01-15T11:30:00"
+        },
+        {
+          "field": "status",
+          "old_value": "IN_PROGRESS",
+          "new_value": "IN_REVIEW",
+          "timestamp": "2025-01-16T09:00:00"
+        }
+      ]
+    },
+    {
+      "id": "task_003",
+      "title": "編寫 API 文檔",
+      "description": "使用 OpenAPI 規範編寫完整的 API 文檔",
+      "status": "DONE",
+      "priority": "LOW",
+      "assignee": "王五",
+      "tags": ["documentation", "api"],
+      "estimated_hours": 4,
+      "actual_hours": 4.5,
+      "created_at": "2025-01-14T14:00:00",
+      "updated_at": "2025-01-15T16:00:00",
+      "completed_at": "2025-01-15T16:00:00",
+      "comments": [
+        {
+          "author": "王五",
+          "content": "文檔已完成並發布",
+          "timestamp": "2025-01-15T16:00:00"
+        }
+      ],
+      "history": [
+        {
+          "field": "created",
+          "old_value": null,
+          "new_value": "Task created",
+          "timestamp": "2025-01-14T14:00:00"
+        },
+        {
+          "field": "status",
+          "old_value": "TODO",
+          "new_value": "IN_PROGRESS",
+          "timestamp": "2025-01-15T09:00:00"
+        },
+        {
+          "field": "status",
+          "old_value": "IN_PROGRESS",
+          "new_value": "DONE",
+          "timestamp": "2025-01-15T16:00:00"
+        }
+      ]
+    },
+    {
+      "id": "task_004",
+      "title": "數據庫查詢優化",
+      "description": "優化慢查詢，提升數據庫性能",
+      "status": "TODO",
+      "priority": "URGENT",
+      "assignee": "張三",
+      "tags": ["backend", "database", "performance"],
+      "estimated_hours": 6,
+      "actual_hours": 0,
+      "created_at": "2025-01-16T10:00:00",
+      "updated_at": "2025-01-16T10:00:00",
+      "completed_at": null,
+      "comments": [],
+      "history": [
+        {
+          "field": "created",
+          "old_value": null,
+          "new_value": "Task created",
+          "timestamp": "2025-01-16T10:00:00"
+        }
+      ]
+    },
+    {
+      "id": "task_005",
+      "title": "編寫單元測試",
+      "description": "提高代碼覆蓋率到 80% 以上",
+      "status": "TODO",
+      "priority": "MEDIUM",
+      "assignee": "李四",
+      "tags": ["testing", "quality"],
+      "estimated_hours": 8,
+      "actual_hours": 0,
+      "created_at": "2025-01-16T11:00:00",
+      "updated_at": "2025-01-16T11:00:00",
+      "completed_at": null,
+      "comments": [],
+      "history": [
+        {
+          "field": "created",
+          "old_value": null,
+          "new_value": "Task created",
+          "timestamp": "2025-01-16T11:00:00"
+        }
+      ]
+    }
+  ]
+}
