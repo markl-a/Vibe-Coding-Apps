@@ -1,0 +1,26 @@
+{
+  "name": "live-streaming",
+  "version": "1.0.0",
+  "description": "AI-Native 直播應用 - 專業直播推流工具",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder"
+  },
+  "keywords": ["streaming", "live", "rtmp", "obs"],
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "node-rtmp-server": "^2.0.0"
+  },
+  "build": {
+    "appId": "com.ainative.livestreaming",
+    "productName": "AI Live Streaming"
+  }
+}

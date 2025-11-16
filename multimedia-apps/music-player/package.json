@@ -1,0 +1,55 @@
+{
+  "name": "music-player",
+  "version": "1.0.0",
+  "description": "AI-Native 音樂播放器 - 基於 Electron 的跨平台音樂播放器",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
+  },
+  "keywords": [
+    "music-player",
+    "electron",
+    "audio",
+    "cross-platform",
+    "ai-native"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "music-metadata": "^8.1.4"
+  },
+  "build": {
+    "appId": "com.ainative.musicplayer",
+    "productName": "AI Music Player",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": ["nsis"],
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": ["dmg"],
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.music"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "assets/icon.png",
+      "category": "Audio"
+    }
+  }
+}

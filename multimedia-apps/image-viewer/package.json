@@ -1,0 +1,55 @@
+{
+  "name": "image-viewer",
+  "version": "1.0.0",
+  "description": "AI-Native 圖片查看器 - 基於 Electron 的跨平台圖片查看與編輯工具",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
+  },
+  "keywords": [
+    "image-viewer",
+    "electron",
+    "cross-platform",
+    "image-editor",
+    "ai-native"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "sharp": "^0.33.0"
+  },
+  "build": {
+    "appId": "com.ainative.imageviewer",
+    "productName": "AI Image Viewer",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": ["nsis"],
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": ["dmg"],
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.graphics-design"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "assets/icon.png",
+      "category": "Graphics"
+    }
+  }
+}

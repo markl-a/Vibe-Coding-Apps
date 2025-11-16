@@ -1,0 +1,24 @@
+{
+  "name": "image-converter",
+  "version": "1.0.0",
+  "description": "AI-Native 圖片轉檔工具 - 批量圖片格式轉換",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder"
+  },
+  "keywords": ["image", "converter", "batch", "sharp"],
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "sharp": "^0.33.0"
+  },
+  "build": {
+    "appId": "com.ainative.imageconverter",
+    "productName": "AI Image Converter"
+  }
+}

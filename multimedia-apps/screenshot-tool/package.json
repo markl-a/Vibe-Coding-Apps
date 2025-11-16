@@ -1,0 +1,21 @@
+{
+  "name": "screenshot-tool",
+  "version": "1.0.0",
+  "description": "AI-Native 截圖工具 - 強大的截圖與標註工具",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder"
+  },
+  "keywords": ["screenshot", "annotation", "electron"],
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.ainative.screenshot",
+    "productName": "AI Screenshot Tool"
+  }
+}
