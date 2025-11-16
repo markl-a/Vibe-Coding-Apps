@@ -1,0 +1,39 @@
+# AI 原理圖生成器 - Python 依賴
+
+# LLM 整合
+openai>=1.0.0
+anthropic>=0.7.0
+langchain>=0.1.0
+langchain-openai>=0.0.2
+
+# EDA 工具
+# SKiDL (電路描述語言)
+skidl>=1.2.0
+# KiCAD Python API (需要安裝 KiCAD)
+# kiutils>=1.0.0
+
+# 電路模擬
+# PySpice (需要 ngspice)
+# PySpice>=1.5
+
+# 資料處理
+numpy>=1.24.0
+pandas>=2.0.0
+pydantic>=2.0.0
+
+# 向量資料庫 (RAG)
+chromadb>=0.4.0
+# sentence-transformers>=2.2.0
+
+# 視覺化
+matplotlib>=3.7.0
+plotly>=5.14.0
+
+# Web 框架 (可選)
+fastapi>=0.100.0
+uvicorn>=0.23.0
+
+# 工具
+pyyaml>=6.0
+python-dotenv>=1.0.0
+tqdm>=4.65.0
