@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>番茄鐘計時器 | Pomodoro Timer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍅 番茄鐘計時器</h1>
+            <p class="subtitle">提升專注力，提高工作效率</p>
+        </header>
+
+        <main>
+            <div class="timer-card">
+                <div class="mode-selector">
+                    <button class="mode-btn active" data-mode="work">工作</button>
+                    <button class="mode-btn" data-mode="shortBreak">短休息</button>
+                    <button class="mode-btn" data-mode="longBreak">長休息</button>
+                </div>
+
+                <div class="timer-display">
+                    <div class="time" id="timeDisplay">25:00</div>
+                    <div class="progress-ring">
+                        <svg width="320" height="320">
+                            <circle
+                                cx="160"
+                                cy="160"
+                                r="140"
+                                fill="none"
+                                stroke="#e0e0e0"
+                                stroke-width="8"
+                            />
+                            <circle
+                                id="progressCircle"
+                                cx="160"
+                                cy="160"
+                                r="140"
+                                fill="none"
+                                stroke="#4CAF50"
+                                stroke-width="8"
+                                stroke-linecap="round"
+                                transform="rotate(-90 160 160)"
+                            />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="timer-controls">
+                    <button class="btn btn-primary" id="startBtn">開始</button>
+                    <button class="btn btn-secondary" id="resetBtn">重置</button>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="completedCount">0</div>
+                        <div class="stat-label">完成番茄鐘</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalTime">0</div>
+                        <div class="stat-label">總專注時間（分鐘）</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h3>⚙️ 設定</h3>
+                <div class="setting-item">
+                    <label for="workDuration">工作時長（分鐘）</label>
+                    <input type="number" id="workDuration" value="25" min="1" max="60">
+                </div>
+                <div class="setting-item">
+                    <label for="shortBreakDuration">短休息時長（分鐘）</label>
+                    <input type="number" id="shortBreakDuration" value="5" min="1" max="30">
+                </div>
+                <div class="setting-item">
+                    <label for="longBreakDuration">長休息時長（分鐘）</label>
+                    <input type="number" id="longBreakDuration" value="15" min="1" max="60">
+                </div>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="soundEnabled" checked>
+                        啟用音效通知
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="autoStartBreak">
+                        自動開始休息
+                    </label>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>使用番茄鐘技術提升專注力 | 工作 25 分鐘，休息 5 分鐘</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
