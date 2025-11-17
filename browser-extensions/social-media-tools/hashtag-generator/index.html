@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hashtag Generator Pro</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>#️⃣ Hashtag Generator Pro</h1>
+      <p>為你的社交媒體貼文生成熱門標籤</p>
+    </div>
+
+    <div class="content">
+      <div class="input-section">
+        <label for="topicInput">輸入主題或關鍵字</label>
+        <textarea
+          id="topicInput"
+          placeholder="例如：旅遊、美食、攝影、科技..."
+          rows="3"
+        ></textarea>
+
+        <div class="platform-selector">
+          <label>選擇平台</label>
+          <div class="platform-buttons">
+            <button class="platform-btn active" data-platform="instagram">
+              📷 Instagram
+            </button>
+            <button class="platform-btn" data-platform="twitter">
+              🐦 Twitter
+            </button>
+            <button class="platform-btn" data-platform="tiktok">
+              🎵 TikTok
+            </button>
+            <button class="platform-btn" data-platform="youtube">
+              📺 YouTube
+            </button>
+          </div>
+        </div>
+
+        <div class="options">
+          <div class="option-item">
+            <label for="hashtagCount">標籤數量：<span id="countValue">10</span></label>
+            <input type="range" id="hashtagCount" min="5" max="30" value="10">
+          </div>
+
+          <div class="option-item">
+            <label>
+              <input type="checkbox" id="includeTrending" checked>
+              包含熱門標籤
+            </label>
+          </div>
+        </div>
+
+        <button class="generate-btn" id="generateBtn">
+          ✨ 生成標籤
+        </button>
+      </div>
+
+      <div class="results-section" id="resultsSection" style="display: none;">
+        <div class="section-header">
+          <h3>生成的標籤</h3>
+          <div class="action-buttons">
+            <button class="btn-secondary" id="copyAllBtn">📋 複製全部</button>
+            <button class="btn-secondary" id="refreshBtn">🔄 重新生成</button>
+          </div>
+        </div>
+
+        <div class="hashtag-container" id="hashtagContainer"></div>
+
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-label">總標籤數</span>
+            <span class="stat-value" id="totalCount">0</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">已選擇</span>
+            <span class="stat-value" id="selectedCount">0</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">總字元數</span>
+            <span class="stat-value" id="charCount">0</span>
+          </div>
+        </div>
+
+        <button class="copy-selected-btn" id="copySelectedBtn">
+          📋 複製已選擇的標籤
+        </button>
+      </div>
+
+      <div class="tips-section">
+        <h4>💡 使用技巧</h4>
+        <ul>
+          <li>Instagram 建議使用 20-30 個標籤</li>
+          <li>Twitter 建議使用 1-2 個精準標籤</li>
+          <li>TikTok 建議使用 4-5 個相關標籤</li>
+          <li>混合使用熱門和小眾標籤可提升曝光率</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

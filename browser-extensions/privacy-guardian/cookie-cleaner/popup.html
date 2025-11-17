@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cookie Cleaner Pro</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 400px;
+      max-height: 600px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8f9fa;
+      color: #333;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .header p {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding: 20px;
+      background: white;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+      padding: 16px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .content {
+      padding: 0 20px 20px 20px;
+    }
+
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .button-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    button {
+      padding: 12px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .btn-secondary:hover {
+      background: #d1d5db;
+    }
+
+    .btn-full {
+      grid-column: 1 / -1;
+    }
+
+    .cookie-list {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 12px;
+    }
+
+    .cookie-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: #f9fafb;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+
+    .cookie-name {
+      font-weight: 500;
+      color: #667eea;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .cookie-domain {
+      color: #9ca3af;
+      font-size: 11px;
+      margin-right: 8px;
+    }
+
+    .delete-btn {
+      padding: 4px 8px;
+      font-size: 11px;
+      background: #fee2e2;
+      color: #ef4444;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .delete-btn:hover {
+      background: #fecaca;
+    }
+
+    .whitelist {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+
+    .whitelist-input {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .whitelist-input input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .whitelist-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .tag {
+      background: #667eea;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tag-remove {
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .toggle-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .toggle-group:last-child {
+      border-bottom: none;
+    }
+
+    .toggle-label {
+      font-size: 13px;
+      color: #374151;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      background: #d1d5db;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .toggle-switch.active {
+      background: #667eea;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: left 0.3s;
+    }
+
+    .toggle-switch.active .toggle-slider {
+      left: 22px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #9ca3af;
+    }
+
+    .spinner {
+      border: 2px solid #f3f4f6;
+      border-top: 2px solid #667eea;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .success-message {
+      background: #d1fae5;
+      color: #065f46;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      text-align: center;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🍪 Cookie Cleaner Pro</h1>
+    <p>管理和清理瀏覽器 Cookies</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-value" id="totalCookies">-</div>
+      <div class="stat-label">總 Cookies 數</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="currentSiteCookies">-</div>
+      <div class="stat-label">當前網站</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="section">
+      <div class="section-title">
+        🧹 快速清理
+      </div>
+      <div class="button-group">
+        <button class="btn-primary" id="cleanCurrentBtn">
+          🎯 清除當前網站
+        </button>
+        <button class="btn-danger" id="cleanAllBtn">
+          🗑️ 清除所有
+        </button>
+      </div>
+      <div class="success-message" id="successMessage"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        📋 當前網站的 Cookies
+      </div>
+      <div id="cookieList" class="cookie-list">
+        <div class="loading">
+          <div class="spinner"></div>
+          載入中...
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        🛡️ 白名單
+      </div>
+      <div class="whitelist">
+        <div>保護的網域不會被自動清理</div>
+        <div class="whitelist-input">
+          <input type="text" id="whitelistInput" placeholder="輸入網域（例如：google.com）">
+          <button class="btn-secondary" id="addWhitelistBtn">➕ 新增</button>
+        </div>
+        <div class="whitelist-tags" id="whitelistTags"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        ⚙️ 自動清理設定
+      </div>
+      <div class="toggle-group">
+        <span class="toggle-label">啟動時清理</span>
+        <div class="toggle-switch" id="cleanOnStartup">
+          <div class="toggle-slider"></div>
+        </div>
+      </div>
+      <div class="toggle-group">
+        <span class="toggle-label">定時自動清理</span>
+        <div class="toggle-switch" id="autoClean">
+          <div class="toggle-slider"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

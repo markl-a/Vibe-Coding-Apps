@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTTP Header Viewer - 開發者工具</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-tertiary: #334155;
+      --text: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --border: #475569;
+    }
+
+    body {
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      padding: 30px 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: -20px -20px 30px -20px;
+      border-radius: 0 0 16px 16px;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: white;
+    }
+
+    .header p {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+    }
+
+    .input-section {
+      background: var(--bg-secondary);
+      padding: 24px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+    }
+
+    .input-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 12px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.3s;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    button {
+      padding: 12px 24px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .method-selector {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .method-btn {
+      padding: 8px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .method-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .tab {
+      padding: 12px 24px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .tab-content {
+      display: none;
+      background: var(--bg-secondary);
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .header-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .header-name {
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 13px;
+    }
+
+    .header-value {
+      color: var(--text);
+      font-size: 13px;
+      flex: 1;
+      margin-left: 16px;
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      padding: 6px 12px;
+      font-size: 12px;
+      background: var(--bg);
+      color: var(--text-secondary);
+    }
+
+    .copy-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-success {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--success);
+    }
+
+    .status-warning {
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--warning);
+    }
+
+    .status-error {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--danger);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .info-card {
+      background: var(--bg-tertiary);
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .info-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-secondary);
+    }
+
+    .spinner {
+      border: 3px solid var(--border);
+      border-top: 3px solid var(--primary);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error-message {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid var(--danger);
+      color: var(--danger);
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    pre {
+      background: var(--bg);
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    code {
+      color: var(--success);
+    }
+
+    .quick-urls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .quick-url {
+      padding: 6px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .quick-url:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔍 HTTP Header Viewer</h1>
+      <p>檢查任何網址的 HTTP 請求和回應標頭</p>
+    </div>
+
+    <div class="input-section">
+      <div class="input-group">
+        <input
+          type="text"
+          id="urlInput"
+          placeholder="輸入網址（例如：https://api.github.com）"
+          value="https://api.github.com"
+        >
+        <button id="fetchBtn">📡 查詢標頭</button>
+      </div>
+
+      <div class="method-selector">
+        <button class="method-btn active" data-method="GET">GET</button>
+        <button class="method-btn" data-method="POST">POST</button>
+        <button class="method-btn" data-method="PUT">PUT</button>
+        <button class="method-btn" data-method="DELETE">DELETE</button>
+        <button class="method-btn" data-method="HEAD">HEAD</button>
+        <button class="method-btn" data-method="OPTIONS">OPTIONS</button>
+      </div>
+
+      <div class="quick-urls">
+        <span style="color: var(--text-secondary); font-size: 12px;">快速測試：</span>
+        <div class="quick-url" data-url="https://api.github.com">GitHub API</div>
+        <div class="quick-url" data-url="https://jsonplaceholder.typicode.com/posts/1">JSONPlaceholder</div>
+        <div class="quick-url" data-url="https://httpbin.org/get">HTTPBin</div>
+        <div class="quick-url" data-url="https://www.google.com">Google</div>
+      </div>
+    </div>
+
+    <div id="loading" class="loading" style="display: none;">
+      <div class="spinner"></div>
+      <p>正在查詢標頭資訊...</p>
+    </div>
+
+    <div id="error" class="error-message" style="display: none;"></div>
+
+    <div id="results" style="display: none;">
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-label">HTTP 狀態碼</div>
+          <div class="info-value" id="statusCode">-</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">狀態文字</div>
+          <div class="info-value" id="statusText">-</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">請求方法</div>
+          <div class="info-value" id="method">-</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">內容類型</div>
+          <div class="info-value" id="contentType">-</div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="response">回應標頭</button>
+        <button class="tab" data-tab="request">請求標頭</button>
+        <button class="tab" data-tab="security">安全性標頭</button>
+        <button class="tab" data-tab="raw">原始資料</button>
+      </div>
+
+      <div id="responseTab" class="tab-content active">
+        <div id="responseHeaders"></div>
+      </div>
+
+      <div id="requestTab" class="tab-content">
+        <div id="requestHeaders"></div>
+      </div>
+
+      <div id="securityTab" class="tab-content">
+        <div id="securityHeaders"></div>
+      </div>
+
+      <div id="rawTab" class="tab-content">
+        <pre id="rawData"></pre>
+      </div>
+    </div>
+
+    <div id="emptyState" class="empty-state">
+      <div class="empty-state-icon">🔍</div>
+      <h3>輸入網址開始查詢</h3>
+      <p>查看任何網站的 HTTP 請求和回應標頭資訊</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

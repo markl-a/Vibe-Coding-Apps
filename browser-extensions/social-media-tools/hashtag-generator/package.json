@@ -1,0 +1,20 @@
+{
+  "name": "hashtag-generator-pro",
+  "version": "1.0.0",
+  "description": "AI-powered hashtag generator for social media platforms",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "hashtag",
+    "social-media",
+    "instagram",
+    "twitter",
+    "tiktok",
+    "youtube",
+    "generator"
+  ],
+  "author": "",
+  "license": "MIT"
+}
