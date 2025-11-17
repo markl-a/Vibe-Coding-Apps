@@ -1,0 +1,69 @@
+/*
+ * device_tree_example.dts - 設備樹範例
+ *
+ * 這是一個設備樹片段，展示如何定義平台 LED 設備
+ *
+ * 編譯方法:
+ *   dtc -I dts -O dtb -o device_tree_example.dtb device_tree_example.dts
+ *
+ * 注意: 這僅用於示例，實際使用需要整合到系統設備樹中
+ */
+
+/dts-v1/;
+
+/ {
+    compatible = "vendor,example-board";
+    #address-cells = <1>;
+    #size-cells = <1>;
+
+    /* 平台 LED 設備定義 */
+    platform_led@0 {
+        compatible = "vendor,platform-led";
+        reg = <0x0 0x1000>;  /* 記憶體區域（示例）*/
+
+        /* GPIO 定義（如果使用 GPIO）*/
+        led-gpios = <&gpio0 10 0>;  /* GPIO 10, 活動高電平 */
+
+        /* 其他屬性 */
+        label = "status-led";
+        default-state = "off";
+        linux,default-trigger = "heartbeat";
+    };
+
+    /* 另一個 LED 設備 */
+    platform_led@1 {
+        compatible = "vendor,platform-led";
+        reg = <0x1000 0x1000>;
+
+        led-gpios = <&gpio0 11 0>;  /* GPIO 11 */
+
+        label = "activity-led";
+        default-state = "off";
+    };
+
+    /* GPIO 控制器定義（示例）*/
+    gpio0: gpio@40000000 {
+        compatible = "vendor,gpio";
+        reg = <0x40000000 0x1000>;
+        gpio-controller;
+        #gpio-cells = <2>;
+        ngpios = <32>;
+    };
+};
+
+/*
+ * 設備樹使用說明:
+ *
+ * 1. compatible 屬性必須匹配驅動中的 of_device_id
+ * 2. reg 屬性定義記憶體映射區域
+ * 3. gpio 屬性定義使用的 GPIO 引腳
+ * 4. 自定義屬性可以通過 of_property_read_* 函數讀取
+ *
+ * 在驅動中讀取設備樹屬性:
+ *
+ *   struct device_node *np = pdev->dev.of_node;
+ *   const char *label;
+ *
+ *   of_property_read_string(np, "label", &label);
+ *   gpio = of_get_named_gpio(np, "led-gpios", 0);
+ */
