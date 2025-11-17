@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>習慣追蹤器 - Habit Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                習慣追蹤器
+            </h1>
+            <div class="header-actions">
+                <button class="btn btn-secondary" id="exportBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    匯出
+                </button>
+                <button class="btn btn-secondary" id="importBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    匯入
+                </button>
+                <button class="btn btn-primary" id="addHabitBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    新增習慣
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Overview -->
+        <div class="stats-container" id="statsContainer">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="totalHabits">0</div>
+                    <div class="stat-label">總習慣數</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="todayCompleted">0</div>
+                    <div class="stat-label">今日完成</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="longestStreak">0</div>
+                    <div class="stat-label">最長連續</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📈</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="completionRate">0%</div>
+                    <div class="stat-label">完成率</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <button class="tab-btn active" data-category="all">全部</button>
+            <button class="tab-btn" data-category="health">健康</button>
+            <button class="tab-btn" data-category="study">學習</button>
+            <button class="tab-btn" data-category="work">工作</button>
+            <button class="tab-btn" data-category="entertainment">娛樂</button>
+            <button class="tab-btn" data-category="other">其他</button>
+        </div>
+
+        <!-- Habits List -->
+        <div class="habits-container" id="habitsContainer">
+            <div class="empty-state" id="emptyState">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <h3>還沒有任何習慣</h3>
+                <p>點擊「新增習慣」按鈕開始建立您的第一個習慣</p>
+            </div>
+        </div>
+
+        <!-- Add/Edit Habit Modal -->
+        <div class="modal" id="habitModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">新增習慣</h2>
+                    <button class="close-btn" id="closeModal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <form id="habitForm">
+                    <div class="form-group">
+                        <label for="habitName">習慣名稱 *</label>
+                        <input type="text" id="habitName" required placeholder="例如：每日運動30分鐘">
+                    </div>
+                    <div class="form-group">
+                        <label for="habitDescription">描述</label>
+                        <textarea id="habitDescription" rows="3" placeholder="描述這個習慣的目標和意義"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="habitCategory">類別 *</label>
+                        <select id="habitCategory" required>
+                            <option value="health">健康</option>
+                            <option value="study">學習</option>
+                            <option value="work">工作</option>
+                            <option value="entertainment">娛樂</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="habitColor">顏色</label>
+                        <div class="color-picker">
+                            <input type="radio" name="color" value="#FF6B6B" id="color1" checked>
+                            <label for="color1" style="background: #FF6B6B;"></label>
+
+                            <input type="radio" name="color" value="#4ECDC4" id="color2">
+                            <label for="color2" style="background: #4ECDC4;"></label>
+
+                            <input type="radio" name="color" value="#45B7D1" id="color3">
+                            <label for="color3" style="background: #45B7D1;"></label>
+
+                            <input type="radio" name="color" value="#FFA07A" id="color4">
+                            <label for="color4" style="background: #FFA07A;"></label>
+
+                            <input type="radio" name="color" value="#98D8C8" id="color5">
+                            <label for="color5" style="background: #98D8C8;"></label>
+
+                            <input type="radio" name="color" value="#F7DC6F" id="color6">
+                            <label for="color6" style="background: #F7DC6F;"></label>
+
+                            <input type="radio" name="color" value="#BB8FCE" id="color7">
+                            <label for="color7" style="background: #BB8FCE;"></label>
+
+                            <input type="radio" name="color" value="#85C1E2" id="color8">
+                            <label for="color8" style="background: #85C1E2;"></label>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">取消</button>
+                        <button type="submit" class="btn btn-primary" id="saveHabitBtn">儲存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Habit Detail Modal -->
+        <div class="modal" id="habitDetailModal">
+            <div class="modal-content modal-large">
+                <div class="modal-header">
+                    <h2 id="detailHabitName">習慣詳情</h2>
+                    <button class="close-btn" id="closeDetailModal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="detail-content">
+                    <div class="detail-stats">
+                        <div class="detail-stat">
+                            <span class="detail-stat-label">當前連續</span>
+                            <span class="detail-stat-value" id="detailCurrentStreak">0 天</span>
+                        </div>
+                        <div class="detail-stat">
+                            <span class="detail-stat-label">最長連續</span>
+                            <span class="detail-stat-value" id="detailLongestStreak">0 天</span>
+                        </div>
+                        <div class="detail-stat">
+                            <span class="detail-stat-label">總完成次數</span>
+                            <span class="detail-stat-value" id="detailTotalCheckins">0 次</span>
+                        </div>
+                        <div class="detail-stat">
+                            <span class="detail-stat-label">完成率</span>
+                            <span class="detail-stat-value" id="detailCompletionRate">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="heatmap-section">
+                        <h3>打卡熱力圖</h3>
+                        <div class="heatmap-container" id="heatmapContainer"></div>
+                        <div class="heatmap-legend">
+                            <span>少</span>
+                            <div class="legend-item" style="background: #ebedf0;"></div>
+                            <div class="legend-item" style="background: #c6e48b;"></div>
+                            <div class="legend-item" style="background: #7bc96f;"></div>
+                            <div class="legend-item" style="background: #239a3b;"></div>
+                            <div class="legend-item" style="background: #196127;"></div>
+                            <span>多</span>
+                        </div>
+                    </div>
+
+                    <div class="trend-section">
+                        <h3>完成趨勢（最近30天）</h3>
+                        <div class="chart-container" id="trendChart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import File Input (hidden) -->
+        <input type="file" id="importFileInput" accept=".json" style="display: none;">
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
