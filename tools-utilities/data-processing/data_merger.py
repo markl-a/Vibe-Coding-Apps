@@ -149,12 +149,12 @@ def smart_merge(files: List[str], threshold: float = 0.7) -> pd.DataFrame:
         mapping = {}
         for col in df.columns:
             best_match = col
-            best_score = 1.0
+            best_score = 0.0
 
             # 找最相似的標準欄位
             for standard_col in all_columns:
                 score = similarity(col, standard_col)
-                if score > threshold and score < best_score:
+                if score >= threshold and score > best_score:
                     best_match = standard_col
                     best_score = score
 

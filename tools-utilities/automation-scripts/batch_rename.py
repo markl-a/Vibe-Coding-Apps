@@ -144,7 +144,7 @@ class BatchRenamer:
     def undo_last(self) -> int:
         """撤銷上次操作"""
         count = 0
-        for new_path, old_path in reversed(self.rename_history):
+        for old_path, new_path in reversed(self.rename_history):
             try:
                 if new_path.exists():
                     new_path.rename(old_path)

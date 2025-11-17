@@ -106,7 +106,10 @@ def flatten_dict(data: Dict, parent_key: str = '', sep: str = '.') -> Dict:
             items.extend(flatten_dict(v, new_key, sep=sep).items())
         elif isinstance(v, list):
             for i, item in enumerate(v):
-                items.extend(flatten_dict({f"{new_key}[{i}]": item}).items())
+                if isinstance(item, dict):
+                    items.extend(flatten_dict(item, f"{new_key}[{i}]", sep=sep).items())
+                else:
+                    items.append((f"{new_key}[{i}]", item))
         else:
             items.append((new_key, v))
     return dict(items)
@@ -128,7 +131,7 @@ def unflatten_dict(data: Dict, sep: str = '.') -> Dict:
 
 def normalize_column_names(df: pd.DataFrame) -> pd.DataFrame:
     """標準化欄位名稱（移除空白、小寫、替換特殊字元）"""
-    df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_').str.replace('[^a-z0-9_]', '', regex=True)
+    df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_').str.replace(r'[^a-z0-9_]', '', regex=True)
     return df
 
 

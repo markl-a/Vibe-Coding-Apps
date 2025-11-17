@@ -1,0 +1,78 @@
+# 範例 requirements.txt - 展示專案依賴管理
+
+# Web 框架
+flask==2.3.0
+django>=4.2.0,<5.0.0
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# 資料處理
+pandas==2.1.3
+numpy==1.26.2
+sqlalchemy==2.0.23
+
+# 測試工具
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+pytest-asyncio==0.21.1
+
+# 程式碼品質
+black==23.11.0
+flake8==6.1.0
+isort==5.12.0
+mypy==1.7.1
+pylint==3.0.3
+
+# 資料驗證
+pydantic==2.5.2
+marshmallow==3.20.1
+
+# HTTP 客戶端
+requests==2.31.0
+httpx==0.25.2
+aiohttp==3.9.1
+
+# 日期時間
+python-dateutil==2.8.2
+arrow==1.3.0
+
+# 環境變數
+python-dotenv==1.0.0
+
+# 日誌
+loguru==0.7.2
+
+# 序列化
+pyyaml==6.0.1
+toml==0.10.2
+
+# 快取
+redis==5.0.1
+python-memcached==1.59
+
+# 資料庫驅動
+psycopg2-binary==2.9.9
+pymongo==4.6.0
+motor==3.3.2
+
+# 任務隊列
+celery==5.3.4
+redis==5.0.1
+
+# 安全性
+cryptography==41.0.7
+pyjwt==2.8.0
+passlib==1.7.4
+
+# 監控
+prometheus-client==0.19.0
+sentry-sdk==1.38.0
+
+# 工具
+click==8.1.7
+rich==13.7.0
+tqdm==4.66.1
+
+# API 文檔
+openapi-spec-validator==0.7.1

@@ -1,0 +1,68 @@
+{
+  "processing_date": "2025-11-17 05:19:58",
+  "workflow": "完整資料處理流程",
+  "steps": [
+    {
+      "step": 1,
+      "name": "清理銷售資料",
+      "input_file": "sales_data.csv",
+      "output_file": "sales_cleaned.csv",
+      "original_rows": 15,
+      "processed_rows": 14,
+      "operations": [
+        "移除空白字元",
+        "移除重複列",
+        "填充缺失值",
+        "驗證電子郵件"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "合併員工資料",
+      "input_files": [
+        "employees_dept1.csv",
+        "employees_dept2.csv"
+      ],
+      "output_file": "employees_all.csv",
+      "total_employees": 10,
+      "departments": [
+        "工程部",
+        "設計部"
+      ]
+    },
+    {
+      "step": 3,
+      "name": "資料分析",
+      "sales_analysis": {
+        "total_revenue": 188910.0,
+        "total_orders": 14,
+        "categories": [
+          "電子產品",
+          "傢俱",
+          "文具"
+        ],
+        "regions": [
+          "北區",
+          "南區",
+          "中區",
+          "東區",
+          "西區"
+        ]
+      },
+      "employee_analysis": {
+        "total_employees": 10,
+        "average_salary": 63300.0,
+        "departments": 2
+      }
+    }
+  ],
+  "summary": {
+    "files_processed": 3,
+    "total_records": 24,
+    "output_formats": [
+      "CSV",
+      "JSON"
+    ],
+    "success": true
+  }
+}

@@ -1,0 +1,6 @@
+emp_id,name,email,department,salary,hire_date
+E001,張小明,zhang.xiaoming@company.com,工程部,65000,2022-03-15
+E002,李小華,li.xiaohua@company.com,工程部,70000,2021-07-20
+E003,王大偉,wang.dawei@company.com,工程部,58000,2023-01-10
+E004,陳美麗,chen.meili@company.com,工程部,62000,2022-11-05
+E005,林志明,lin.zhiming@company.com,工程部,75000,2021-05-18

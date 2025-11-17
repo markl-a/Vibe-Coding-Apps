@@ -1,0 +1,67 @@
+[
+  {
+    "id": "P001",
+    "name": "筆記型電腦",
+    "category": "電子產品",
+    "price": 35000,
+    "stock": 50,
+    "specifications": {
+      "cpu": "Intel i7",
+      "ram": "16GB",
+      "storage": "512GB SSD"
+    },
+    "tags": ["電腦", "辦公", "學習"]
+  },
+  {
+    "id": "P002",
+    "name": "無線滑鼠",
+    "category": "電子產品",
+    "price": 500,
+    "stock": 200,
+    "specifications": {
+      "type": "無線",
+      "dpi": "1600",
+      "battery": "AA電池"
+    },
+    "tags": ["電腦週邊", "辦公"]
+  },
+  {
+    "id": "P003",
+    "name": "機械鍵盤",
+    "category": "電子產品",
+    "price": 1200,
+    "stock": 80,
+    "specifications": {
+      "type": "機械",
+      "switch": "青軸",
+      "backlight": "RGB"
+    },
+    "tags": ["電腦週邊", "遊戲"]
+  },
+  {
+    "id": "P004",
+    "name": "27吋顯示器",
+    "category": "電子產品",
+    "price": 8000,
+    "stock": 30,
+    "specifications": {
+      "size": "27吋",
+      "resolution": "2K",
+      "refresh_rate": "144Hz"
+    },
+    "tags": ["顯示器", "辦公", "遊戲"]
+  },
+  {
+    "id": "P005",
+    "name": "人體工學辦公桌",
+    "category": "傢俱",
+    "price": 6000,
+    "stock": 25,
+    "specifications": {
+      "material": "實木",
+      "adjustable": true,
+      "size": "120x60cm"
+    },
+    "tags": ["辦公", "傢俱"]
+  }
+]

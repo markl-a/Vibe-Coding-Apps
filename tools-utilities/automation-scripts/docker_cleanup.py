@@ -594,7 +594,7 @@ def main():
             if args.all or args.dangling_images:
                 results.append(cleaner.cleanup_dangling_images(dry_run=args.dry_run))
 
-            if args.volumes or (args.all and args.unused_volumes):
+            if args.volumes or args.unused_volumes:
                 results.append(cleaner.cleanup_unused_volumes(dry_run=args.dry_run))
 
             if args.all or args.unused_networks:

@@ -1,0 +1,387 @@
+# 部署配置檔範例
+# 用於 deploy_helper.py 工具
+
+# 專案資訊
+project:
+  name: example-app
+  version: 1.0.0
+  description: 範例應用程式部署配置
+
+# 環境配置
+environments:
+  # 開發環境
+  development:
+    host: dev.example.com
+    port: 22
+    user: deployer
+    path: /var/www/dev
+    branch: develop
+    python_version: "3.11"
+    env_vars:
+      ENV: development
+      DEBUG: "true"
+      LOG_LEVEL: debug
+
+  # 測試環境
+  staging:
+    host: staging.example.com
+    port: 22
+    user: deployer
+    path: /var/www/staging
+    branch: staging
+    python_version: "3.11"
+    env_vars:
+      ENV: staging
+      DEBUG: "false"
+      LOG_LEVEL: info
+    backup:
+      enabled: true
+      keep_count: 5
+
+  # 生產環境
+  production:
+    host: production.example.com
+    port: 22
+    user: deployer
+    path: /var/www/production
+    branch: main
+    python_version: "3.11"
+    env_vars:
+      ENV: production
+      DEBUG: "false"
+      LOG_LEVEL: warning
+    backup:
+      enabled: true
+      keep_count: 10
+    security:
+      ssl_enabled: true
+      firewall_enabled: true
+
+# Docker 配置
+docker:
+  # 映像設定
+  image:
+    name: example-app
+    registry: docker.io
+    repository: myorg/example-app
+    tag_format: "{version}-{timestamp}"
+
+  # Dockerfile 設定
+  build:
+    dockerfile: Dockerfile
+    context: .
+    target: production
+    build_args:
+      - PYTHON_VERSION=3.11
+      - NODE_ENV=production
+    cache_from:
+      - myorg/example-app:latest
+
+  # 容器運行設定
+  run:
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./logs:/app/logs"
+      - "./data:/app/data"
+    environment:
+      - ENV=production
+    restart_policy: unless-stopped
+
+  # Docker Compose 設定
+  compose:
+    file: docker-compose.yml
+    project_name: example-app
+    services:
+      - web
+      - db
+      - redis
+
+# Kubernetes 配置
+kubernetes:
+  # 集群設定
+  cluster:
+    name: production-cluster
+    context: production
+    namespace: example-app
+
+  # 部署設定
+  deployment:
+    manifests:
+      - k8s/deployment.yaml
+      - k8s/service.yaml
+      - k8s/ingress.yaml
+    replicas:
+      min: 3
+      max: 10
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+  # Helm 設定
+  helm:
+    chart: ./helm/example-app
+    release_name: example-app
+    values_file: helm/values.yaml
+    values:
+      image:
+        tag: latest
+      ingress:
+        enabled: true
+        host: example.com
+
+# 部署前檢查
+pre_deploy:
+  checks:
+    # 執行測試
+    - name: run_tests
+      enabled: true
+      command: python test_runner.py --coverage
+      required: true
+
+    # 檢查程式碼格式
+    - name: check_formatting
+      enabled: true
+      command: python code_formatter.py . --check
+      required: true
+
+    # 檢查依賴安全性
+    - name: security_scan
+      enabled: true
+      command: python dependency_checker.py --security
+      required: true
+
+    # Lint 檢查
+    - name: lint
+      enabled: true
+      command: flake8 src/
+      required: false
+
+    # 型別檢查
+    - name: type_check
+      enabled: true
+      command: mypy src/
+      required: false
+
+  # 建構步驟
+  build:
+    - name: install_dependencies
+      command: pip install -r requirements.txt
+    - name: compile_assets
+      command: npm run build
+    - name: collect_static
+      command: python manage.py collectstatic --noinput
+
+# 部署步驟
+deploy:
+  strategy: rolling_update  # rolling_update, blue_green, canary
+
+  steps:
+    # 1. 準備
+    - name: prepare
+      actions:
+        - backup_current_version
+        - download_dependencies
+        - setup_environment
+
+    # 2. 部署
+    - name: deploy
+      actions:
+        - stop_old_version
+        - deploy_new_version
+        - run_migrations
+        - start_new_version
+
+    # 3. 驗證
+    - name: verify
+      actions:
+        - health_check
+        - smoke_tests
+        - performance_check
+
+  # 滾動更新設定
+  rolling_update:
+    max_surge: 1
+    max_unavailable: 0
+    timeout: 300
+
+  # 藍綠部署設定
+  blue_green:
+    traffic_split:
+      blue: 100
+      green: 0
+    verification_time: 300
+
+  # 金絲雀部署設定
+  canary:
+    stages:
+      - percentage: 10
+        duration: 300
+      - percentage: 50
+        duration: 600
+      - percentage: 100
+
+# 健康檢查
+health_check:
+  enabled: true
+  url: /health
+  method: GET
+  timeout: 30
+  retries: 3
+  interval: 5
+  expected_status: 200
+  expected_response:
+    status: ok
+
+# 煙霧測試
+smoke_tests:
+  enabled: true
+  tests:
+    - name: api_health
+      endpoint: /api/health
+      method: GET
+      expected_status: 200
+
+    - name: database_connection
+      endpoint: /api/db-check
+      method: GET
+      expected_status: 200
+
+    - name: cache_connection
+      endpoint: /api/cache-check
+      method: GET
+      expected_status: 200
+
+# 部署後動作
+post_deploy:
+  actions:
+    # 健康檢查
+    - name: health_check
+      enabled: true
+      retry: 3
+
+    # 通知團隊
+    - name: notify_team
+      enabled: true
+      channels:
+        - slack
+        - email
+      message: "部署完成: {version} to {environment}"
+
+    # 清理舊版本
+    - name: cleanup
+      enabled: true
+      keep_versions: 5
+
+    # 更新監控
+    - name: update_monitoring
+      enabled: true
+      dashboards:
+        - grafana
+        - datadog
+
+# 回滾設定
+rollback:
+  # 自動回滾
+  auto_rollback:
+    enabled: true
+    triggers:
+      - health_check_failed
+      - error_rate_threshold: 5%
+      - response_time_threshold: 2000ms
+
+  # 回滾策略
+  strategy: previous_version  # previous_version, specific_version
+  keep_versions: 5
+  timeout: 300
+
+# 通知設定
+notifications:
+  # Slack
+  slack:
+    enabled: true
+    webhook_url: "${SLACK_WEBHOOK_URL}"
+    channel: "#deployments"
+    events:
+      - deploy_started
+      - deploy_completed
+      - deploy_failed
+      - rollback_triggered
+
+  # Email
+  email:
+    enabled: true
+    smtp_host: smtp.gmail.com
+    smtp_port: 587
+    from: deploy@example.com
+    to:
+      - team@example.com
+    events:
+      - deploy_completed
+      - deploy_failed
+
+  # Webhook
+  webhook:
+    enabled: false
+    url: https://hooks.example.com/deploy
+    method: POST
+    headers:
+      Authorization: "Bearer ${WEBHOOK_TOKEN}"
+
+# 監控整合
+monitoring:
+  # Prometheus
+  prometheus:
+    enabled: true
+    metrics_endpoint: /metrics
+    scrape_interval: 15s
+
+  # Grafana
+  grafana:
+    enabled: true
+    dashboard_id: example-app
+    alerts:
+      - name: high_error_rate
+        condition: error_rate > 5%
+        action: notify_team
+
+  # Sentry
+  sentry:
+    enabled: true
+    dsn: "${SENTRY_DSN}"
+    environment: "${ENV}"
+    release: "${VERSION}"
+
+# 日誌設定
+logging:
+  level: info
+  format: json
+  outputs:
+    - console
+    - file
+  file:
+    path: /var/log/deploy.log
+    max_size: 100MB
+    backup_count: 5
+
+# 安全設定
+security:
+  # SSH 金鑰
+  ssh:
+    private_key: ~/.ssh/deploy_key
+    known_hosts: ~/.ssh/known_hosts
+
+  # 加密
+  encryption:
+    enabled: true
+    algorithm: AES256
+
+  # 憑證
+  secrets:
+    provider: vault  # vault, aws_secrets_manager, env
+    vault_url: https://vault.example.com
+    vault_token: "${VAULT_TOKEN}"
