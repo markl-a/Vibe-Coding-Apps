@@ -4,7 +4,10 @@ PCB 熱分析器主模組
 
 import numpy as np
 from typing import Dict, List, Tuple, Optional
-from .materials import MaterialDatabase
+try:
+    from .materials import MaterialDatabase
+except ImportError:
+    from materials import MaterialDatabase
 
 
 class ThermalAnalyzer:
@@ -178,7 +181,10 @@ class ThermalAnalyzer:
         Returns:
             溫度網格
         """
-        from .solvers.fdm_solver import fdm_steady_state
+        try:
+            from .solvers.fdm_solver import fdm_steady_state
+        except ImportError:
+            from solvers.fdm_solver import fdm_steady_state
 
         # 獲取材料屬性
         material_name = self.boundary_conditions['substrate_material']
