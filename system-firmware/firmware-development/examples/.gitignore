@@ -1,0 +1,16 @@
+# 編譯生成的文件
+build/
+*.o
+*.a
+*.so
+*.exe
+
+# 編輯器臨時文件
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# 調試文件
+*.dSYM/
