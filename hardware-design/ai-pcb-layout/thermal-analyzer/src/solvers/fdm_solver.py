@@ -39,30 +39,24 @@ def fdm_steady_state(power_grid: np.ndarray,
     dx = dy = resolution / 1000.0
 
     # 穩定性參數
-    # 使用逐次超鬆弛法（SOR）加速收斂
-    omega = 1.5  # 鬆弛因子
+    # 使用 Gauss-Seidel 方法（omega = 1.0 更穩定）
+    omega = 1.0  # 鬆弛因子
 
     for iteration in range(max_iterations):
         temp_old = temp.copy()
 
         for i in range(1, h - 1):
             for j in range(1, w - 1):
-                # 拉普拉斯算子（5 點差分）
-                laplacian = (
-                    temp_old[i+1, j] + temp_old[i-1, j] +
-                    temp_old[i, j+1] + temp_old[i, j-1] -
-                    4 * temp_old[i, j]
-                ) / (dx * dx)
+                # 熱源項（W/m³轉換為溫度增量）
+                # Q = k * ∇²T，所以 ∇²T = Q/k
+                # 簡化：功率密度直接作為熱源
+                q_term = power_grid[i, j] * dx * dx / thermal_conductivity
 
-                # 熱源項
-                heat_source = power_grid[i, j] / thermal_conductivity
+                # Gauss-Seidel 更新（使用已更新的鄰居值）
+                temp_new = (temp[i+1, j] + temp[i-1, j] +
+                           temp[i, j+1] + temp[i, j-1] + q_term) / 4.0
 
-                # 更新溫度（SOR）
-                temp_new = (temp_old[i+1, j] + temp_old[i-1, j] +
-                           temp_old[i, j+1] + temp_old[i, j-1] +
-                           heat_source * dx * dx) / 4.0
-
-                temp[i, j] = temp_old[i, j] + omega * (temp_new - temp_old[i, j])
+                temp[i, j] = omega * temp_new + (1 - omega) * temp_old[i, j]
 
         # 邊界條件：對流邊界
         # 頂部

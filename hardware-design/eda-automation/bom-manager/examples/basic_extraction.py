@@ -2,7 +2,10 @@
 基本 BOM 提取範例
 """
 
-from src.bom_manager import BOMManager
+import sys
+sys.path.insert(0, '../src')
+
+from bom_manager import BOMManager
 
 
 def main():
