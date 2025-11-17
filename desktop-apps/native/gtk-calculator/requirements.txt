@@ -1,0 +1,18 @@
+# GTK Calculator Dependencies
+# Note: These are system packages, install via your package manager
+
+# PyGObject (Python bindings for GTK)
+PyGObject>=3.42.0
+
+# Note: You also need the following system packages:
+# - GTK 4
+# - libadwaita
+#
+# Install on Debian/Ubuntu:
+#   sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-4.0 gir1.2-adw-1
+#
+# Install on Fedora:
+#   sudo dnf install python3-gobject gtk4 libadwaita
+#
+# Install on Arch Linux:
+#   sudo pacman -S python-gobject gtk4 libadwaita

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Picker</title>
+    <link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🎨 Color Picker</h1>
+        </header>
+
+        <div class="main-picker">
+            <div class="color-display" id="colorDisplay">
+                <input type="color" id="colorInput" value="#667eea">
+            </div>
+            <div class="color-info">
+                <div class="color-values">
+                    <div class="value-group">
+                        <label>HEX</label>
+                        <input type="text" id="hexValue" value="#667eea" readonly>
+                        <button class="copy-btn" data-target="hexValue">📋</button>
+                    </div>
+                    <div class="value-group">
+                        <label>RGB</label>
+                        <input type="text" id="rgbValue" value="rgb(102, 126, 234)" readonly>
+                        <button class="copy-btn" data-target="rgbValue">📋</button>
+                    </div>
+                    <div class="value-group">
+                        <label>HSL</label>
+                        <input type="text" id="hslValue" value="hsl(228, 76%, 66%)" readonly>
+                        <button class="copy-btn" data-target="hslValue">📋</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="palettes">
+            <div class="palette-section">
+                <h3>互補色</h3>
+                <div class="color-row" id="complementary"></div>
+            </div>
+
+            <div class="palette-section">
+                <h3>類似色</h3>
+                <div class="color-row" id="analogous"></div>
+            </div>
+
+            <div class="palette-section">
+                <h3>三角色</h3>
+                <div class="color-row" id="triadic"></div>
+            </div>
+
+            <div class="palette-section">
+                <h3>單色系</h3>
+                <div class="color-row" id="monochromatic"></div>
+            </div>
+        </div>
+
+        <div class="history-section">
+            <h3>顏色歷史</h3>
+            <div class="color-history" id="colorHistory">
+                <p class="empty-hint">尚無歷史記錄</p>
+            </div>
+            <button class="btn-clear" id="clearHistory">清除歷史</button>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>
