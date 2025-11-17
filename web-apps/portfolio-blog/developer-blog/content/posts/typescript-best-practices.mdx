@@ -1,0 +1,308 @@
+---
+title: "TypeScript Best Practices for Modern Development"
+date: "2024-01-10"
+description: "Discover essential TypeScript best practices, tips, and patterns to write safer and more maintainable code."
+tags: ["TypeScript", "JavaScript", "Best Practices", "Programming"]
+author: "Developer Blog"
+image: "/images/typescript.jpg"
+---
+
+TypeScript has become the de facto standard for building large-scale JavaScript applications. In this article, we'll explore best practices that will help you write better TypeScript code.
+
+## Why TypeScript?
+
+TypeScript offers several advantages over plain JavaScript:
+
+- **Type Safety**: Catch errors at compile time instead of runtime
+- **Better IDE Support**: Intelligent code completion and refactoring
+- **Self-documenting**: Types serve as documentation
+- **Scalability**: Easier to maintain large codebases
+
+## Use Strict Mode
+
+Always enable strict mode in your `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true
+  }
+}
+```
+
+This enables all strict type-checking options, helping you catch potential bugs early.
+
+## Avoid Using `any`
+
+The `any` type defeats the purpose of TypeScript. Instead, use more specific types:
+
+```typescript
+// Bad
+function processData(data: any) {
+  return data.value;
+}
+
+// Good
+interface Data {
+  value: string;
+}
+
+function processData(data: Data) {
+  return data.value;
+}
+
+// Better - using generics
+function processData<T extends { value: unknown }>(data: T) {
+  return data.value;
+}
+```
+
+## Use Type Inference
+
+TypeScript is smart about inferring types. Let it do the work:
+
+```typescript
+// Unnecessary type annotation
+const name: string = 'John';
+const age: number = 30;
+
+// Better - let TypeScript infer
+const name = 'John';
+const age = 30;
+
+// But do annotate function parameters and return types
+function greet(name: string): string {
+  return `Hello, ${name}!`;
+}
+```
+
+## Prefer Interfaces Over Type Aliases for Objects
+
+While both work, interfaces are more extensible:
+
+```typescript
+// Using interface
+interface User {
+  name: string;
+  email: string;
+}
+
+// Extending is cleaner
+interface Admin extends User {
+  role: 'admin';
+}
+
+// Type aliases work too, but...
+type UserType = {
+  name: string;
+  email: string;
+};
+
+// ...intersection types are less readable
+type AdminType = UserType & {
+  role: 'admin';
+};
+```
+
+## Use Union Types for Multiple Possibilities
+
+Union types are perfect when a value can be one of several types:
+
+```typescript
+type Status = 'pending' | 'success' | 'error';
+
+function handleStatus(status: Status) {
+  switch (status) {
+    case 'pending':
+      console.log('Loading...');
+      break;
+    case 'success':
+      console.log('Done!');
+      break;
+    case 'error':
+      console.log('Something went wrong');
+      break;
+  }
+}
+```
+
+## Leverage Utility Types
+
+TypeScript provides powerful utility types:
+
+```typescript
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+}
+
+// Pick specific properties
+type PublicUser = Pick<User, 'id' | 'name'>;
+
+// Omit specific properties
+type UserWithoutPassword = Omit<User, 'password'>;
+
+// Make all properties optional
+type PartialUser = Partial<User>;
+
+// Make all properties required
+type RequiredUser = Required<Partial<User>>;
+
+// Make all properties readonly
+type ReadonlyUser = Readonly<User>;
+```
+
+## Use `unknown` Instead of `any` for Unknown Types
+
+When you don't know the type, use `unknown` instead of `any`:
+
+```typescript
+// Bad
+function parseJSON(json: string): any {
+  return JSON.parse(json);
+}
+
+// Good
+function parseJSON(json: string): unknown {
+  return JSON.parse(json);
+}
+
+// Usage requires type checking
+const result = parseJSON('{"name": "John"}');
+if (typeof result === 'object' && result !== null && 'name' in result) {
+  console.log(result.name);
+}
+```
+
+## Prefer `const` Assertions for Literal Types
+
+Use `as const` to create narrow, immutable types:
+
+```typescript
+// Without const assertion
+const colors = ['red', 'green', 'blue']; // string[]
+
+// With const assertion
+const colors = ['red', 'green', 'blue'] as const; // readonly ["red", "green", "blue"]
+
+// Perfect for configuration objects
+const config = {
+  api: 'https://api.example.com',
+  timeout: 5000,
+} as const;
+```
+
+## Use Type Guards for Runtime Checks
+
+Create type guards to safely narrow types:
+
+```typescript
+interface Dog {
+  bark(): void;
+}
+
+interface Cat {
+  meow(): void;
+}
+
+function isDog(animal: Dog | Cat): animal is Dog {
+  return (animal as Dog).bark !== undefined;
+}
+
+function makeSound(animal: Dog | Cat) {
+  if (isDog(animal)) {
+    animal.bark(); // TypeScript knows it's a Dog
+  } else {
+    animal.meow(); // TypeScript knows it's a Cat
+  }
+}
+```
+
+## Use `never` Type for Exhaustiveness Checking
+
+Ensure you handle all cases in a union type:
+
+```typescript
+type Shape = Circle | Square | Triangle;
+
+function getArea(shape: Shape): number {
+  switch (shape.kind) {
+    case 'circle':
+      return Math.PI * shape.radius ** 2;
+    case 'square':
+      return shape.size ** 2;
+    case 'triangle':
+      return (shape.base * shape.height) / 2;
+    default:
+      // This ensures all cases are handled
+      const exhaustiveCheck: never = shape;
+      throw new Error(`Unhandled shape: ${exhaustiveCheck}`);
+  }
+}
+```
+
+## Organize Types in Separate Files
+
+Keep your types organized:
+
+```typescript
+// types/user.ts
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+// types/post.ts
+export interface Post {
+  id: number;
+  title: string;
+  author: User;
+}
+
+// types/index.ts
+export * from './user';
+export * from './post';
+```
+
+## Use Template Literal Types
+
+Create sophisticated string types:
+
+```typescript
+type EventName = 'click' | 'hover' | 'focus';
+type EventHandler = `on${Capitalize<EventName>}`;
+// Result: "onClick" | "onHover" | "onFocus"
+
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+type Endpoint = `/api/${string}`;
+type ApiRoute = `${HttpMethod} ${Endpoint}`;
+// Result: "GET /api/users" | "POST /api/users" | etc.
+```
+
+## Conclusion
+
+Following these TypeScript best practices will help you write more maintainable, type-safe code. Remember:
+
+- Enable strict mode
+- Avoid `any`, use specific types
+- Leverage TypeScript's type inference
+- Use utility types and type guards
+- Keep your types organized
+
+TypeScript is a powerful tool that, when used correctly, can significantly improve your development experience and code quality.
+
+## Further Reading
+
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
+- [TypeScript Deep Dive](https://basarat.gitbook.io/typescript/)
+- [Type Challenges](https://github.com/type-challenges/type-challenges)
