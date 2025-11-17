@@ -1,0 +1,18 @@
+{
+  "name": "cookie-cleaner-pro",
+  "version": "1.0.0",
+  "description": "Smart cookie manager and cleaner for privacy protection",
+  "main": "src/background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cookie",
+    "privacy",
+    "cleaner",
+    "security",
+    "browser-extension"
+  ],
+  "author": "",
+  "license": "MIT"
+}

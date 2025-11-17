@@ -1,0 +1,19 @@
+{
+  "name": "http-header-viewer",
+  "version": "1.0.0",
+  "description": "Professional HTTP header viewer and analyzer for developers",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "http",
+    "headers",
+    "developer-tools",
+    "api",
+    "debugging",
+    "security"
+  ],
+  "author": "",
+  "license": "MIT"
+}
