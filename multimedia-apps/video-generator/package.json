@@ -1,0 +1,56 @@
+{
+  "name": "video-generator",
+  "version": "1.0.0",
+  "description": "Professional video generation application with multiple modes and effects",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
+  },
+  "keywords": [
+    "video",
+    "generator",
+    "editor",
+    "electron",
+    "multimedia"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^27.0.0",
+    "canvas": "^2.11.2",
+    "fluent-ffmpeg": "^2.1.2",
+    "gifencoder": "^2.0.1",
+    "node-datachannel": "^0.6.0"
+  },
+  "devDependencies": {
+    "electron-builder": "^24.6.4"
+  },
+  "build": {
+    "appId": "com.videogenerator.app",
+    "productName": "Video Generator",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "build/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "build/icon.png"
+    }
+  }
+}

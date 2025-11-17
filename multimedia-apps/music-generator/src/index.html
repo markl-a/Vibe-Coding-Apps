@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Music Generator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 顶部标题栏 -->
+    <header class="header">
+      <h1>
+        <span class="icon">🎵</span>
+        AI Music Generator
+      </h1>
+      <div class="status-bar">
+        <span id="status" class="status">Ready to generate music</span>
+      </div>
+    </header>
+
+    <div class="main-content">
+      <!-- 左侧控制面板 -->
+      <aside class="control-panel">
+        <div class="panel-section">
+          <h2>Generation Mode</h2>
+          <select id="mode" class="select-input">
+            <option value="full">Full Composition</option>
+            <option value="random">Random Melody</option>
+            <option value="markov">Markov Chain</option>
+            <option value="chord">Chord Progression</option>
+            <option value="rhythm">Rhythm Pattern</option>
+          </select>
+        </div>
+
+        <div class="panel-section">
+          <h2>Musical Parameters</h2>
+
+          <div class="param-group">
+            <label for="scale">Scale</label>
+            <select id="scale" class="select-input">
+              <option value="major">Major</option>
+              <option value="minor">Minor</option>
+              <option value="pentatonic">Pentatonic</option>
+              <option value="blues">Blues</option>
+              <option value="dorian">Dorian</option>
+              <option value="mixolydian">Mixolydian</option>
+              <option value="harmonic_minor">Harmonic Minor</option>
+            </select>
+          </div>
+
+          <div class="param-group">
+            <label for="bpm">
+              BPM: <span id="bpmValue" class="param-value">120</span>
+            </label>
+            <input type="range" id="bpm" min="60" max="200" value="120" class="slider">
+          </div>
+
+          <div class="param-group">
+            <label for="bars">
+              Bars: <span id="barsValue" class="param-value">8</span>
+            </label>
+            <input type="range" id="bars" min="2" max="32" value="8" class="slider">
+          </div>
+
+          <div class="param-group">
+            <label for="timbre">Timbre</label>
+            <select id="timbre" class="select-input">
+              <option value="piano">Piano</option>
+              <option value="organ">Organ</option>
+              <option value="synth">Synth</option>
+              <option value="bell">Bell</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="panel-section" id="styleSection">
+          <h2>Style Options</h2>
+
+          <div class="param-group" id="fullStyleGroup">
+            <label for="fullStyle">Composition Style</label>
+            <select id="fullStyle" class="select-input">
+              <option value="pop">Pop</option>
+              <option value="jazz">Jazz</option>
+              <option value="blues">Blues</option>
+              <option value="sad">Sad/Melancholic</option>
+              <option value="ambient">Ambient</option>
+            </select>
+          </div>
+
+          <div class="param-group" id="chordStyleGroup" style="display: none;">
+            <label for="chordStyle">Chord Style</label>
+            <select id="chordStyle" class="select-input">
+              <option value="pop">Pop</option>
+              <option value="jazz">Jazz</option>
+              <option value="blues">Blues</option>
+              <option value="sad">Sad</option>
+              <option value="ambient">Ambient</option>
+            </select>
+          </div>
+
+          <div class="param-group" id="rhythmPatternGroup" style="display: none;">
+            <label for="rhythmPattern">Rhythm Pattern</label>
+            <select id="rhythmPattern" class="select-input">
+              <option value="straight">Straight</option>
+              <option value="syncopated">Syncopated</option>
+              <option value="triplet">Triplet</option>
+              <option value="swing">Swing</option>
+              <option value="reggae">Reggae</option>
+              <option value="complex">Complex</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <h2>Actions</h2>
+          <button id="generateBtn" class="btn btn-primary">
+            <span class="icon">✨</span>
+            Generate Music
+          </button>
+        </div>
+      </aside>
+
+      <!-- 右侧主工作区 -->
+      <main class="workspace">
+        <!-- 可视化区域 -->
+        <section class="visualizer-section">
+          <div class="section-header">
+            <h2>Visualization</h2>
+            <div class="viz-controls">
+              <label class="radio-label">
+                <input type="radio" name="vizMode" value="waveform" checked>
+                <span>Waveform</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="vizMode" value="spectrum">
+                <span>Spectrum</span>
+              </label>
+            </div>
+          </div>
+          <div class="visualizer-container">
+            <canvas id="visualizer"></canvas>
+          </div>
+        </section>
+
+        <!-- 音符序列显示 -->
+        <section class="notes-section">
+          <div class="section-header">
+            <h2>Note Sequence</h2>
+          </div>
+          <div id="noteSequence" class="note-sequence">
+            <p class="placeholder">Generate music to see notes...</p>
+          </div>
+        </section>
+
+        <!-- 播放控制 -->
+        <section class="playback-section">
+          <div class="playback-controls">
+            <button id="playBtn" class="btn btn-control btn-play">
+              <span class="icon">▶</span>
+              Play
+            </button>
+            <button id="stopBtn" class="btn btn-control">
+              <span class="icon">⏹</span>
+              Stop
+            </button>
+          </div>
+        </section>
+
+        <!-- 导出选项 -->
+        <section class="export-section">
+          <div class="section-header">
+            <h2>Export</h2>
+          </div>
+          <div class="export-controls">
+            <button id="exportWavBtn" class="btn btn-export">
+              <span class="icon">💾</span>
+              Export WAV
+            </button>
+            <button id="exportMidiBtn" class="btn btn-export">
+              <span class="icon">🎹</span>
+              Export MIDI
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // 动态显示/隐藏样式选项
+    document.getElementById('mode').addEventListener('change', (e) => {
+      const mode = e.target.value;
+
+      // 隐藏所有样式选项
+      document.getElementById('fullStyleGroup').style.display = 'none';
+      document.getElementById('chordStyleGroup').style.display = 'none';
+      document.getElementById('rhythmPatternGroup').style.display = 'none';
+
+      // 根据模式显示相应的选项
+      if (mode === 'full') {
+        document.getElementById('fullStyleGroup').style.display = 'block';
+      } else if (mode === 'chord') {
+        document.getElementById('chordStyleGroup').style.display = 'block';
+      } else if (mode === 'rhythm') {
+        document.getElementById('rhythmPatternGroup').style.display = 'block';
+      }
+    });
+  </script>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation Generator - 专业动画生成器</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>🎨 动画生成器</h1>
+                <p>Animation Generator</p>
+            </div>
+
+            <!-- 动画类型选择 -->
+            <section class="section">
+                <h2>动画类型</h2>
+                <div class="animation-types">
+                    <button class="type-btn active" data-type="particles">
+                        <span class="icon">✨</span>
+                        <span class="label">粒子效果</span>
+                    </button>
+                    <button class="type-btn" data-type="shapes">
+                        <span class="icon">⬡</span>
+                        <span class="label">形状动画</span>
+                    </button>
+                    <button class="type-btn" data-type="path">
+                        <span class="icon">〰️</span>
+                        <span class="label">路径动画</span>
+                    </button>
+                    <button class="type-btn" data-type="text">
+                        <span class="icon">Aa</span>
+                        <span class="label">文字动画</span>
+                    </button>
+                    <button class="type-btn" data-type="wave">
+                        <span class="icon">〜</span>
+                        <span class="label">波形动画</span>
+                    </button>
+                    <button class="type-btn" data-type="particle-text">
+                        <span class="icon">💫</span>
+                        <span class="label">粒子文字</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- 预设模板 -->
+            <section class="section">
+                <h2>预设模板</h2>
+                <select id="presetSelect" class="preset-select">
+                    <option value="">选择预设...</option>
+                    <option value="fireworks">烟花爆炸</option>
+                    <option value="rain">下雨场景</option>
+                    <option value="snow">飘雪效果</option>
+                    <option value="stars">星空闪烁</option>
+                    <option value="explosion">粒子爆炸</option>
+                    <option value="wave">波浪涌动</option>
+                    <option value="spiral">DNA螺旋</option>
+                    <option value="morph">几何变换</option>
+                    <option value="typing">打字机效果</option>
+                    <option value="galaxy">星系旋转</option>
+                </select>
+            </section>
+
+            <!-- 参数控制 -->
+            <section class="section parameters-section">
+                <h2>参数设置</h2>
+                <div id="parametersContainer" class="parameters">
+                    <!-- 通用参数 -->
+                    <div class="param-group">
+                        <label>
+                            <span class="param-label">画布大小</span>
+                            <div class="size-inputs">
+                                <input type="number" id="canvasWidth" value="800" min="400" max="1920" step="100">
+                                <span>×</span>
+                                <input type="number" id="canvasHeight" value="600" min="300" max="1080" step="100">
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="param-group">
+                        <label>
+                            <span class="param-label">帧率 (FPS)</span>
+                            <div class="slider-container">
+                                <input type="range" id="fpsSlider" min="15" max="60" value="30" step="1">
+                                <span class="slider-value" id="fpsValue">30</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="param-group">
+                        <label>
+                            <span class="param-label">动画速度</span>
+                            <div class="slider-container">
+                                <input type="range" id="speedSlider" min="0.1" max="3" value="1" step="0.1">
+                                <span class="slider-value" id="speedValue">1.0x</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="param-group">
+                        <label>
+                            <span class="param-label">持续时间 (秒)</span>
+                            <div class="slider-container">
+                                <input type="range" id="durationSlider" min="1" max="10" value="3" step="0.5">
+                                <span class="slider-value" id="durationValue">3.0</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- 粒子参数 -->
+                    <div id="particleParams" class="dynamic-params">
+                        <div class="param-group">
+                            <label>
+                                <span class="param-label">粒子数量</span>
+                                <div class="slider-container">
+                                    <input type="range" id="particleCount" min="10" max="500" value="100" step="10">
+                                    <span class="slider-value" id="particleCountValue">100</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="param-group">
+                            <label>
+                                <span class="param-label">粒子大小</span>
+                                <div class="slider-container">
+                                    <input type="range" id="particleSize" min="1" max="20" value="4" step="0.5">
+                                    <span class="slider-value" id="particleSizeValue">4</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="param-group">
+                            <label>
+                                <span class="param-label">主色调</span>
+                                <input type="color" id="particleColor" value="#00d4ff" class="color-input">
+                            </label>
+                        </div>
+
+                        <div class="param-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="randomColors">
+                                <span>随机颜色</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 背景设置 -->
+                    <div class="param-group">
+                        <label>
+                            <span class="param-label">背景类型</span>
+                            <select id="bgType" class="param-select">
+                                <option value="transparent">透明</option>
+                                <option value="solid">纯色</option>
+                                <option value="gradient">渐变</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="param-group" id="bgColorGroup">
+                        <label>
+                            <span class="param-label">背景颜色</span>
+                            <input type="color" id="bgColor" value="#1a1a2e" class="color-input">
+                        </label>
+                    </div>
+                </div>
+            </section>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 工具栏 -->
+            <div class="toolbar">
+                <div class="toolbar-left">
+                    <button id="playBtn" class="toolbar-btn primary" title="播放/暂停 (Space)">
+                        <span id="playIcon">▶</span>
+                        <span id="playText">播放</span>
+                    </button>
+                    <button id="resetBtn" class="toolbar-btn" title="重置 (R)">
+                        <span>↻</span>
+                        <span>重置</span>
+                    </button>
+                </div>
+
+                <div class="toolbar-center">
+                    <div class="status-info">
+                        <span id="statusText">就绪</span>
+                        <span class="separator">|</span>
+                        <span id="frameInfo">帧: 0/90</span>
+                    </div>
+                </div>
+
+                <div class="toolbar-right">
+                    <button id="exportBtn" class="toolbar-btn success" title="导出动画 (Ctrl+E)">
+                        <span>💾</span>
+                        <span>导出</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Canvas 预览区 -->
+            <div class="canvas-container">
+                <canvas id="animationCanvas"></canvas>
+                <div id="loadingOverlay" class="loading-overlay hidden">
+                    <div class="spinner"></div>
+                    <p id="loadingText">正在处理...</p>
+                </div>
+            </div>
+
+            <!-- 底部控制栏 -->
+            <div class="bottom-controls">
+                <div class="timeline">
+                    <div class="timeline-header">
+                        <span class="time-label" id="currentTime">0.0s</span>
+                        <span class="time-label" id="totalTime">3.0s</span>
+                    </div>
+                    <div class="timeline-track">
+                        <div id="timelineProgress" class="timeline-progress"></div>
+                        <input type="range" id="timelineSlider" min="0" max="100" value="0" step="0.1" class="timeline-slider">
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 右侧面板 -->
+        <aside class="right-panel">
+            <div class="panel-section">
+                <h2>导出设置</h2>
+
+                <div class="export-options">
+                    <div class="param-group">
+                        <label>
+                            <span class="param-label">输出格式</span>
+                            <select id="exportFormat" class="param-select">
+                                <option value="gif">GIF 动画</option>
+                                <option value="mp4">MP4 视频</option>
+                                <option value="webm">WebM 视频</option>
+                                <option value="png">PNG 序列</option>
+                                <option value="webp">WebP 动画</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="param-group">
+                        <label>
+                            <span class="param-label">质量</span>
+                            <div class="slider-container">
+                                <input type="range" id="exportQuality" min="1" max="100" value="85" step="1">
+                                <span class="slider-value" id="qualityValue">85%</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="param-group">
+                        <label>
+                            <span class="param-label">缩放比例</span>
+                            <select id="exportScale" class="param-select">
+                                <option value="0.5">50% (更小)</option>
+                                <option value="1" selected>100% (原始)</option>
+                                <option value="1.5">150%</option>
+                                <option value="2">200% (高清)</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="param-group" id="loopGroup">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="exportLoop" checked>
+                            <span>循环播放</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h2>预览信息</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">分辨率:</span>
+                        <span class="info-value" id="infoResolution">800×600</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">帧率:</span>
+                        <span class="info-value" id="infoFPS">30 FPS</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">总帧数:</span>
+                        <span class="info-value" id="infoFrames">90</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">当前帧:</span>
+                        <span class="info-value" id="infoCurrentFrame">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h2>快捷键</h2>
+                <div class="shortcuts">
+                    <div class="shortcut-item">
+                        <kbd>Space</kbd>
+                        <span>播放/暂停</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>R</kbd>
+                        <span>重置动画</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl+E</kbd>
+                        <span>导出动画</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl+S</kbd>
+                        <span>保存预设</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl+O</kbd>
+                        <span>打开预设</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>F11</kbd>
+                        <span>全屏预览</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- 导出进度对话框 -->
+    <div id="exportModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>导出动画</h3>
+            <div class="export-progress">
+                <div class="progress-bar">
+                    <div id="exportProgressBar" class="progress-fill"></div>
+                </div>
+                <p id="exportStatus">准备导出...</p>
+                <p id="exportProgress">0%</p>
+            </div>
+            <div class="modal-actions">
+                <button id="cancelExport" class="btn btn-secondary">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="animationEngine.js"></script>
+    <script src="renderer.js"></script>
+</body>
+</html>

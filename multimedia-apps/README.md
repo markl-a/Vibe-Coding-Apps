@@ -563,19 +563,33 @@ AI 會提供完整的實現方案。
 ```
 multimedia-apps/
 ├── README.md (本文檔)
-├── image-viewer/          # 圖片查看器 ✅
-├── music-player/          # 音樂播放器 ✅
-├── video-player/          # 視頻播放器
-├── screenshot-tool/       # 截圖工具 ✅ (新增)
-├── image-converter/       # 圖片轉檔工具 ✅ (新增)
-├── gif-maker/            # GIF 製作工具 ✅ (新增)
-├── audio-editor/         # 音頻編輯器 ✅ (新增)
-├── audio-recorder/       # 音頻錄製工具 ✅
-├── video-editor/         # 視頻編輯器
-├── video-converter/      # 視頻轉檔工具 ✅ (新增)
-├── video-recorder/       # 屏幕錄製工具 ✅
-├── webcam-capture/       # 攝像頭捕捉工具 ✅
-└── live-streaming/       # 直播應用
+│
+├── 📺 視頻處理
+│   ├── video-player/          # 視頻播放器 ✅
+│   ├── video-editor/          # 視頻編輯器 ✅
+│   ├── video-converter/       # 視頻轉檔工具 ✅
+│   ├── video-recorder/        # 屏幕錄製工具 ✅
+│   └── video-generator/       # AI視頻生成器 ✅ 🆕
+│
+├── 🎵 音頻處理
+│   ├── music-player/          # 音樂播放器 ✅
+│   ├── audio-editor/          # 音頻編輯器 ✅
+│   ├── audio-recorder/        # 音頻錄製工具 ✅
+│   ├── music-generator/       # AI音樂生成器 ✅ 🆕
+│   └── voice-generator/       # AI語音生成器 ✅ 🆕
+│
+├── 🖼️ 圖像處理
+│   ├── image-viewer/          # 圖片查看器 ✅
+│   ├── image-converter/       # 圖片轉檔工具 ✅
+│   ├── screenshot-tool/       # 截圖工具 ✅
+│   ├── webcam-capture/        # 攝像頭捕捉工具 ✅
+│   └── gif-maker/            # GIF 製作工具 ✅
+│
+├── 🎬 動畫與特效
+│   └── animation-generator/   # AI動畫生成器 ✅ 🆕
+│
+└── 📡 直播串流
+    └── live-streaming/        # 直播推流應用 ✅
 ```
 
 ### 🆕 新增專案
@@ -680,6 +694,140 @@ multimedia-apps/
 - 支持 WAV、MP3、OGG、FLAC 等格式
 
 **技術棧**：Electron + Web Audio API + Canvas API
+
+---
+
+## 🤖 生成式 AI 應用（全新！）
+
+### 🎵 music-generator - AI 音樂生成器 ✅ 🆕
+
+使用算法和 AI 技術生成音樂的創新應用。
+
+**核心功能**：
+- **多種生成模式**：
+  - 完整作曲（旋律 + 和弦 + 節奏）
+  - 隨機旋律生成
+  - 馬可夫鏈智能旋律
+  - 和弦進行（Pop/Jazz/Blues/Sad/Ambient）
+  - 節奏模式生成
+- **音樂參數控制**：
+  - 7 種音階（大調/小調/五聲/布魯斯等）
+  - BPM: 60-200
+  - 4 種音色（Piano/Organ/Synth/Bell）
+- **實時可視化**：波形和頻譜顯示
+- **導出功能**：WAV、MIDI 格式
+
+**技術棧**：Electron + Tone.js + Web Audio API + Canvas
+
+**應用場景**：影片配樂、遊戲背景音樂、播客開場、冥想音樂
+
+---
+
+### 🗣️ voice-generator - AI 語音生成器 ✅ 🆕
+
+專業的文字轉語音（TTS）應用，支持多語言和豐富的語音參數。
+
+**核心功能**：
+- **文字轉語音**：基於 Web Speech API
+- **多語言音色**：支持中文、英文、日文、韓文等
+- **參數調節**：
+  - 語速：0.1x - 3.0x
+  - 音調：0.0 - 2.0
+  - 音量：0% - 100%
+- **SSML 支持**：高級語音標記語言
+- **波形可視化**：實時波形顯示
+- **音頻導出**：WAV、MP3、OGG 格式
+
+**技術棧**：Electron + Web Speech API + MediaRecorder API
+
+**應用場景**：有聲書、播客、視頻配音、IVR 系統、教育內容
+
+---
+
+### 💫 animation-generator - AI 動畫生成器 ✅ 🆕
+
+強大的程序化動畫生成工具，支持多種動畫類型和特效。
+
+**核心功能**：
+- **6 種動畫類型**：
+  - 粒子效果（煙花、下雨、飄雪、星空）
+  - 形狀動畫（幾何變換、旋轉）
+  - 路徑動畫（圓形、螺旋、無限符號）
+  - 文字動畫（打字機、閃爍）
+  - 波形動畫（多層波浪）
+  - 粒子文字（粒子聚合）
+- **10+ 預設模板**：煙花、下雨、飄雪、DNA螺旋、星系旋轉等
+- **參數控制**：畫布大小、幀率、速度、持續時間、顏色
+- **多格式導出**：GIF、MP4、WebM、PNG 序列、WebP
+
+**技術棧**：Electron + Canvas API + MediaRecorder API
+
+**應用場景**：視頻背景、網頁動畫、社交媒體、遊戲特效、演示文稿
+
+---
+
+### 🎬 video-generator - AI 視頻生成器 ✅ 🆕
+
+自動化視頻製作工具，從模板快速生成專業視頻。
+
+**核心功能**：
+- **4 種生成模式**：
+  - 幻燈片視頻（照片 + 轉場 + 音樂）
+  - 文字動畫視頻（9 種文字動畫）
+  - 模板視頻（5 種專業模板）
+  - 可視化視頻（柱狀圖/折線圖/餅圖等）
+- **12 種轉場效果**：Fade、Slide、Zoom、Wipe、Circle、Dissolve
+- **專業模板**：
+  - Simple Intro（簡單介紹）
+  - Product Showcase（產品展示）
+  - Social Media Post（社交媒體）
+  - Event Announcement（活動公告）
+  - Quote Video（名言視頻）
+- **7 種可視化**：柱狀圖、折線圖、餅圖、粒子、波形、螺旋、矩陣雨
+- **導出選項**：MP4、WebM、GIF，多種分辨率（360p-1080p）
+
+**技術棧**：Electron + Canvas API + FFmpeg
+
+**應用場景**：YouTube 介紹、產品宣傳、社交媒體、數據展示、活動預告
+
+---
+
+## 🌟 生成式 AI 應用的優勢
+
+### 為什麼要使用生成式 AI 多媒體工具？
+
+1. **快速原型**：幾分鐘內生成專業內容
+2. **降低門檻**：無需專業技能即可創作
+3. **靈感激發**：AI 幫助克服創作瓶頸
+4. **成本效益**：減少對昂貴軟體和專業人員的依賴
+5. **可定制性**：豐富的參數控制滿足個性化需求
+6. **批量生成**：自動化生產大量相似內容
+
+### 應用場景示例
+
+#### 內容創作者
+- 使用 **music-generator** 為影片生成背景音樂
+- 使用 **voice-generator** 製作旁白配音
+- 使用 **animation-generator** 創建片頭動畫
+- 使用 **video-generator** 快速製作宣傳片
+
+#### 市場營銷
+- 使用 **video-generator** 批量生成產品宣傳視頻
+- 使用 **animation-generator** 創建社交媒體動態圖
+- 使用 **voice-generator** 製作廣告配音
+- 使用 **music-generator** 創建品牌音頻標識
+
+#### 教育培訓
+- 使用 **voice-generator** 製作多語言課程
+- 使用 **video-generator** 生成數據可視化教學視頻
+- 使用 **animation-generator** 創建教學動畫
+- 使用 **music-generator** 生成背景音樂
+
+#### 遊戲開發
+- 使用 **music-generator** 生成遊戲配樂
+- 使用 **animation-generator** 創建特效素材
+- 使用 **voice-generator** 生成 NPC 對話
+- 使用 **video-generator** 製作遊戲宣傳片
 
 ---
 
