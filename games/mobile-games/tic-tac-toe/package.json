@@ -1,0 +1,35 @@
+{
+  "name": "tic-tac-toe",
+  "version": "1.0.0",
+  "description": "井字遊戲 - 使用 React Native 開發",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "react": "18.2.0",
+    "react-native": "0.72.6",
+    "expo": "~49.0.15"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0"
+  },
+  "keywords": [
+    "tic-tac-toe",
+    "game",
+    "react-native",
+    "mobile",
+    "井字遊戲",
+    "圈圈叉叉"
+  ],
+  "author": "Vibe Coding Apps",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/markl-a/Vibe-Coding-Apps"
+  },
+  "private": true
+}
