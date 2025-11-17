@@ -169,8 +169,6 @@ class CodeFormatter:
             # 增加縮排
             if stripped.endswith('{') or stripped.endswith('['):
                 indent_level += 1
-            elif stripped.endswith('}') or stripped.endswith(']'):
-                indent_level = max(0, indent_level - 1)
 
         return '\n'.join(formatted_lines)
 

@@ -74,7 +74,7 @@ class FileTree:
                     return f"{size:.1f}{unit}"
                 size /= 1024.0
             return f"{size:.1f}TB"
-        except:
+        except (OSError, IOError):
             return "N/A"
 
     def _get_tree_chars(self, is_last: bool) -> tuple:

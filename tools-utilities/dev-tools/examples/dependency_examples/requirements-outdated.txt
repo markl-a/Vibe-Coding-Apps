@@ -1,0 +1,17 @@
+# 範例 - 包含過時依賴的 requirements.txt
+# 用於展示 dependency_checker.py 的過時檢查功能
+
+# 過時的版本（用於示範）
+flask==2.0.0  # 當前版本: 2.3.0
+django==3.2.0  # 當前版本: 4.2.x
+requests==2.25.0  # 當前版本: 2.31.0
+numpy==1.20.0  # 當前版本: 1.26.2
+pandas==1.3.0  # 當前版本: 2.1.3
+
+# 已知有安全漏洞的版本
+pyyaml==5.3.1  # CVE-2020-14343
+cryptography==3.3.0  # 多個 CVE
+
+# 版本過舊
+sqlalchemy==1.3.0  # 當前版本: 2.0.x
+pytest==6.0.0  # 當前版本: 7.4.x

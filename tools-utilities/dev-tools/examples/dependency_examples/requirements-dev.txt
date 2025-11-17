@@ -1,0 +1,45 @@
+# 開發環境依賴
+
+# 繼承主要依賴
+-r requirements.txt
+
+# 開發工具
+ipython==8.18.1
+jupyter==1.0.0
+notebook==7.0.6
+
+# 除錯工具
+ipdb==0.13.13
+pdb++==0.10.3
+
+# 程式碼分析
+pyflakes==3.1.0
+pydocstyle==6.3.0
+radon==6.0.1
+bandit==1.7.5
+
+# 測試增強
+pytest-xdist==3.5.0
+pytest-timeout==2.2.0
+pytest-sugar==0.9.7
+pytest-benchmark==4.0.0
+faker==20.1.0
+factory-boy==3.3.0
+
+# 文檔工具
+sphinx==7.2.6
+sphinx-rtd-theme==2.0.0
+mkdocs==1.5.3
+mkdocs-material==9.5.1
+
+# 效能分析
+py-spy==0.3.14
+memory-profiler==0.61.0
+line-profiler==4.1.1
+
+# 型別檢查
+types-requests==2.31.0.10
+types-PyYAML==6.0.12.12
+
+# Pre-commit hooks
+pre-commit==3.6.0

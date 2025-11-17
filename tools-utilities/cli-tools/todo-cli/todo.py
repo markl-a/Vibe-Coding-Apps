@@ -312,8 +312,9 @@ def main():
         manager.add(args.task, args.priority, tags)
 
     elif args.command == 'list':
-        manager.list(show_completed=args.all, filter_tag=args.tag,
-                    filter_priority=args.priority)
+        manager.list(show_completed=getattr(args, 'all', False),
+                    filter_tag=getattr(args, 'tag', None),
+                    filter_priority=getattr(args, 'priority', None))
 
     elif args.command == 'done':
         manager.complete(args.id)

@@ -5,6 +5,7 @@ Markdown Preview - Markdown 預覽工具
 """
 
 import argparse
+import json
 import os
 import sys
 import webbrowser
@@ -56,10 +57,10 @@ class MarkdownRenderer:
 
             # 程式碼區塊
             elif line.strip().startswith('```'):
-                if line == '```':
+                if line.strip() == '```':
                     output.append('┌' + '─' * 58 + '┐')
                 else:
-                    lang = line[3:].strip()
+                    lang = line.strip()[3:].strip()
                     output.append('┌─ ' + lang + ' ' + '─' * (55 - len(lang)) + '┐')
 
             # 引用
@@ -188,7 +189,7 @@ class MarkdownRenderer:
         <div id="content"></div>
     </div>
     <script>
-        const markdown = `{content.replace('`', '\\`')}`;
+        const markdown = {json.dumps(content)};
         document.getElementById('content').innerHTML = marked.parse(markdown);
     </script>
 </body>

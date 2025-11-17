@@ -63,10 +63,10 @@ def handle_missing_values(df: pd.DataFrame, strategy: str = 'drop', fill_value: 
         df = df.fillna(fill_value if fill_value is not None else 'N/A')
         print(f"✅ 已填充缺失值: {fill_value}")
     elif strategy == 'forward':
-        df = df.fillna(method='ffill')
+        df = df.ffill()
         print("✅ 使用前一筆資料填充")
     elif strategy == 'backward':
-        df = df.fillna(method='bfill')
+        df = df.bfill()
         print("✅ 使用後一筆資料填充")
     return df
 
@@ -185,10 +185,13 @@ def infer_data_types(df: pd.DataFrame) -> pd.DataFrame:
             pass
 
         # 嘗試轉換為布林值
-        if df[column].str.lower().isin(['true', 'false', '1', '0', 'yes', 'no']).all():
-            df[column] = df[column].map({'true': True, 'false': False, '1': True, '0': False, 'yes': True, 'no': False})
-            print(f"  {column}: 布林值")
-            continue
+        try:
+            if df[column].dtype == 'object' and df[column].str.lower().isin(['true', 'false', '1', '0', 'yes', 'no']).all():
+                df[column] = df[column].str.lower().map({'true': True, 'false': False, '1': True, '0': False, 'yes': True, 'no': False})
+                print(f"  {column}: 布林值")
+                continue
+        except (AttributeError, TypeError):
+            pass
 
         print(f"  {column}: 文字")
 

@@ -5,11 +5,10 @@ passgen.py - 安全密碼生成器
 """
 
 import argparse
-import random
 import string
 import sys
 import secrets
-from typing import List, Dict
+from typing import List, Dict, Any
 import re
 
 
@@ -81,7 +80,7 @@ class PasswordGenerator:
         return ''.join(secrets.choice(chars) for _ in range(length))
 
     @staticmethod
-    def calculate_strength(password: str) -> Dict[str, any]:
+    def calculate_strength(password: str) -> Dict[str, Any]:
         """計算密碼強度"""
         strength = {
             'score': 0,

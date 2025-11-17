@@ -1,0 +1,224 @@
+# 自訂程式碼格式化規則範例
+# 這個配置檔展示如何自訂格式化行為
+
+# Python 格式化設定
+python:
+  # 使用的格式化工具 (black, autopep8, yapf)
+  formatter: black
+
+  # 最大行長度
+  line_length: 100
+
+  # 目標 Python 版本
+  target_version: py38
+
+  # 是否保持字串引號原樣（不轉換為雙引號）
+  skip_string_normalization: false
+
+  # 是否使用魔法逗號（尾隨逗號）
+  magic_trailing_comma: true
+
+  # isort 設定（Import 排序）
+  isort:
+    # 使用與 black 相容的設定
+    profile: black
+
+    # 最大行長度（應與 black 一致）
+    line_length: 100
+
+    # 多行輸出模式
+    # 0: grid, 1: vertical, 2: hanging indent
+    # 3: vertical hanging indent, 4: hanging grid
+    # 5: hanging grid grouped, 6: hanging grid grouped no trailing comma
+    multi_line_output: 3
+
+    # 是否在最後一個 import 後加逗號
+    include_trailing_comma: true
+
+    # 強制單行 imports
+    force_single_line: false
+
+    # 已知的第一方套件（你的專案套件）
+    known_first_party:
+      - myapp
+      - mylib
+
+    # Import 段落之間的空行數
+    lines_after_imports: 2
+
+    # 從哪裡開始分組
+    sections:
+      - FUTURE
+      - STDLIB
+      - THIRDPARTY
+      - FIRSTPARTY
+      - LOCALFOLDER
+
+# JavaScript/TypeScript 格式化設定
+javascript:
+  # 使用的格式化工具
+  formatter: prettier
+
+  # 縮排大小
+  indent_size: 2
+
+  # 最大行長度
+  max_line_length: 100
+
+  # 是否使用分號
+  semicolons: true
+
+  # 是否使用單引號
+  single_quotes: true
+
+  # 尾隨逗號
+  trailing_commas: "es5"  # none, es5, all
+
+  # 箭頭函數參數括號
+  arrow_parens: "always"  # always, avoid
+
+# TypeScript 特定設定
+typescript:
+  formatter: prettier
+  indent_size: 2
+  max_line_length: 100
+  semicolons: true
+
+# HTML 格式化設定
+html:
+  formatter: prettier
+  indent_size: 2
+  max_line_length: 120
+
+# CSS/SCSS 格式化設定
+css:
+  formatter: prettier
+  indent_size: 2
+  single_quotes: false
+
+# JSON 格式化設定
+json:
+  formatter: prettier
+  indent_size: 2
+  trailing_commas: false
+
+# YAML 格式化設定
+yaml:
+  formatter: prettier
+  indent_size: 2
+
+# Markdown 格式化設定
+markdown:
+  formatter: prettier
+  prose_wrap: "preserve"  # always, never, preserve
+
+# 忽略的檔案和目錄
+ignore:
+  # Python
+  - __pycache__
+  - "*.pyc"
+  - .pytest_cache
+  - .mypy_cache
+  - "*.egg-info"
+  - dist
+  - build
+  - .venv
+  - venv
+  - env
+
+  # JavaScript/Node.js
+  - node_modules
+  - "*.min.js"
+  - "*.min.css"
+  - bundle.js
+  - dist
+
+  # 版本控制
+  - .git
+  - .svn
+  - .hg
+
+  # IDE
+  - .vscode
+  - .idea
+  - "*.swp"
+  - "*.swo"
+
+  # 編譯輸出
+  - "*.o"
+  - "*.so"
+  - "*.dylib"
+
+  # 文檔
+  - docs/_build
+  - site
+
+# 自動修復設定
+auto_fix:
+  # 是否啟用自動修復
+  enabled: true
+
+  # 修復前是否備份
+  backup: false
+
+  # 備份目錄（如果 backup 為 true）
+  backup_dir: .formatting_backups
+
+# 檢查設定
+check:
+  # 是否顯示詳細輸出
+  verbose: true
+
+  # 是否顯示 diff
+  show_diff: true
+
+  # 錯誤時的退出碼
+  exit_code_on_error: 1
+
+# 報告設定
+report:
+  # 報告格式 (json, xml, html, text)
+  format: json
+
+  # 是否包含成功的檔案
+  include_passed: false
+
+  # 是否包含詳細資訊
+  include_details: true
+
+# 平行處理設定
+parallel:
+  # 是否啟用平行處理
+  enabled: true
+
+  # 工作執行緒數量（0 表示使用 CPU 核心數）
+  workers: 0
+
+# 快取設定
+cache:
+  # 是否啟用快取
+  enabled: true
+
+  # 快取目錄
+  directory: .formatter_cache
+
+  # 快取過期時間（秒）
+  ttl: 86400  # 24 小時
+
+# 整合設定
+integrations:
+  # Git 整合
+  git:
+    # 只格式化已修改的檔案
+    staged_only: false
+
+    # 只格式化追蹤的檔案
+    tracked_only: true
+
+  # IDE 整合
+  ide:
+    # VS Code 設定檔路徑
+    vscode_settings: .vscode/settings.json
+
+    # 是否自動更新 IDE 設定
+    auto_update: false

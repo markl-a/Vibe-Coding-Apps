@@ -168,16 +168,15 @@ MIT License
                 'functions': []
             }
 
-            for node in ast.walk(tree):
+            for node in tree.body:
                 if isinstance(node, ast.ClassDef):
                     class_doc = self._parse_class(node)
                     module_doc['classes'].append(class_doc)
 
                 elif isinstance(node, ast.FunctionDef):
                     # 只收集模組層級的函數
-                    if isinstance(node, ast.FunctionDef):
-                        func_doc = self._parse_function(node)
-                        module_doc['functions'].append(func_doc)
+                    func_doc = self._parse_function(node)
+                    module_doc['functions'].append(func_doc)
 
             return module_doc
 

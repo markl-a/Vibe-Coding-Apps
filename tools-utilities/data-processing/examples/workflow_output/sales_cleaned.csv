@@ -1,0 +1,15 @@
+product_id,product_name,category,price,quantity,order_date,customer_email,region,email_valid
+P001,筆記型電腦,電子產品,35000,2.0,2024-01-15,customer1@example.com,北區,True
+P002,滑鼠,電子產品,500,10.0,2024-01-16,customer2@example.com,南區,True
+P003,鍵盤,電子產品,1200,5.0,2024-01-17,,中區,False
+P001,筆記型電腦,電子產品,35000,1.0,2024-01-18,customer3@example.com,北區,True
+P004,顯示器,電子產品,8000,3.0,2024-01-19,invalid-email,東區,False
+P005,桌子,傢俱,6000,2.0,2024-01-20,customer5@example.com,西區,True
+P006,椅子,傢俱,3500,4.0,2024-01-21,customer6@example.com,北區,True
+P002,滑鼠,電子產品,500,8.0,2024-01-25,customer7@example.com,南區,True
+P007,書架,傢俱,4500,1.0,2024-01-23,customer8@example.com,中區,True
+P008,檯燈,傢俱,800,6.0,2024-01-24,customer9@example.com,東區,True
+P009,文件夾,文具,50,100.0,2024-01-26,customer10@example.com,西區,True
+P010,筆,文具,15,200.0,2024-01-27,customer11@example.com,北區,True
+P011,橡皮擦,文具,10,1.0,2024-01-28,customer12@example.com,南區,True
+P012,尺,文具,20,80.0,2024-01-29,customer13@example.com,中區,True

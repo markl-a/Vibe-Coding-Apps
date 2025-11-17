@@ -1,0 +1,72 @@
+[
+  {
+    "customer_id": "C001",
+    "name": "王大明",
+    "email": "wang.daming@email.com",
+    "phone": "0912-345-678",
+    "address": {
+      "city": "台北市",
+      "district": "信義區",
+      "street": "信義路五段7號"
+    },
+    "registration_date": "2023-01-15",
+    "total_orders": 15,
+    "total_spent": 125000
+  },
+  {
+    "customer_id": "C002",
+    "name": "李小華",
+    "email": "li.xiaohua@email.com",
+    "phone": "0923-456-789",
+    "address": {
+      "city": "台中市",
+      "district": "西屯區",
+      "street": "台灣大道三段99號"
+    },
+    "registration_date": "2023-02-20",
+    "total_orders": 8,
+    "total_spent": 68000
+  },
+  {
+    "customer_id": "C003",
+    "name": "張美玲",
+    "email": "zhang.meiling@email.com",
+    "phone": "0934-567-890",
+    "address": {
+      "city": "高雄市",
+      "district": "前鎮區",
+      "street": "中山四路100號"
+    },
+    "registration_date": "2023-03-10",
+    "total_orders": 22,
+    "total_spent": 189000
+  },
+  {
+    "customer_id": "C004",
+    "name": "陳志偉",
+    "email": "chen.zhiwei@email.com",
+    "phone": "0945-678-901",
+    "address": {
+      "city": "台南市",
+      "district": "中西區",
+      "street": "民生路二段200號"
+    },
+    "registration_date": "2023-04-05",
+    "total_orders": 5,
+    "total_spent": 42000
+  },
+  {
+    "customer_id": "C005",
+    "name": "林雅婷",
+    "email": "lin.yating@email.com",
+    "phone": "0956-789-012",
+    "address": {
+      "city": "新竹市",
+      "district": "東區",
+      "street": "光復路一段88號"
+    },
+    "registration_date": "2023-05-18",
+    "total_orders": 12,
+    "total_spent": 95000
+  }
+]
