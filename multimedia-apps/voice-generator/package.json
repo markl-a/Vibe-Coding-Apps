@@ -1,0 +1,62 @@
+{
+  "name": "voice-generator",
+  "version": "1.0.0",
+  "description": "专业的文字转语音工具，支持多种音色、参数调节和波形可视化",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
+  },
+  "keywords": [
+    "TTS",
+    "text-to-speech",
+    "voice-generator",
+    "speech-synthesis",
+    "audio",
+    "electron"
+  ],
+  "author": "Vibe Coding Apps",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^27.0.0"
+  },
+  "devDependencies": {
+    "electron-builder": "^24.6.4"
+  },
+  "build": {
+    "appId": "com.vibecoding.voicegenerator",
+    "productName": "Voice Generator",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.productivity"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "assets/icon.png",
+      "category": "Audio"
+    }
+  }
+}

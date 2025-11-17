@@ -1,0 +1,29 @@
+{
+  "name": "music-generator",
+  "version": "1.0.0",
+  "description": "AI-Native 音樂生成器 - 使用算法和AI生成音樂",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder"
+  },
+  "keywords": [
+    "music-generator",
+    "ai-music",
+    "audio-synthesis",
+    "generative-music"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "tone": "^14.7.77"
+  },
+  "build": {
+    "appId": "com.ainative.musicgenerator",
+    "productName": "AI Music Generator"
+  }
+}

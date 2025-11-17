@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Video Player - 視頻播放器</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 視頻播放區域 -->
+        <div class="video-container" id="videoContainer">
+            <video id="videoPlayer" class="video-player"></video>
+
+            <!-- 字幕顯示 -->
+            <div class="subtitle-display" id="subtitleDisplay"></div>
+
+            <!-- 播放器控制層 -->
+            <div class="controls-overlay" id="controlsOverlay">
+                <div class="controls">
+                    <!-- 進度條 -->
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progressBar">
+                            <div class="progress-filled" id="progressFilled"></div>
+                            <div class="progress-handle" id="progressHandle"></div>
+                        </div>
+                        <div class="time-display">
+                            <span id="currentTime">00:00:00</span>
+                            <span class="time-separator">/</span>
+                            <span id="duration">00:00:00</span>
+                        </div>
+                    </div>
+
+                    <!-- 控制按鈕 -->
+                    <div class="control-buttons">
+                        <div class="left-controls">
+                            <button class="btn-control" id="playPauseBtn" title="播放/暫停 (Space)">
+                                <svg class="icon play-icon" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                                <svg class="icon pause-icon hidden" viewBox="0 0 24 24">
+                                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                                </svg>
+                            </button>
+                            <button class="btn-control" id="stopBtn" title="停止">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M6 6h12v12H6z"/>
+                                </svg>
+                            </button>
+                            <button class="btn-control" id="backwardBtn" title="快退 10秒 (←)">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/>
+                                </svg>
+                            </button>
+                            <button class="btn-control" id="forwardBtn" title="快進 10秒 (→)">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/>
+                                </svg>
+                            </button>
+
+                            <!-- 音量控制 -->
+                            <div class="volume-control">
+                                <button class="btn-control" id="muteBtn" title="靜音">
+                                    <svg class="icon volume-icon" viewBox="0 0 24 24">
+                                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+                                    </svg>
+                                    <svg class="icon mute-icon hidden" viewBox="0 0 24 24">
+                                        <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+                                    </svg>
+                                </button>
+                                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="100">
+                            </div>
+                        </div>
+
+                        <div class="right-controls">
+                            <!-- 播放速度 -->
+                            <div class="speed-control">
+                                <button class="btn-control" id="speedBtn" title="播放速度">
+                                    <span id="speedText">1.0x</span>
+                                </button>
+                                <div class="speed-menu hidden" id="speedMenu">
+                                    <button class="speed-option" data-speed="0.5">0.5x</button>
+                                    <button class="speed-option" data-speed="0.75">0.75x</button>
+                                    <button class="speed-option active" data-speed="1">1.0x</button>
+                                    <button class="speed-option" data-speed="1.25">1.25x</button>
+                                    <button class="speed-option" data-speed="1.5">1.5x</button>
+                                    <button class="speed-option" data-speed="2">2.0x</button>
+                                </div>
+                            </div>
+
+                            <button class="btn-control" id="subtitleBtn" title="字幕">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM4 12h4v2H4v-2zm10 6H4v-2h10v2zm6 0h-4v-2h4v2zm0-4H10v-2h10v2z"/>
+                                </svg>
+                            </button>
+
+                            <button class="btn-control" id="fullscreenBtn" title="全屏 (F11)">
+                                <svg class="icon fullscreen-icon" viewBox="0 0 24 24">
+                                    <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                                </svg>
+                                <svg class="icon exit-fullscreen-icon hidden" viewBox="0 0 24 24">
+                                    <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 初始提示 -->
+            <div class="empty-state" id="emptyState">
+                <svg class="empty-icon" viewBox="0 0 24 24">
+                    <path d="M18 3v2h-2V3H8v2H6V3H4v18h2v-2h2v2h8v-2h2v2h2V3h-2zM8 17H6v-2h2v2zm0-4H6v-2h2v2zm0-4H6V7h2v2zm10 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z"/>
+                </svg>
+                <p>點擊「打開視頻」或拖拽視頻文件到此處</p>
+                <button class="btn-primary" id="openFileBtn">打開視頻</button>
+            </div>
+        </div>
+
+        <!-- 側邊欄 - 播放列表 -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3>播放列表</h3>
+                <div class="sidebar-actions">
+                    <button class="btn-icon" id="openFolderBtn" title="打開文件夾">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/>
+                        </svg>
+                    </button>
+                    <button class="btn-icon" id="clearPlaylistBtn" title="清空播放列表">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="playlist" id="playlist">
+                <div class="playlist-empty">
+                    <p>播放列表為空</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

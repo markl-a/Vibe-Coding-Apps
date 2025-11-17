@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Live Streaming - 专业直播推流工具</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+      <div class="logo">
+        <h1>Live<span>Stream</span></h1>
+      </div>
+
+      <!-- 场景管理 -->
+      <div class="section">
+        <h3 class="section-title">场景</h3>
+        <div class="scene-list" id="sceneList">
+          <div class="scene-item active" data-scene="default">
+            <span class="scene-icon">🎬</span>
+            <span class="scene-name">默认场景</span>
+          </div>
+        </div>
+        <button class="btn-add" id="addScene">
+          <span>+</span> 添加场景
+        </button>
+      </div>
+
+      <!-- 源管理 -->
+      <div class="section">
+        <h3 class="section-title">视频源</h3>
+        <div class="source-buttons">
+          <button class="source-btn" id="addCamera">
+            <span class="icon">📹</span>
+            <span>摄像头</span>
+          </button>
+          <button class="source-btn" id="addScreen">
+            <span class="icon">🖥️</span>
+            <span>屏幕</span>
+          </button>
+          <button class="source-btn" id="addWindow">
+            <span class="icon">🪟</span>
+            <span>窗口</span>
+          </button>
+        </div>
+        <div class="sources-list" id="sourcesList"></div>
+      </div>
+
+      <!-- 滤镜效果 -->
+      <div class="section">
+        <h3 class="section-title">滤镜效果</h3>
+        <div class="filter-controls">
+          <div class="filter-item">
+            <label>亮度</label>
+            <input type="range" id="brightness" min="50" max="150" value="100">
+            <span class="value" id="brightnessValue">100%</span>
+          </div>
+          <div class="filter-item">
+            <label>对比度</label>
+            <input type="range" id="contrast" min="50" max="150" value="100">
+            <span class="value" id="contrastValue">100%</span>
+          </div>
+          <div class="filter-item">
+            <label>饱和度</label>
+            <input type="range" id="saturation" min="0" max="200" value="100">
+            <span class="value" id="saturationValue">100%</span>
+          </div>
+          <div class="filter-item">
+            <label>模糊</label>
+            <input type="range" id="blur" min="0" max="10" value="0">
+            <span class="value" id="blurValue">0px</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 顶部栏 -->
+      <header class="top-bar">
+        <div class="stream-info">
+          <span class="status-indicator" id="statusIndicator"></span>
+          <span class="status-text" id="statusText">未推流</span>
+          <span class="stream-time" id="streamTime">00:00:00</span>
+        </div>
+        <div class="top-actions">
+          <button class="btn-icon" id="settingsBtn" title="设置">
+            <span>⚙️</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- 预览区域 -->
+      <div class="preview-area">
+        <div class="preview-container">
+          <video id="preview" autoplay muted playsinline></video>
+          <canvas id="canvas" style="display: none;"></canvas>
+          <div class="preview-overlay" id="previewOverlay">
+            <div class="overlay-content">
+              <span class="icon">📹</span>
+              <p>添加视频源开始预览</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 预览控制 -->
+        <div class="preview-controls">
+          <button class="control-btn" id="muteBtn">
+            <span id="muteIcon">🔊</span>
+          </button>
+          <div class="volume-control">
+            <input type="range" id="volumeSlider" min="0" max="100" value="100">
+          </div>
+          <div class="spacer"></div>
+          <button class="control-btn" id="fullscreenBtn">
+            <span>⛶</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 底部控制栏 -->
+      <footer class="bottom-bar">
+        <div class="stream-controls">
+          <button class="btn-primary" id="startStreamBtn">
+            <span class="btn-icon">▶️</span>
+            <span>开始推流</span>
+          </button>
+          <button class="btn-danger" id="stopStreamBtn" style="display: none;">
+            <span class="btn-icon">⏹️</span>
+            <span>停止推流</span>
+          </button>
+        </div>
+        <div class="stats">
+          <div class="stat-item">
+            <span class="stat-label">比特率:</span>
+            <span class="stat-value" id="bitrate">0 kbps</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">帧率:</span>
+            <span class="stat-value" id="fps">0 fps</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">分辨率:</span>
+            <span class="stat-value" id="resolution">0x0</span>
+          </div>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <!-- 设置模态框 -->
+  <div class="modal" id="settingsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>推流设置</h2>
+        <button class="btn-close" id="closeSettings">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-section">
+          <h3>推流服务器</h3>
+          <div class="form-group">
+            <label for="rtmpUrl">RTMP URL</label>
+            <input type="text" id="rtmpUrl" placeholder="rtmp://live.example.com/live"
+                   value="rtmp://localhost:1935/live">
+          </div>
+          <div class="form-group">
+            <label for="streamKey">推流密钥</label>
+            <input type="password" id="streamKey" placeholder="输入推流密钥">
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>视频设置</h3>
+          <div class="form-group">
+            <label for="videoResolution">分辨率</label>
+            <select id="videoResolution">
+              <option value="1920x1080">1920x1080 (Full HD)</option>
+              <option value="1280x720" selected>1280x720 (HD)</option>
+              <option value="854x480">854x480 (SD)</option>
+              <option value="640x360">640x360</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="videoFps">帧率</label>
+            <select id="videoFps">
+              <option value="60">60 fps</option>
+              <option value="30" selected>30 fps</option>
+              <option value="24">24 fps</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="videoBitrate">视频比特率</label>
+            <select id="videoBitrate">
+              <option value="6000">6000 kbps</option>
+              <option value="4500">4500 kbps</option>
+              <option value="2500" selected>2500 kbps</option>
+              <option value="1500">1500 kbps</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>音频设置</h3>
+          <div class="form-group">
+            <label for="audioBitrate">音频比特率</label>
+            <select id="audioBitrate">
+              <option value="320">320 kbps</option>
+              <option value="192">192 kbps</option>
+              <option value="128" selected>128 kbps</option>
+              <option value="96">96 kbps</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="audioDevice">音频设备</label>
+            <select id="audioDevice">
+              <option value="default">默认设备</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelSettings">取消</button>
+        <button class="btn-primary" id="saveSettings">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 源选择模态框 -->
+  <div class="modal" id="sourceModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="sourceModalTitle">选择源</h2>
+        <button class="btn-close" id="closeSourceModal">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="source-grid" id="sourceGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

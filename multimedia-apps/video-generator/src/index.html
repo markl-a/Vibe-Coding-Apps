@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Generator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo">
+        <svg width="32" height="32" viewBox="0 0 32 32">
+          <rect x="4" y="4" width="24" height="24" rx="4" fill="url(#gradient)"/>
+          <path d="M12 10 L22 16 L12 22 Z" fill="white"/>
+          <defs>
+            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#667eea"/>
+              <stop offset="100%" style="stop-color:#764ba2"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <h1>Video Generator</h1>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary" id="openProjectBtn">
+          <span class="icon">📂</span> Open Project
+        </button>
+        <button class="btn btn-secondary" id="saveProjectBtn">
+          <span class="icon">💾</span> Save Project
+        </button>
+      </div>
+    </header>
+
+    <div class="main-content">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="mode-selector">
+          <h2>Generation Mode</h2>
+          <div class="mode-buttons">
+            <button class="mode-btn active" data-mode="slideshow">
+              <span class="icon">🖼️</span>
+              <span class="label">Slideshow</span>
+            </button>
+            <button class="mode-btn" data-mode="text-animation">
+              <span class="icon">✍️</span>
+              <span class="label">Text Animation</span>
+            </button>
+            <button class="mode-btn" data-mode="template">
+              <span class="icon">📋</span>
+              <span class="label">Template</span>
+            </button>
+            <button class="mode-btn" data-mode="visualization">
+              <span class="icon">📊</span>
+              <span class="label">Visualization</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Slideshow Mode Controls -->
+        <div class="controls-section" id="slideshowControls">
+          <h3>Slideshow Settings</h3>
+
+          <div class="control-group">
+            <label>Images</label>
+            <button class="btn btn-primary btn-block" id="addImagesBtn">
+              <span class="icon">➕</span> Add Images
+            </button>
+            <div class="image-list" id="imageList"></div>
+          </div>
+
+          <div class="control-group">
+            <label for="frameDuration">Frame Duration (seconds)</label>
+            <input type="number" id="frameDuration" value="3" min="0.5" max="10" step="0.5">
+          </div>
+
+          <div class="control-group">
+            <label for="transition">Transition Effect</label>
+            <select id="transition">
+              <option value="none">None</option>
+              <option value="fade">Fade</option>
+              <option value="slide-left">Slide Left</option>
+              <option value="slide-right">Slide Right</option>
+              <option value="slide-up">Slide Up</option>
+              <option value="slide-down">Slide Down</option>
+              <option value="zoom-in">Zoom In</option>
+              <option value="zoom-out">Zoom Out</option>
+              <option value="wipe-left">Wipe Left</option>
+              <option value="wipe-right">Wipe Right</option>
+              <option value="circle-expand">Circle Expand</option>
+              <option value="dissolve">Dissolve</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="transitionDuration">Transition Duration (seconds)</label>
+            <input type="number" id="transitionDuration" value="0.5" min="0.1" max="2" step="0.1">
+          </div>
+
+          <div class="control-group">
+            <label>Background Music</label>
+            <button class="btn btn-secondary btn-block" id="addMusicBtn">
+              <span class="icon">🎵</span> Add Music
+            </button>
+            <div id="musicInfo" class="music-info"></div>
+          </div>
+        </div>
+
+        <!-- Text Animation Mode Controls -->
+        <div class="controls-section hidden" id="textAnimationControls">
+          <h3>Text Animation Settings</h3>
+
+          <div class="control-group">
+            <label for="textContent">Text Content</label>
+            <textarea id="textContent" rows="4" placeholder="Enter your text here..."></textarea>
+          </div>
+
+          <div class="control-group">
+            <label for="textAnimation">Animation Style</label>
+            <select id="textAnimation">
+              <option value="fade-in">Fade In</option>
+              <option value="slide-in-left">Slide In Left</option>
+              <option value="slide-in-right">Slide In Right</option>
+              <option value="slide-in-top">Slide In Top</option>
+              <option value="slide-in-bottom">Slide In Bottom</option>
+              <option value="typewriter">Typewriter</option>
+              <option value="scale-in">Scale In</option>
+              <option value="rotate-in">Rotate In</option>
+              <option value="bounce">Bounce</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="textFont">Font Family</label>
+            <select id="textFont">
+              <option value="Arial">Arial</option>
+              <option value="Helvetica">Helvetica</option>
+              <option value="Times New Roman">Times New Roman</option>
+              <option value="Georgia">Georgia</option>
+              <option value="Courier New">Courier New</option>
+              <option value="Verdana">Verdana</option>
+              <option value="Impact">Impact</option>
+              <option value="Comic Sans MS">Comic Sans MS</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="textSize">Font Size</label>
+            <input type="number" id="textSize" value="48" min="12" max="200" step="4">
+          </div>
+
+          <div class="control-group">
+            <label for="textColor">Text Color</label>
+            <input type="color" id="textColor" value="#ffffff">
+          </div>
+
+          <div class="control-group">
+            <label for="bgColor">Background Color</label>
+            <input type="color" id="bgColor" value="#1a1a2e">
+          </div>
+
+          <div class="control-group">
+            <label for="textDuration">Duration (seconds)</label>
+            <input type="number" id="textDuration" value="5" min="1" max="30" step="0.5">
+          </div>
+        </div>
+
+        <!-- Template Mode Controls -->
+        <div class="controls-section hidden" id="templateControls">
+          <h3>Template Settings</h3>
+
+          <div class="control-group">
+            <label>Choose Template</label>
+            <div class="template-grid" id="templateGrid">
+              <div class="template-card" data-template="simple-intro">
+                <div class="template-preview">📱</div>
+                <div class="template-name">Simple Intro</div>
+              </div>
+              <div class="template-card" data-template="product-showcase">
+                <div class="template-preview">🛍️</div>
+                <div class="template-name">Product Showcase</div>
+              </div>
+              <div class="template-card" data-template="social-post">
+                <div class="template-preview">📲</div>
+                <div class="template-name">Social Media</div>
+              </div>
+              <div class="template-card" data-template="event-announcement">
+                <div class="template-preview">🎉</div>
+                <div class="template-name">Event</div>
+              </div>
+              <div class="template-card" data-template="quote-video">
+                <div class="template-preview">💬</div>
+                <div class="template-name">Quote</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="control-group" id="templateParams">
+            <!-- Template-specific parameters will be inserted here -->
+          </div>
+        </div>
+
+        <!-- Visualization Mode Controls -->
+        <div class="controls-section hidden" id="visualizationControls">
+          <h3>Visualization Settings</h3>
+
+          <div class="control-group">
+            <label for="vizType">Visualization Type</label>
+            <select id="vizType">
+              <option value="bar-chart">Bar Chart</option>
+              <option value="line-graph">Line Graph</option>
+              <option value="pie-chart">Pie Chart</option>
+              <option value="particles">Particles</option>
+              <option value="waveform">Waveform</option>
+              <option value="spiral">Spiral</option>
+              <option value="matrix">Matrix Rain</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="vizData">Data (comma-separated)</label>
+            <input type="text" id="vizData" placeholder="10,25,15,30,20,35" value="10,25,15,30,20,35">
+          </div>
+
+          <div class="control-group">
+            <label for="vizColor">Primary Color</label>
+            <input type="color" id="vizColor" value="#667eea">
+          </div>
+
+          <div class="control-group">
+            <label for="vizDuration">Duration (seconds)</label>
+            <input type="number" id="vizDuration" value="10" min="1" max="60" step="1">
+          </div>
+
+          <div class="control-group">
+            <label>
+              <input type="checkbox" id="vizAnimated" checked>
+              Animated
+            </label>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Area -->
+      <main class="main-area">
+        <!-- Preview Section -->
+        <section class="preview-section">
+          <div class="preview-header">
+            <h2>Preview</h2>
+            <div class="preview-controls">
+              <button class="btn btn-icon" id="playBtn" title="Play">
+                <span class="icon">▶️</span>
+              </button>
+              <button class="btn btn-icon" id="pauseBtn" title="Pause">
+                <span class="icon">⏸️</span>
+              </button>
+              <button class="btn btn-icon" id="stopBtn" title="Stop">
+                <span class="icon">⏹️</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="preview-container">
+            <canvas id="previewCanvas"></canvas>
+            <div class="preview-overlay" id="previewOverlay">
+              <div class="preview-message">
+                <span class="icon">🎬</span>
+                <p>Select a mode and configure settings to preview</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline">
+            <input type="range" id="timelineSlider" min="0" max="100" value="0">
+            <div class="timeline-info">
+              <span id="currentTime">0:00</span>
+              <span id="totalTime">0:00</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Export Section -->
+        <section class="export-section">
+          <h3>Export Settings</h3>
+
+          <div class="export-grid">
+            <div class="control-group">
+              <label for="exportFormat">Format</label>
+              <select id="exportFormat">
+                <option value="mp4">MP4 (H.264)</option>
+                <option value="webm">WebM (VP9)</option>
+                <option value="gif">GIF Animation</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="exportResolution">Resolution</label>
+              <select id="exportResolution">
+                <option value="1920x1080">1080p (1920x1080)</option>
+                <option value="1280x720">720p (1280x720)</option>
+                <option value="854x480">480p (854x480)</option>
+                <option value="640x360">360p (640x360)</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="exportFPS">Frame Rate</label>
+              <select id="exportFPS">
+                <option value="24">24 fps</option>
+                <option value="30">30 fps</option>
+                <option value="60">60 fps</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="exportQuality">Quality</label>
+              <select id="exportQuality">
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="export-actions">
+            <button class="btn btn-large btn-primary" id="generateBtn">
+              <span class="icon">🎬</span> Generate Video
+            </button>
+          </div>
+
+          <div class="progress-section hidden" id="progressSection">
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Processing...</div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="videoEngine.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
