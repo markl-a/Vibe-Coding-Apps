@@ -5,6 +5,7 @@ import { ShoppingCart, Heart, Search, Menu } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
 import { useWishlistStore } from '@/store/useWishlistStore';
 import { Badge } from '@/components/ui/Badge';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useState } from 'react';
 
 export function Header() {
@@ -13,7 +14,7 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+    <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -50,9 +51,11 @@ export function Header() {
 
           {/* Actions */}
           <div className="flex items-center space-x-4">
+            <ThemeToggle />
+
             <Link
               href="/"
-              className="text-gray-600 hover:text-primary-600 transition-colors"
+              className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               aria-label="搜尋"
             >
               <Search className="h-5 w-5" />
