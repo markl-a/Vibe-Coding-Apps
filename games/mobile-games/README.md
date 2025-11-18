@@ -2,6 +2,36 @@
 
 使用 AI 輔助開發的 iOS 和 Android 跨平台遊戲，涵蓋休閒、益智、動作等各類移動遊戲。
 
+## ✨ 已實現的遊戲
+
+本專案包含 **7 款完整的移動遊戲**，每款都整合了 AI 輔助功能：
+
+| 遊戲 | 技術棧 | AI 功能 | 難度 | 狀態 |
+|------|--------|---------|------|------|
+| [井字遊戲](./tic-tac-toe/) | React Native | Minimax AI 對手 + 提示系統 | ⭐⭐ | ✅ 完成 |
+| [2048](./2048-game/) | Flutter + Dart | 策略提示（未來擴展） | ⭐⭐⭐ | ✅ 完成 |
+| [Flappy Bird](./flappy-bird-clone/) | React Native + Matter.js | 物理引擎 | ⭐⭐ | ✅ 完成 |
+| [無盡跑酷](./endless-runner/) | React Native | 動態難度調整 | ⭐⭐⭐ | ✅ 完成 |
+| [打地鼠](./whack-a-mole/) | React Native | AI 提示標記 | ⭐⭐ | ✅ 完成 |
+| [記憶翻牌](./memory-card/) | React Native | AI 配對提示 | ⭐⭐⭐ | ✅ 完成 |
+| [貪吃蛇](./snake-game/) | React Native | BFS 路徑規劃 | ⭐⭐⭐ | ✅ 完成 |
+
+### 🎯 AI 功能亮點
+
+- **Minimax 演算法**: 井字遊戲的不可戰勝 AI 對手
+- **BFS 尋路**: 貪吃蛇的智能路徑提示
+- **動態提示系統**: 打地鼠和記憶翻牌的學習輔助
+- **共享 AI 庫**: 包含 7+ 種遊戲 AI 演算法
+
+### 📦 共享資源
+
+- **[AI Helper Library](./shared/ai-helpers/)**: 通用遊戲 AI 演算法庫
+  - Minimax / Alpha-Beta 剪枝
+  - BFS / A* 尋路
+  - MCTS (蒙特卡洛樹搜索)
+  - 遺傳演算法
+  - 模擬退火
+
 ## 📋 目錄
 
 - [移動遊戲概述](#移動遊戲概述)
