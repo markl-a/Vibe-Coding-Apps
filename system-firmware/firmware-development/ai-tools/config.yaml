@@ -1,0 +1,171 @@
+# AI 輔助開發工具配置文件
+# 複製此文件並根據您的需求進行修改
+
+# Anthropic API 配置
+# 方式 1: 在此設置 API key（不推薦，建議使用環境變量）
+# api_key: "your-api-key-here"
+
+# 方式 2: 使用環境變量（推薦）
+# export ANTHROPIC_API_KEY="your-api-key-here"
+
+# 默認編程語言
+language: C
+
+# 項目配置
+project_name: "Firmware Project"
+project_version: "1.0.0"
+repository_url: "https://github.com/your-repo/firmware"
+
+# 測試配置
+test_framework: Unity  # Unity, CppUTest, GoogleTest, etc.
+
+# 文檔配置
+doc_format: markdown  # markdown, html, rst
+comment_style: doxygen  # doxygen, javadoc, sphinx
+
+# 代碼分析配置
+code_analysis:
+  # 啟用的分析類型
+  enable_quality_analysis: true
+  enable_security_analysis: true
+  enable_performance_analysis: true
+  enable_memory_analysis: true
+
+  # 質量評分閾值
+  min_quality_score: 70
+  min_security_score: 80
+  min_performance_score: 60
+  min_memory_score: 70
+
+# 韌體優化配置
+firmware_optimization:
+  # 優化目標
+  optimize_size: true
+  optimize_speed: true
+  optimize_memory: true
+  optimize_power: true
+
+  # 優化級別 (1-3)
+  optimization_level: 2
+
+  # 編譯器標誌
+  compiler_flags:
+    - "-Os"  # 優化大小
+    - "-Wall"
+    - "-Wextra"
+    - "-std=c11"
+
+# 測試生成配置
+test_generation:
+  # 測試類型
+  generate_unit_tests: true
+  generate_integration_tests: true
+  generate_fuzzing_tests: true
+
+  # 覆蓋率目標
+  target_line_coverage: 80
+  target_branch_coverage: 75
+  target_function_coverage: 90
+
+# Bug 檢測配置
+bug_detection:
+  # 檢測類型
+  enable_static_analysis: true
+  enable_common_errors: true
+  enable_boundary_checks: true
+  enable_resource_leak_detection: true
+
+  # 嚴重性級別過濾
+  report_critical: true
+  report_high: true
+  report_medium: true
+  report_low: false
+
+# 文檔生成配置
+documentation:
+  # 生成的文檔類型
+  generate_api_docs: true
+  generate_code_comments: true
+  generate_user_manual: true
+  generate_readme: true
+
+  # 文檔詳細程度 (brief, normal, detailed)
+  detail_level: normal
+
+  # 包含示例代碼
+  include_examples: true
+
+# 輸出配置
+output:
+  # 默認輸出目錄
+  default_output_dir: "./ai_analysis_results"
+
+  # 輸出格式
+  default_format: json  # json, html
+
+  # 保存中間結果
+  save_intermediate_results: true
+
+  # 詳細輸出
+  verbose: true
+
+# 批處理配置
+batch_processing:
+  # 最大並發處理數
+  max_concurrent: 4
+
+  # 跳過已存在的結果
+  skip_existing: false
+
+  # 錯誤處理
+  continue_on_error: true
+
+# Claude API 配置
+claude_api:
+  # 使用的模型
+  model: "claude-sonnet-4-5-20250929"
+
+  # 最大 token 數
+  max_tokens: 8000
+
+  # 溫度參數 (0-1)
+  temperature: 0.7
+
+  # 請求超時（秒）
+  timeout: 60
+
+  # 重試次數
+  max_retries: 3
+
+# 日誌配置
+logging:
+  # 日誌級別 (DEBUG, INFO, WARNING, ERROR)
+  level: INFO
+
+  # 日誌文件
+  log_file: "./ai_tools.log"
+
+  # 日誌格式
+  format: "[%(asctime)s] %(levelname)s: %(message)s"
+
+# 快取配置
+cache:
+  # 啟用結果快取
+  enable_cache: true
+
+  # 快取目錄
+  cache_dir: "./.ai_cache"
+
+  # 快取過期時間（小時）
+  cache_expiry_hours: 24
+
+# 進階配置
+advanced:
+  # 使用實驗性功能
+  enable_experimental: false
+
+  # 自定義提示詞模板目錄
+  custom_prompts_dir: "./prompts"
+
+  # 插件目錄
+  plugins_dir: "./plugins"
