@@ -3,14 +3,23 @@ import MetricCard from '../components/MetricCard'
 import LineChartComponent from '../components/LineChartComponent'
 import BarChartComponent from '../components/BarChartComponent'
 import DoughnutChartComponent from '../components/DoughnutChartComponent'
+import AIInsights from '../components/AIInsights'
+import PredictionChart from '../components/PredictionChart'
+import AnomalyDetection from '../components/AnomalyDetection'
 
 const Dashboard = () => {
+  // 模拟数据
+  const revenueData = [4000, 3000, 5000, 4500, 6000, 5500, 7000];
+  const usersData = [200, 250, 300, 280, 350, 400, 450];
+  const ordersData = [120, 100, 150, 140, 180, 170, 210];
+  const labels = ['一月', '二月', '三月', '四月', '五月', '六月', '七月'];
+
   return (
     <div className="dashboard">
       {/* Header */}
       <div className="dashboard-header">
         <h1>Analytics Dashboard</h1>
-        <p>實時數據分析與視覺化</p>
+        <p>實時數據分析與視覺化 • AI 驅動</p>
       </div>
 
       {/* Metrics Grid */}
@@ -48,6 +57,29 @@ const Dashboard = () => {
           iconColor="purple"
         />
       </div>
+
+      {/* AI Insights - 新增 AI 洞察组件 */}
+      <AIInsights
+        revenueData={revenueData}
+        usersData={usersData}
+        ordersData={ordersData}
+      />
+
+      {/* AI Prediction Chart - 新增 AI 预测图表 */}
+      <div style={{ marginBottom: '2rem' }}>
+        <PredictionChart
+          historicalData={revenueData}
+          labels={labels}
+          title="收入趋势与 AI 预测"
+        />
+      </div>
+
+      {/* Anomaly Detection - 新增异常检测 */}
+      <AnomalyDetection
+        data={revenueData}
+        labels={labels}
+        metricName="收入"
+      />
 
       {/* Charts Grid */}
       <div className="charts-grid">
