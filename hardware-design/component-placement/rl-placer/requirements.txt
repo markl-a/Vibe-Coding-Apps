@@ -1,0 +1,15 @@
+# 強化學習元件擺放器依賴
+
+# 深度強化學習
+stable-baselines3>=2.2.0
+gymnasium>=0.29.0
+
+# 數值計算
+numpy>=1.24.0
+
+# 視覺化
+matplotlib>=3.7.0
+
+# 可選：進階功能
+# tensorboard>=2.14.0  # 訓練可視化
+# opencv-python>=4.8.0  # 視頻生成
