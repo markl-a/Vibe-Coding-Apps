@@ -1,37 +1,87 @@
 # 圖像處理與分類 Image Processing
 
-🖼️ 使用深度學習進行圖像分類、物件偵測和圖像處理
+🖼️ 完整的 AI 圖像處理工具集 - 分類、偵測、增強、修復、識別
 
 ## 功能特點
 
-- ✅ 圖像分類 (使用預訓練模型)
-- ✅ 物件偵測 (YOLO)
+### 核心功能
+- ✅ 圖像分類 (ResNet, VGG, EfficientNet)
+- ✅ 物件偵測 (YOLOv8)
 - ✅ 圖像增強與處理
-- ✅ 批次處理
 - ✅ 自定義模型訓練
-- ✅ Web UI 介面
-- ✅ REST API
+- ✅ Web UI 介面 (Streamlit)
+- ✅ REST API (FastAPI)
+- ✅ 批次處理
+
+### AI 增強功能
+- ✅ 圖像超分辨率 (Super Resolution)
+- ✅ 圖像修復與補全 (Inpainting)
+- ✅ OCR 文字識別
+- ✅ 圖像分割 (Segmentation)
+- ✅ 背景移除
+- ✅ 人臉識別
+- ✅ 圖像風格轉換
+- ✅ QR 碼工具
+- ✅ 圖像浮水印
 
 ## 專案結構
 
 ```
 image-processing/
 ├── README.md              # 專案說明
+├── EXAMPLES_INDEX.md      # 完整範例索引
 ├── requirements.txt       # 依賴套件
 ├── classifier.py          # 圖像分類器
 ├── detector.py            # 物件偵測器
 ├── processor.py           # 圖像處理工具
-├── train.py              # 模型訓練腳本
+├── train.py              # 模型訓練腳本 ✨ NEW
 ├── app.py                # Streamlit UI
-├── api.py                # FastAPI REST API
+├── api.py                # FastAPI REST API ✨ NEW
+├── utils/                # 工具函數
 ├── models/               # 模型儲存
 ├── data/                 # 資料集
-│   ├── train/
-│   └── test/
-└── utils/
-    ├── __init__.py
-    ├── image_utils.py
-    └── model_utils.py
+│
+├── super-resolution/     # 圖像超分辨率 ✨ NEW
+│   ├── super_resolution.py
+│   ├── app.py
+│   ├── example_usage.py
+│   └── README.md
+│
+├── image-inpainting/     # 圖像修復與補全 ✨ NEW
+│   ├── inpainting.py
+│   ├── example_usage.py
+│   └── README.md
+│
+├── ocr-recognition/      # OCR 文字識別 ✨ NEW
+│   ├── ocr_engine.py
+│   └── README.md
+│
+├── image-segmentation/   # 圖像分割 ✨ NEW
+│   ├── segmentation.py
+│   └── README.md
+│
+├── background-remover/   # 背景移除
+│   ├── bg_remover.py
+│   ├── app.py
+│   └── example_usage.py
+│
+├── face-recognition/     # 人臉識別
+│   ├── face_detector.py
+│   ├── face_recognizer.py
+│   └── app.py
+│
+├── style-transfer/       # 風格轉換
+│   ├── style_transfer.py
+│   └── app.py
+│
+├── qr-code-tools/        # QR 碼工具
+│   ├── qr_generator.py
+│   ├── qr_reader.py
+│   └── app.py
+│
+└── image-watermark/      # 圖像浮水印
+    ├── watermark.py
+    └── app.py
 ```
 
 ## 安裝
