@@ -3,15 +3,115 @@
 
 使用 AI 輔助開發的 GraphQL API 服務專案集合。
 
+## 🎉 **全新增強！生產級 GraphQL API**
+
+所有專案現已升級為**生產級、AI 驅動**的 GraphQL API，包含：
+
+✨ **自定義 Scalars** - DateTime, Email, URL, PositiveInt 自動驗證
+🛡️ **安全增強** - 查詢複雜度限制、深度限制、速率限制
+🤖 **AI 功能** - 內容生成、SEO 優化、情感分析、智能推薦
+⚡ **性能優化** - DataLoader、Cursor 分頁、智能快取
+📊 **監控工具** - 查詢計時、性能分析、錯誤追蹤
+🎯 **自定義 Directives** - @auth, @rateLimit, @cacheControl 等
+
+👉 **查看詳細文檔**: [blog-graphql-api/ENHANCED_FEATURES.md](./blog-graphql-api/ENHANCED_FEATURES.md)
+
+---
+
 ## 📋 目錄
 
+- [最新功能](#最新功能)
 - [什麼是 GraphQL](#什麼是-graphql)
 - [GraphQL vs REST](#graphql-vs-rest)
 - [技術棧選擇](#技術棧選擇)
 - [專案範例](#專案範例)
+- [共享工具](#共享工具)
 - [開發指南](#開發指南)
 - [AI 輔助開發建議](#ai-輔助開發建議)
 - [最佳實踐](#最佳實踐)
+
+---
+
+## ✨ 最新功能
+
+### 🚀 生產級增強功能
+
+所有 GraphQL 專案現已包含以下生產級功能：
+
+#### 1. **自定義 Scalars**
+```graphql
+type User {
+  email: Email!        # 自動驗證和格式化
+  createdAt: DateTime! # ISO 8601 格式
+  avatar: URL          # URL 驗證
+}
+```
+
+#### 2. **安全性 Directives**
+```graphql
+type Query {
+  me: User @auth                    # 需要認證
+  posts: [Post!]! @cacheControl(maxAge: 60)
+}
+
+type Mutation {
+  register(...): AuthPayload @rateLimit(limit: 3, duration: 3600)
+}
+```
+
+#### 3. **AI 輔助功能**
+- 📝 **內容生成** - 自動摘要、SEO 優化
+- 🏷️ **智能標籤** - AI 生成相關標籤
+- 😊 **情感分析** - 分析內容情感傾向
+- 🔍 **智能搜尋** - 搜尋建議和糾錯
+- 💡 **內容推薦** - 個性化推薦系統
+- ✍️ **創作輔助** - 大綱生成、內容擴展、校對、翻譯
+
+#### 4. **性能優化**
+- ⚡ **DataLoader** - 解決 N+1 查詢問題
+- 📄 **Cursor 分頁** - 高效大型列表分頁
+- 💾 **智能快取** - 可配置的查詢快取
+- 📊 **性能監控** - 查詢計時和慢查詢追蹤
+
+#### 5. **查詢安全**
+```javascript
+// 配置限制
+MAX_QUERY_COMPLEXITY=1000  // 最大查詢複雜度
+MAX_QUERY_DEPTH=10         // 最大嵌套深度
+MAX_BATCH_SIZE=10          // 最大批次大小
+```
+
+### 📦 專案狀態
+
+| 專案 | 基礎功能 | 增強功能 | AI 功能 | 文檔 |
+|------|---------|---------|---------|------|
+| **blog-graphql-api** | ✅ | ✅ | ✅ | ✅ [詳細文檔](./blog-graphql-api/ENHANCED_FEATURES.md) |
+| **ecommerce-graphql** | ✅ | 🔄 | 📝 | ✅ [AI 功能](./ecommerce-graphql/AI_FEATURES.md) |
+| **social-media-graphql** | ✅ | 🔄 | 📝 | ✅ [AI 功能](./social-media-graphql/AI_FEATURES.md) |
+| **realtime-chat-graphql** | ✅ | 🔄 | 📝 | ✅ [AI 功能](./realtime-chat-graphql/AI_FEATURES.md) |
+
+圖例：✅ 已完成 | 🔄 進行中 | 📝 已規劃
+
+---
+
+## 🛠️ 共享工具
+
+所有專案可共享使用的工具和服務位於 [`shared-utils/`](./shared-utils/) 目錄：
+
+### 可用工具
+- **customScalars.js** - DateTime, Email, URL, PositiveInt
+- **directives.js** - @auth, @rateLimit, @cacheControl, @validate
+- **queryComplexity.js** - 複雜度限制、深度限制、性能監控
+- **aiService.js** - AI 服務整合（支援 OpenAI、Anthropic、本地模型）
+
+### 使用方式
+```bash
+# 複製到你的專案
+cp -r blog-graphql-api/src/utils/* your-project/src/utils/
+cp blog-graphql-api/src/services/aiService.js your-project/src/services/
+```
+
+詳見：[共享工具文檔](./shared-utils/README.md)
 
 ---
 
