@@ -12,7 +12,9 @@ import { Badge } from '@/components/ui/Badge';
 import { Rating } from '@/components/ui/Rating';
 import { Card } from '@/components/ui/Card';
 import { ImageGallery } from '@/components/products/ImageGallery';
-import { useState } from 'react';
+import ProductRecommendations from '@/components/products/ProductRecommendations';
+import { getContentBasedRecommendations, getFrequentlyBoughtTogether } from '@/lib/aiRecommendations';
+import { useState, useMemo } from 'react';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -34,6 +36,15 @@ export default function ProductDetailPage() {
   }
 
   const inWishlist = isInWishlist(product.id);
+
+  // AI Recommendations
+  const aiRecommendations = useMemo(() => {
+    return getContentBasedRecommendations(product, mockProducts, 4);
+  }, [product.id]);
+
+  const bundleRecommendations = useMemo(() => {
+    return getFrequentlyBoughtTogether(product, mockProducts, 3);
+  }, [product.id]);
 
   const handleAddToCart = () => {
     addToCart(product, quantity);
@@ -280,6 +291,22 @@ export default function ProductDetailPage() {
           </Card>
         )}
       </motion.div>
+
+      {/* AI Recommendations */}
+      {aiRecommendations.length > 0 && (
+        <ProductRecommendations
+          products={aiRecommendations}
+          type="ai"
+        />
+      )}
+
+      {/* Frequently Bought Together */}
+      {bundleRecommendations.length > 0 && (
+        <ProductRecommendations
+          products={bundleRecommendations}
+          type="bundle"
+        />
+      )}
     </div>
   );
 }

@@ -8,12 +8,24 @@
   }
 
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100;
+  }
+
+  /* Smooth transitions for dark mode */
+  html {
+    @apply transition-colors duration-300;
   }
 }
 
 @layer utilities {
   .container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* Custom dark mode enhancements */
+@layer components {
+  .dark-mode-transition {
+    @apply transition-colors duration-200;
   }
 }
