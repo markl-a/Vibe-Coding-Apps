@@ -136,8 +136,7 @@ class ThermalAnalyzer:
             print("FEM 方法尚未實現，使用 FDM 替代")
             result_temp = self._analyze_fdm(max_iterations, convergence)
         elif method == 'ml':
-            print("ML 方法尚未實現，使用 FDM 替代")
-            result_temp = self._analyze_fdm(max_iterations, convergence)
+            result_temp = self._analyze_ml()
         else:
             raise ValueError(f"未知方法: {method}")
 
@@ -386,3 +385,151 @@ class ThermalAnalyzer:
             f.write("\n" + "=" * 60 + "\n")
 
         print(f"報告已生成: {output}")
+
+    def _analyze_ml(self, model_path: str = None) -> np.ndarray:
+        """
+        使用機器學習進行熱分析
+
+        Args:
+            model_path: 預訓練模型路徑
+
+        Returns:
+            溫度網格
+        """
+        try:
+            from .solvers.ml_predictor import MLThermalPredictor
+        except ImportError:
+            from solvers.ml_predictor import MLThermalPredictor
+
+        # 獲取材料屬性
+        material_name = self.boundary_conditions['substrate_material']
+        material = self.material_db.get_material(material_name)
+
+        # 創建預測器
+        predictor = MLThermalPredictor(model_type='simple', model_path=model_path)
+
+        # 執行預測
+        temp_grid = predictor.predict(
+            power_grid=self.power_grid,
+            thermal_conductivity=material['thermal_conductivity'],
+            convection_coeff=self.boundary_conditions['convection_coeff'],
+            ambient_temp=self.boundary_conditions['ambient_temp']
+        )
+
+        return temp_grid
+
+    def visualize_3d(self, result: Dict, elev: int = 30, azim: int = 45, show: bool = True):
+        """
+        3D 視覺化溫度分布
+
+        Args:
+            result: 分析結果
+            elev: 仰角
+            azim: 方位角
+            show: 是否顯示
+        """
+        import matplotlib.pyplot as plt
+        from mpl_toolkits.mplot3d import Axes3D
+
+        temp_grid = result['temperature_grid']
+
+        # 創建網格座標
+        x = np.arange(0, self.board_size[0], self.resolution)
+        y = np.arange(0, self.board_size[1], self.resolution)
+        X, Y = np.meshgrid(x, y)
+
+        # 創建 3D 圖
+        fig = plt.figure(figsize=(14, 10))
+        ax = fig.add_subplot(111, projection='3d')
+
+        # 繪製表面
+        surf = ax.plot_surface(X, Y, temp_grid, cmap='hot',
+                              vmin=result['min_temp'], vmax=result['max_temp'],
+                              alpha=0.9, antialiased=True)
+
+        # 添加色條
+        cbar = fig.colorbar(surf, ax=ax, shrink=0.5, aspect=5)
+        cbar.set_label('Temperature (°C)', fontsize=12)
+
+        # 設置標籤
+        ax.set_xlabel('X (mm)', fontsize=12)
+        ax.set_ylabel('Y (mm)', fontsize=12)
+        ax.set_zlabel('Temperature (°C)', fontsize=12)
+        ax.set_title(f'3D Temperature Distribution\n'
+                    f'Max: {result["max_temp"]:.1f}°C',
+                    fontsize=14)
+
+        # 設置視角
+        ax.view_init(elev=elev, azim=azim)
+
+        plt.tight_layout()
+
+        if show:
+            plt.show()
+
+        return fig
+
+    def plot_temperature_profile(self, result: Dict, axis: str = 'x',
+                                position: float = None, show: bool = True):
+        """
+        繪製溫度剖面圖
+
+        Args:
+            result: 分析結果
+            axis: 剖面軸 ('x' 或 'y')
+            position: 剖面位置 (mm)，None 表示中心
+            show: 是否顯示
+        """
+        import matplotlib.pyplot as plt
+
+        temp_grid = result['temperature_grid']
+
+        if position is None:
+            if axis == 'x':
+                position = self.board_size[0] / 2
+            else:
+                position = self.board_size[1] / 2
+
+        # 轉換為網格座標
+        if axis == 'x':
+            idx = int(position / self.resolution)
+            idx = min(idx, temp_grid.shape[1] - 1)
+            profile = temp_grid[:, idx]
+            coord = np.arange(0, self.board_size[1], self.resolution)
+            label_coord = 'Y (mm)'
+            title = f'Temperature Profile at X = {position:.1f} mm'
+        else:
+            idx = int(position / self.resolution)
+            idx = min(idx, temp_grid.shape[0] - 1)
+            profile = temp_grid[idx, :]
+            coord = np.arange(0, self.board_size[0], self.resolution)
+            label_coord = 'X (mm)'
+            title = f'Temperature Profile at Y = {position:.1f} mm'
+
+        # 繪製剖面
+        fig, ax = plt.subplots(figsize=(10, 6))
+
+        ax.plot(coord[:len(profile)], profile, 'b-', linewidth=2)
+        ax.fill_between(coord[:len(profile)], profile,
+                        self.boundary_conditions['ambient_temp'],
+                        alpha=0.3)
+
+        ax.axhline(y=result['max_temp'], color='r', linestyle='--',
+                  label=f'Max: {result["max_temp"]:.1f}°C')
+        ax.axhline(y=result['avg_temp'], color='g', linestyle='--',
+                  label=f'Avg: {result["avg_temp"]:.1f}°C')
+        ax.axhline(y=self.boundary_conditions['ambient_temp'],
+                  color='gray', linestyle=':', label='Ambient')
+
+        ax.set_xlabel(label_coord, fontsize=12)
+        ax.set_ylabel('Temperature (°C)', fontsize=12)
+        ax.set_title(title, fontsize=14)
+        ax.legend()
+        ax.grid(True, alpha=0.3)
+
+        plt.tight_layout()
+
+        if show:
+            plt.show()
+
+        return fig
