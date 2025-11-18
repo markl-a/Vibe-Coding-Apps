@@ -18,19 +18,33 @@
 
 ### 核心功能
 
-- **時間序列預測**：使用 Facebook Prophet 進行需求預測
+- **多模型預測**：支持 Prophet、LSTM、GRU 等多種預測模型
+- **智能模型選擇**：根據數據特徵自動選擇最佳模型
 - **多週期預測**：支持日、週、月多種時間粒度
 - **趨勢分析**：自動識別需求趨勢和季節性模式
 - **異常檢測**：使用 Isolation Forest 檢測需求異常
 - **置信區間**：提供預測的上下界，量化不確定性
 - **準確度評估**：MAPE、RMSE、MAE、R² 等多種指標
 
-### AI 能力
+### AI 增強功能 🆕
+
+- **深度學習預測**：LSTM 和 GRU 神經網絡模型，適合複雜時間序列
+- **AI 智能分析**：自動生成預測洞察、趨勢分析和風險預警
+- **自然語言報告**：生成可讀性強的預測分析報告
+- **AI 助手對話**：支持自然語言查詢，獲取智能建議
+- **集成預測**：結合多個模型的預測結果，提升準確度
+- **自動化流程**：從數據處理到模型訓練全自動化
+- **實時分析**：提供實時的需求趨勢和異常檢測
+- **可視化增強**：matplotlib、seaborn、plotly 多種圖表支持
+
+### 傳統 ML 能力
 
 - **自動季節性檢測**：自動識別年度、週度季節性模式
 - **促銷影響分析**：考慮促銷活動對需求的影響
 - **趨勢變化點檢測**：自動識別需求模式的突變
 - **多變量預測**：支持價格、促銷等外部因素
+- **XGBoost 支持**：梯度提升樹模型
+- **LightGBM 支持**：高效的梯度提升框架
 
 ---
 
@@ -269,6 +283,116 @@ GET /api/anomalies/{item_id}?contamination=0.1
       "quantity": 2500.0
     }
   ]
+}
+```
+
+### LSTM 深度學習預測 🆕
+
+```http
+POST /api/forecast/lstm
+Content-Type: application/json
+
+{
+  "item_id": "ITEM-001",
+  "periods": 12,
+  "lookback_window": 30,
+  "model_type": "lstm"
+}
+```
+
+**參數說明**:
+- `lookback_window`: 回看窗口（使用過去多少個時間步進行預測）
+- `model_type`: "lstm" 或 "gru"
+
+**響應示例**:
+```json
+{
+  "status": "success",
+  "item_id": "ITEM-001",
+  "model_type": "LSTM",
+  "forecasts": [...],
+  "training_metrics": {
+    "final_val_loss": 0.0234,
+    "final_val_mae": 45.67,
+    "epochs_trained": 50,
+    "training_samples": 70
+  }
+}
+```
+
+### 智能預測（自動選擇模型）🆕
+
+```http
+POST /api/forecast/smart
+Content-Type: application/json
+
+{
+  "item_id": "ITEM-001",
+  "periods": 12,
+  "frequency": "M"
+}
+```
+
+系統會根據數據特徵自動選擇最適合的模型（Prophet、LSTM 或 GRU）。
+
+### AI 智能分析 🆕
+
+```http
+POST /api/ai/analyze
+Content-Type: application/json
+
+{
+  "item_id": "ITEM-001",
+  "periods": 12,
+  "frequency": "M"
+}
+```
+
+**響應示例**:
+```json
+{
+  "status": "success",
+  "forecasts": [...],
+  "accuracy_metrics": {...},
+  "ai_analysis": {
+    "summary": "預測準確度良好 (MAPE: 5.5%)...",
+    "insights": [
+      {
+        "type": "accuracy",
+        "level": "good",
+        "message": "預測準確度良好",
+        "details": "模型表現穩定，適合用於業務決策"
+      }
+    ],
+    "recommendations": [
+      "考慮增加庫存水平以應對需求增長",
+      "與供應商溝通，確保供應能力"
+    ],
+    "alerts": []
+  },
+  "natural_language_report": "# 筆記型電腦 需求預測報告\n..."
+}
+```
+
+### AI 助手對話 🆕
+
+```http
+POST /api/ai/chat
+Content-Type: application/json
+
+{
+  "message": "預測準確嗎？",
+  "item_id": "ITEM-001"
+}
+```
+
+**響應示例**:
+```json
+{
+  "status": "success",
+  "user_message": "預測準確嗎？",
+  "ai_response": "當前預測模型的 MAPE 為 5.5%。準確度很高，可以放心使用。",
+  "timestamp": "2025-11-18T10:30:00"
 }
 ```
 
