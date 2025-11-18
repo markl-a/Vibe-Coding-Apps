@@ -3,6 +3,34 @@
 
 專案管理系統幫助團隊有效規劃、執行和追蹤專案進度，確保專案按時、按預算完成。使用 AI 輔助開發可以快速建立功能完整、協作高效的專案管理平台。
 
+## 🆕 最新更新
+
+### ✨ AI 增強功能已全面整合
+
+本專案管理系統現已整合完整的 AI 輔助功能：
+
+- ✅ **AI 助手整合模組**: 提供任務估時、風險預測、資源優化等核心 AI 功能
+- ✅ **AI 增強 Sprint Manager**: 智能故事點估算、自動化 Sprint 規劃、實時進度預測
+- ✅ **整合示例**: 展示所有模組協同工作的完整示例
+- ✅ **Docker 部署**: 一鍵啟動完整系統，支持 Docker Compose
+- ✅ **完整文檔**: 詳細的使用指南和 API 文檔
+
+### 🚀 快速開始
+
+```bash
+# 使用 Docker 快速啟動（推薦）
+./docker-run.sh
+
+# 或手動啟動
+docker-compose up -d
+```
+
+訪問服務：
+- Sprint Manager: http://localhost:8501
+- Kanban Board: http://localhost:8502
+- Gantt Chart: http://localhost:8503
+- Dashboard: http://localhost:8504
+
 ## 📋 目錄
 
 - [專案管理概述](#專案管理概述)
