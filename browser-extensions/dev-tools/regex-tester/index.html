@@ -14,6 +14,47 @@
         </header>
 
         <div class="main-content">
+            <!-- AI Assistant Section -->
+            <section class="ai-section">
+                <h2>🤖 AI 正則表達式生成器</h2>
+                <div class="ai-description">
+                    <p>用自然語言描述你需要的正則表達式，AI 會為你生成！</p>
+                </div>
+                <div class="ai-input-group">
+                    <textarea id="ai-description"
+                              placeholder="例如：匹配台灣手機號碼 (09開頭10碼)&#10;例如：驗證強密碼 (至少8字元，含大小寫字母和數字)&#10;例如：提取所有電子郵件地址"
+                              rows="3"></textarea>
+                    <div class="ai-buttons">
+                        <button id="ai-generate-btn" class="btn-primary">✨ 生成正則表達式</button>
+                        <button id="ai-clear-btn" class="btn-secondary">清除</button>
+                    </div>
+                </div>
+                <div id="ai-result" class="ai-result" style="display: none;">
+                    <div class="ai-result-header">
+                        <span class="ai-result-title">✅ AI 生成結果</span>
+                        <button id="ai-use-result-btn" class="btn-use">使用此正則表達式</button>
+                    </div>
+                    <div class="ai-result-content">
+                        <div class="ai-regex">
+                            <label>生成的正則表達式:</label>
+                            <code id="ai-generated-regex"></code>
+                        </div>
+                        <div class="ai-explanation">
+                            <label>說明:</label>
+                            <p id="ai-generated-explanation"></p>
+                        </div>
+                        <div class="ai-examples">
+                            <label>測試範例:</label>
+                            <div id="ai-generated-examples"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="ai-loading" class="ai-loading" style="display: none;">
+                    <div class="loading-spinner"></div>
+                    <p>AI 正在生成正則表達式...</p>
+                </div>
+            </section>
+
             <!-- Regex Input Section -->
             <section class="regex-section">
                 <h2>正規表示式</h2>
