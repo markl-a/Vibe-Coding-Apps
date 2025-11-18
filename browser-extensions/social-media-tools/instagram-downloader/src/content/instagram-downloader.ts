@@ -76,7 +76,8 @@ class InstagramDownloader {
 
       sendResponse({ success: true, media: allMedia });
     } catch (error) {
-      sendResponse({ success: false, error: error.message });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      sendResponse({ success: false, error: errorMessage });
     }
   }
 
@@ -103,7 +104,8 @@ class InstagramDownloader {
 
       sendResponse({ success: true, count: media.length });
     } catch (error) {
-      sendResponse({ success: false, error: error.message });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      sendResponse({ success: false, error: errorMessage });
     }
   }
 }
