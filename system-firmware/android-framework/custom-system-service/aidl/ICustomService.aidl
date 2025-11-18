@@ -117,4 +117,49 @@ interface ICustomService {
      * @return 配置 Bundle
      */
     Bundle getConfiguration();
+
+    // ==================== AI 輔助功能 ====================
+
+    /**
+     * AI 輔助分析資料
+     * @param data 待分析的資料
+     * @param analysisType 分析類型 (pattern, anomaly, prediction)
+     * @return 分析結果 JSON 字串
+     */
+    String analyzeDataWithAI(String data, String analysisType);
+
+    /**
+     * AI 輔助優化建議
+     * @param context 上下文資訊
+     * @return 優化建議列表
+     */
+    List<String> getAIOptimizationSuggestions(in Bundle context);
+
+    /**
+     * AI 輔助預測
+     * @param historicalData 歷史資料列表
+     * @param predictionHorizon 預測時間範圍 (分鐘)
+     * @return 預測結果
+     */
+    String predictWithAI(in List<String> historicalData, int predictionHorizon);
+
+    /**
+     * AI 輔助異常檢測
+     * @param metrics 待檢測的指標資料
+     * @return 異常檢測報告
+     */
+    String detectAnomalies(in Bundle metrics);
+
+    /**
+     * AI 輔助自動調優
+     * @param targetMetric 目標指標 (performance, battery, memory)
+     * @return 調優結果
+     */
+    boolean autoTuneWithAI(String targetMetric);
+
+    /**
+     * 獲取 AI 模型資訊
+     * @return AI 模型資訊 Bundle
+     */
+    Bundle getAIModelInfo();
 }

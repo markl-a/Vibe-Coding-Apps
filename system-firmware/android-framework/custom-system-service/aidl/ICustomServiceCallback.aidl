@@ -58,4 +58,36 @@ oneway interface ICustomServiceCallback {
      * @param eventData 事件資料
      */
     void onCustomEvent(int eventType, in Bundle eventData);
+
+    // ==================== AI 輔助回調 ====================
+
+    /**
+     * AI 分析完成通知
+     * @param analysisId 分析任務 ID
+     * @param result 分析結果
+     */
+    void onAIAnalysisComplete(String analysisId, String result);
+
+    /**
+     * AI 異常檢測通知
+     * @param anomalyType 異常類型
+     * @param severity 嚴重程度 (1-5)
+     * @param details 異常詳情
+     */
+    void onAnomalyDetected(String anomalyType, int severity, String details);
+
+    /**
+     * AI 優化建議通知
+     * @param category 建議類別
+     * @param suggestions 建議列表
+     */
+    void onOptimizationSuggestion(String category, in List<String> suggestions);
+
+    /**
+     * AI 預測結果通知
+     * @param predictionType 預測類型
+     * @param confidence 置信度 (0.0-1.0)
+     * @param prediction 預測結果
+     */
+    void onPredictionUpdate(String predictionType, float confidence, String prediction);
 }

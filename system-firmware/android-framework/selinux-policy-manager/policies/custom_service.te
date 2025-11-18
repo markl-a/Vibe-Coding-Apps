@@ -1,0 +1,49 @@
+# 自定義系統服務 SELinux 策略
+
+# 定義服務類型
+type custom_service, system_api_service, system_server_service, service_manager_type;
+
+# 允許 system_server 添加服務
+allow system_server custom_service:service_manager add;
+
+# 允許應用查找服務
+allow appdomain custom_service:service_manager find;
+
+# 允許系統應用訪問
+allow system_app custom_service:service_manager find;
+allow platform_app custom_service:service_manager find;
+
+# 允許特權應用訪問
+allow priv_app custom_service:service_manager find;
+
+# 允許服務訪問必要的文件
+allow system_server custom_service_data_file:dir { create_dir_perms rw_dir_perms };
+allow system_server custom_service_data_file:file { create_file_perms rw_file_perms };
+
+# 允許服務使用網路
+allow system_server self:tcp_socket { create_socket_perms };
+allow system_server self:udp_socket { create_socket_perms };
+
+# 允許服務訪問設備
+allow system_server custom_device:chr_file { read write ioctl open };
+
+# Binder 通訊
+allow system_server binder_device:chr_file { read write ioctl open };
+allow system_server servicemanager:binder { call transfer };
+
+# 允許設置系統屬性
+set_prop(system_server, custom_service_prop)
+
+# 允許 SELinux 安全標籤操作 (謹慎使用)
+# allow system_server self:capability2 mac_admin;
+
+# AI 功能相關權限
+# 允許訪問 ML 模型文件
+allow system_server ai_model_file:dir r_dir_perms;
+allow system_server ai_model_file:file r_file_perms;
+
+# 允許使用 GPU (如果 AI 模型需要)
+allow system_server gpu_device:chr_file { read write ioctl open };
+
+# 安全限制 - 禁止某些危險操作
+neverallow { appdomain -priv_app -system_app } custom_service:service_manager add;

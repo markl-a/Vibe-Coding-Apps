@@ -1,0 +1,26 @@
+# 文件上下文配置
+# 定義文件和目錄的 SELinux 安全標籤
+
+# 系統服務可執行文件
+/system/bin/custom_service                     u:object_r:custom_service_exec:s0
+
+# 服務資料目錄
+/data/custom(/.*)?                              u:object_r:custom_service_data_file:s0
+/data/custom/cache(/.*)?                        u:object_r:custom_service_cache_file:s0
+/data/custom/logs(/.*)?                         u:object_r:custom_service_log_file:s0
+
+# 配置文件
+/system/etc/custom(/.*)?                        u:object_r:custom_service_config_file:s0
+/system/etc/custom/custom.conf                  u:object_r:custom_service_config_file:s0
+
+# 設備節點
+/dev/custom_device                              u:object_r:custom_device:s0
+/dev/custom(/.*)?                               u:object_r:custom_device:s0
+
+# AI 模型文件
+/system/etc/custom/models(/.*)?                 u:object_r:ai_model_file:s0
+/data/custom/models(/.*)?                       u:object_r:ai_model_file:s0
+
+# 系統屬性上下文
+# (在 property_contexts 中定義)
+# persist.custom.*                               u:object_r:custom_service_prop:s0
