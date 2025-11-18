@@ -1,0 +1,7 @@
+# 服務上下文配置
+# 定義系統服務的 SELinux 安全標籤
+
+# 自定義服務
+custom                                          u:object_r:custom_service:s0
+custom_ai                                       u:object_r:custom_service:s0
+custom_data                                     u:object_r:custom_service:s0
