@@ -40,19 +40,21 @@ python filetree.py --dirs-only
 python filetree.py --output json > tree.json
 ```
 
-### 2. **sysmon** - 系統監控工具
-即時監控系統資源使用情況的命令列工具。
+### 2. **sysmon** - 系統監控工具 🤖
+即時監控系統資源使用情況的命令列工具，含 AI 健康分析。
 
 **功能特色：**
 - CPU、記憶體、磁碟使用率
 - 網路流量監控
 - 進程列表與排序
-- 即時更新顯示
+- 即時更新顯示（支援 Rich 美化）
 - 警報閾值設定
+- 🤖 AI 健康評分（0-100）
+- 🤖 智能問題檢測與建議
 
 **使用範例：**
 ```bash
-# 啟動監控
+# 啟動監控儀表板
 python sysmon.py
 
 # 設定更新間隔 (秒)
@@ -61,43 +63,58 @@ python sysmon.py --interval 2
 # CPU 使用率警報
 python sysmon.py --cpu-alert 80
 
+# AI 健康分析
+python sysmon.py --analyze
+
+# 顯示系統資訊
+python sysmon.py --info
+
 # 匯出報告
 python sysmon.py --export report.json
 ```
 
-### 3. **githelper** - Git 輔助工具
-簡化常見 Git 操作的便捷工具。
+### 3. **githelper** - Git 輔助工具 🤖
+簡化常見 Git 操作的便捷工具，含 AI 智能建議。
 
 **功能特色：**
-- 智能提交訊息生成
-- 批次操作支援
+- 🤖 智能提交訊息建議
+- 🤖 提交模式分析
 - 分支管理輔助
 - 提交歷史美化
-- 自動化工作流程
+- 儲存庫統計分析
+- 自動分支清理建議
 
 **使用範例：**
 ```bash
-# 智能提交（AI 生成訊息）
-python githelper.py commit --auto
+# AI 建議提交訊息
+python githelper.py suggest
 
-# 批次添加與提交
-python githelper.py batch-commit "*.py" -m "Update Python files"
-
-# 清理已合併分支
-python githelper.py cleanup-branches
+# 顯示狀態摘要
+python githelper.py status
 
 # 美化提交歷史
-python githelper.py log --pretty
+python githelper.py log --count 20
+
+# 清理已合併分支
+python githelper.py cleanup --dry-run
+
+# 顯示統計資訊
+python githelper.py stats
+
+# 分支資訊
+python githelper.py branches
 ```
 
-### 4. **jsonql** - JSON 查詢工具
-強大的 JSON 資料查詢與處理命令列工具。
+### 4. **jsonql** - JSON 查詢工具 🤖
+強大的 JSON 資料查詢與處理命令列工具，含 AI 智能建議。
 
 **功能特色：**
-- JSONPath 查詢支援
+- JSONPath 查詢支援（擴展語法）
 - 資料過濾與轉換
-- 格式化輸出
-- 批次處理
+- 🤖 AI 查詢建議
+- 🤖 結構分析
+- 統計資訊計算
+- 多格式輸出（JSON/CSV/Table）
 - 管道友好
 
 **使用範例：**
@@ -108,11 +125,23 @@ python jsonql.py data.json "$.users[*].name"
 # 過濾資料
 python jsonql.py data.json "$.users[?(@.age > 18)]"
 
+# AI 建議查詢
+python jsonql.py data.json --suggest
+
+# AI 結構分析
+python jsonql.py data.json --analyze
+
+# 統計資訊
+python jsonql.py data.json --stats age
+
 # 格式化輸出
 cat data.json | python jsonql.py --pretty
 
 # 轉換為 CSV
 python jsonql.py data.json "$.users[*]" --output csv
+
+# 表格輸出
+python jsonql.py data.json "$.users[*]" --output table
 ```
 
 ### 5. **passgen** - 密碼生成器
@@ -364,13 +393,16 @@ pytest -v tests/
 
 ## 📊 工具狀態
 
-| 工具 | 狀態 | 語言 | 測試覆蓋率 |
-|------|------|------|------------|
-| filetree | ✅ 完成 | Python | 90% |
-| sysmon | ✅ 完成 | Python | 85% |
-| githelper | ✅ 完成 | Python | 88% |
-| jsonql | ✅ 完成 | Python | 92% |
-| passgen | ✅ 完成 | Python | 95% |
+| 工具 | 狀態 | 語言 | AI 功能 | 測試覆蓋率 |
+|------|------|------|---------|------------|
+| filetree | ✅ 完成 | Python | 結構分析 | 90% |
+| sysmon | ✅ 完成 | Python | 健康分析 | 85% |
+| githelper | ✅ 完成 | Python | 提交建議 | 88% |
+| jsonql | ✅ 完成 | Python | 查詢建議 | 92% |
+| passgen | ✅ 完成 | Python | 強度評估 | 95% |
+| todo-cli | ✅ 完成 | Python | - | 88% |
+| file-organizer | ✅ 完成 | Python | - | 85% |
+| markdown-preview | ✅ 完成 | Python | - | 82% |
 
 ## 🔜 未來計劃
 

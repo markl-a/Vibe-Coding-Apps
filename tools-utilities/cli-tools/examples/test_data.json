@@ -1,0 +1,55 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Alice",
+      "age": 28,
+      "email": "alice@example.com",
+      "role": "developer",
+      "active": true
+    },
+    {
+      "id": 2,
+      "name": "Bob",
+      "age": 35,
+      "email": "bob@example.com",
+      "role": "designer",
+      "active": true
+    },
+    {
+      "id": 3,
+      "name": "Charlie",
+      "age": 22,
+      "email": "charlie@example.com",
+      "role": "developer",
+      "active": false
+    },
+    {
+      "id": 4,
+      "name": "Diana",
+      "age": 31,
+      "email": "diana@example.com",
+      "role": "manager",
+      "active": true
+    }
+  ],
+  "projects": [
+    {
+      "id": 101,
+      "name": "Project Alpha",
+      "status": "active",
+      "team_size": 5
+    },
+    {
+      "id": 102,
+      "name": "Project Beta",
+      "status": "completed",
+      "team_size": 3
+    }
+  ],
+  "company": {
+    "name": "Tech Corp",
+    "founded": 2010,
+    "employees": 150
+  }
+}
