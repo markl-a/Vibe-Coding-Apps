@@ -5,7 +5,7 @@ CFLAGS = -Wall -Wextra -O2
 LDFLAGS = -lm
 
 # 目標文件
-TARGETS = basic_usage led_control button_interrupt error_handling test_suite
+TARGETS = basic_usage led_control button_interrupt error_handling test_suite pwm_control
 
 # 所有目標
 all: $(TARGETS)
@@ -28,6 +28,10 @@ error_handling: error_handling.c
 
 # 測試套件
 test_suite: test_suite.c
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
+
+# PWM 控制範例
+pwm_control: pwm_control.c
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 # 清理

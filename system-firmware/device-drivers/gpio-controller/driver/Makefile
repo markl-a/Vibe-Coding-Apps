@@ -1,9 +1,14 @@
 # Makefile for GPIO Controller Driver
 
 obj-m += gpio_driver.o
+obj-m += gpio_pwm.o
+obj-m += gpio_debounce.o
 
 KDIR := /lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)
+
+# 編譯標誌
+ccflags-y := -DDEBUG
 
 all:
 	make -C $(KDIR) M=$(PWD) modules
@@ -13,11 +18,17 @@ clean:
 
 install:
 	sudo insmod gpio_driver.ko
+	sudo insmod gpio_pwm.ko
+	sudo insmod gpio_debounce.ko
+	@echo "All GPIO modules loaded"
 
 uninstall:
-	sudo rmmod gpio_driver
+	sudo rmmod gpio_debounce || true
+	sudo rmmod gpio_pwm || true
+	sudo rmmod gpio_driver || true
+	@echo "All GPIO modules unloaded"
 
-reload: uninstall install
+reload: uninstall all install
 
 test:
 	@echo "Testing GPIO controller driver..."
