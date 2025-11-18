@@ -11,3 +11,6 @@ export { EmptyState } from './EmptyState';
 export { AIChatBot } from './AIChatBot';
 export { AIAssistantButton } from './AIAssistantButton';
 export { AITextEnhancer } from './AITextEnhancer';
+
+// 主题组件
+export { ThemeToggle } from './ThemeToggle';
