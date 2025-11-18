@@ -1,21 +1,40 @@
 """
 RAG Chatbot - 檢索增強生成聊天機器人
 使用向量資料庫和語義搜尋提供基於文檔的精確回答
+增強版：支援多模態、智能分塊、重排序和混合搜索
 """
 
 import os
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Any
 from pathlib import Path
 import openai
 from dotenv import load_dotenv
+import re
 
 try:
     import faiss
     import numpy as np
+    FAISS_AVAILABLE = True
 except ImportError:
     print("警告: FAISS 未安裝，將使用簡化版向量搜尋")
-    faiss = None
+    FAISS_AVAILABLE = False
     import numpy as np
+
+# 可選的PDF處理
+try:
+    import PyPDF2
+    PDF_AVAILABLE = True
+except ImportError:
+    PDF_AVAILABLE = False
+    print("提示：安裝 PyPDF2 以支援PDF文檔")
+
+# 可選的文檔處理
+try:
+    from docx import Document as DocxDocument
+    DOCX_AVAILABLE = True
+except ImportError:
+    DOCX_AVAILABLE = False
+    print("提示：安裝 python-docx 以支援Word文檔")
 
 load_dotenv()
 
@@ -26,10 +45,13 @@ class RAGChatbot:
     def __init__(
         self,
         vector_db_path: str = "./vector_db",
-        model: str = "gpt-3.5-turbo",
-        chunk_size: int = 500,
-        chunk_overlap: int = 50,
-        api_key: Optional[str] = None
+        model: str = "gpt-4o-mini",
+        chunk_size: int = 800,
+        chunk_overlap: int = 100,
+        api_key: Optional[str] = None,
+        chunk_strategy: str = "semantic",  # "semantic" 或 "fixed"
+        enable_reranking: bool = True,
+        enable_hybrid_search: bool = True
     ):
         """
         初始化 RAG 聊天機器人
@@ -40,13 +62,19 @@ class RAGChatbot:
             chunk_size: 文檔分塊大小
             chunk_overlap: 分塊重疊大小
             api_key: OpenAI API 金鑰
+            chunk_strategy: 分塊策略 ("semantic" 或 "fixed")
+            enable_reranking: 是否啟用重排序
+            enable_hybrid_search: 是否啟用混合搜索
         """
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
-        openai.api_key = self.api_key
+        self.client = openai.OpenAI(api_key=self.api_key)
 
         self.model = model
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
+        self.chunk_strategy = chunk_strategy
+        self.enable_reranking = enable_reranking
+        self.enable_hybrid_search = enable_hybrid_search
         self.vector_db_path = Path(vector_db_path)
 
         # 文檔儲存
@@ -108,7 +136,14 @@ class RAGChatbot:
             return np.random.randn(1536).astype('float32')
 
     def _chunk_text(self, text: str) -> List[str]:
-        """將文本分塊"""
+        """將文本分塊（根據策略選擇）"""
+        if self.chunk_strategy == "semantic":
+            return self._semantic_chunk(text)
+        else:
+            return self._fixed_chunk(text)
+
+    def _fixed_chunk(self, text: str) -> List[str]:
+        """固定大小分塊"""
         chunks = []
         text_length = len(text)
 
@@ -130,6 +165,56 @@ class RAGChatbot:
             start = end - self.chunk_overlap
 
         return chunks
+
+    def _semantic_chunk(self, text: str) -> List[str]:
+        """語義分塊（基於段落和主題）"""
+        # 首先按段落分割
+        paragraphs = re.split(r'\n\s*\n', text)
+
+        chunks = []
+        current_chunk = ""
+
+        for para in paragraphs:
+            para = para.strip()
+            if not para:
+                continue
+
+            # 如果添加這個段落不會超過大小限制
+            if len(current_chunk) + len(para) + 2 <= self.chunk_size:
+                if current_chunk:
+                    current_chunk += "\n\n" + para
+                else:
+                    current_chunk = para
+            else:
+                # 保存當前chunk
+                if current_chunk:
+                    chunks.append(current_chunk)
+
+                # 如果段落本身太大，再分割
+                if len(para) > self.chunk_size:
+                    # 按句子分割
+                    sentences = re.split(r'([.!?。！？]+)', para)
+                    current_chunk = ""
+
+                    for i in range(0, len(sentences), 2):
+                        sentence = sentences[i]
+                        if i + 1 < len(sentences):
+                            sentence += sentences[i + 1]
+
+                        if len(current_chunk) + len(sentence) <= self.chunk_size:
+                            current_chunk += sentence
+                        else:
+                            if current_chunk:
+                                chunks.append(current_chunk.strip())
+                            current_chunk = sentence
+                else:
+                    current_chunk = para
+
+        # 添加最後一個chunk
+        if current_chunk:
+            chunks.append(current_chunk.strip())
+
+        return [c for c in chunks if c]  # 過濾空chunk
 
     def add_document(self, file_path: str, metadata: Optional[Dict] = None):
         """
@@ -173,7 +258,7 @@ class RAGChatbot:
         print(f"文檔已添加: {len(chunks)} 個片段")
 
     def _load_document(self, file_path: str) -> str:
-        """載入文檔內容"""
+        """載入文檔內容（支援多種格式）"""
         path = Path(file_path)
 
         try:
@@ -181,25 +266,42 @@ class RAGChatbot:
                 with open(path, 'r', encoding='utf-8') as f:
                     return f.read()
 
-            elif path.suffix == '.md':
+            elif path.suffix in ['.md', '.markdown']:
                 with open(path, 'r', encoding='utf-8') as f:
                     return f.read()
 
             elif path.suffix == '.pdf':
+                if not PDF_AVAILABLE:
+                    print("請安裝 PyPDF2: pip install PyPDF2")
+                    return ""
                 try:
-                    import PyPDF2
                     with open(path, 'rb') as f:
                         reader = PyPDF2.PdfReader(f)
                         text = ""
                         for page in reader.pages:
-                            text += page.extract_text() + "\n"
+                            page_text = page.extract_text()
+                            if page_text:
+                                text += page_text + "\n\n"
                         return text
-                except ImportError:
-                    print("請安裝 PyPDF2: pip install PyPDF2")
+                except Exception as e:
+                    print(f"PDF讀取錯誤: {e}")
+                    return ""
+
+            elif path.suffix in ['.docx', '.doc']:
+                if not DOCX_AVAILABLE:
+                    print("請安裝 python-docx: pip install python-docx")
+                    return ""
+                try:
+                    doc = DocxDocument(path)
+                    text = "\n\n".join([para.text for para in doc.paragraphs if para.text.strip()])
+                    return text
+                except Exception as e:
+                    print(f"DOCX讀取錯誤: {e}")
                     return ""
 
             else:
                 print(f"不支援的檔案格式: {path.suffix}")
+                print("支援的格式: .txt, .md, .pdf, .docx")
                 return ""
 
         except Exception as e:
@@ -214,7 +316,7 @@ class RAGChatbot:
         # 提取所有嵌入向量
         embeddings = np.array([doc[2] for doc in self.documents])
 
-        if faiss:
+        if FAISS_AVAILABLE and faiss:
             # 使用 FAISS
             dimension = embeddings.shape[1]
             self.index = faiss.IndexFlatL2(dimension)
@@ -230,7 +332,7 @@ class RAGChatbot:
         metadata_filter: Optional[Dict] = None
     ) -> List[Tuple[str, Dict, float]]:
         """
-        語義搜尋相關文檔
+        語義搜尋相關文檔（支援混合搜索和重排序）
 
         Args:
             query: 查詢文本
@@ -243,13 +345,31 @@ class RAGChatbot:
         if not self.documents:
             return []
 
-        # 生成查詢嵌入
+        # 使用混合搜索
+        if self.enable_hybrid_search:
+            results = self._hybrid_search(query, k * 2, metadata_filter)
+        else:
+            results = self._vector_search(query, k * 2, metadata_filter)
+
+        # 使用重排序
+        if self.enable_reranking and len(results) > k:
+            results = self._rerank(query, results)
+
+        return results[:k]
+
+    def _vector_search(
+        self,
+        query: str,
+        k: int,
+        metadata_filter: Optional[Dict] = None
+    ) -> List[Tuple[str, Dict, float]]:
+        """向量搜索"""
         query_embedding = self._get_embedding(query)
 
-        if faiss and self.index:
+        if FAISS_AVAILABLE and faiss and self.index:
             # 使用 FAISS 搜尋
             query_vec = query_embedding.reshape(1, -1)
-            distances, indices = self.index.search(query_vec, min(k * 2, len(self.documents)))
+            distances, indices = self.index.search(query_vec, min(k, len(self.documents)))
 
             results = []
             for dist, idx in zip(distances[0], indices[0]):
@@ -265,7 +385,7 @@ class RAGChatbot:
                     score = 1 / (1 + dist)
                     results.append((chunk, metadata, score))
 
-            return results[:k]
+            return results
 
         else:
             # 簡化版：計算餘弦相似度
@@ -289,6 +409,118 @@ class RAGChatbot:
                 ]
 
             return similarities[:k]
+
+    def _keyword_search(self, query: str, k: int) -> List[Tuple[str, Dict, float]]:
+        """關鍵字搜索（BM25風格）"""
+        query_terms = set(query.lower().split())
+        scores = []
+
+        for chunk, metadata, _ in self.documents:
+            chunk_terms = set(chunk.lower().split())
+            # 計算重疊詞數
+            overlap = len(query_terms & chunk_terms)
+            # 簡化的BM25分數
+            score = overlap / (len(query_terms) + 1)
+            scores.append((chunk, metadata, score))
+
+        scores.sort(key=lambda x: x[2], reverse=True)
+        return scores[:k]
+
+    def _hybrid_search(
+        self,
+        query: str,
+        k: int,
+        metadata_filter: Optional[Dict] = None
+    ) -> List[Tuple[str, Dict, float]]:
+        """混合搜索（向量 + 關鍵字）"""
+        # 獲取向量搜索結果
+        vector_results = self._vector_search(query, k, metadata_filter)
+
+        # 獲取關鍵字搜索結果
+        keyword_results = self._keyword_search(query, k)
+
+        # 合併結果（RRF - Reciprocal Rank Fusion）
+        scores_dict = {}
+
+        # 向量搜索權重
+        for rank, (chunk, metadata, score) in enumerate(vector_results):
+            key = chunk[:100]  # 使用chunk前100字符作為key
+            scores_dict[key] = {
+                'chunk': chunk,
+                'metadata': metadata,
+                'score': 1 / (rank + 60)  # RRF score
+            }
+
+        # 關鍵字搜索權重
+        for rank, (chunk, metadata, score) in enumerate(keyword_results):
+            key = chunk[:100]
+            if key in scores_dict:
+                scores_dict[key]['score'] += 1 / (rank + 60)
+            else:
+                scores_dict[key] = {
+                    'chunk': chunk,
+                    'metadata': metadata,
+                    'score': 1 / (rank + 60)
+                }
+
+        # 排序合併結果
+        merged = [(v['chunk'], v['metadata'], v['score']) for v in scores_dict.values()]
+        merged.sort(key=lambda x: x[2], reverse=True)
+
+        return merged[:k]
+
+    def _rerank(
+        self,
+        query: str,
+        candidates: List[Tuple[str, Dict, float]]
+    ) -> List[Tuple[str, Dict, float]]:
+        """使用AI重排序結果"""
+        if len(candidates) <= 1:
+            return candidates
+
+        try:
+            # 準備候選文本
+            docs_text = "\n\n---\n\n".join([
+                f"[文檔{i}]\n{chunk}"
+                for i, (chunk, _, _) in enumerate(candidates)
+            ])
+
+            # 使用AI評估相關性
+            prompt = f"""評估以下文檔與查詢的相關性，給每個文檔打分（0-10）。
+
+查詢：{query}
+
+文檔：
+{docs_text}
+
+請以JSON格式返回分數，格式：{{"0": 分數, "1": 分數, ...}}"""
+
+            response = self.client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=200,
+                temperature=0
+            )
+
+            result = response.choices[0].message.content
+            import json
+            # 嘗試解析JSON
+            scores = json.loads(result)
+
+            # 更新分數
+            reranked = []
+            for i, (chunk, metadata, _) in enumerate(candidates):
+                new_score = float(scores.get(str(i), 0)) / 10.0
+                reranked.append((chunk, metadata, new_score))
+
+            # 重新排序
+            reranked.sort(key=lambda x: x[2], reverse=True)
+            return reranked
+
+        except Exception as e:
+            print(f"重排序錯誤: {e}")
+            # 降級返回原始結果
+            return candidates
 
     def query(
         self,
