@@ -2,8 +2,20 @@
 
 一個完整的 Scrum Sprint 管理工具，支持故事點估算、速度追蹤、燃盡圖和回顧會議。
 
+## 🆕 AI 增強功能
+
+### 新增 AI 輔助模組 (AIEnhancedSprintManager)
+
+- 🤖 **AI 任務估時**: 自動預測任務工時和故事點
+- 📊 **智能 Sprint 規劃**: 基於團隊速度自動選擇最優任務
+- 🎯 **優先級建議**: AI 分析並建議任務優先級調整
+- 📈 **Sprint 結果預測**: 實時預測 Sprint 完成情況
+- 🔍 **Backlog 健康度分析**: 評估和改進 Product Backlog 質量
+- 💡 **AI 洞察報告**: 估算準確性分析和持續改進建議
+
 ## 功能特點
 
+### 基礎功能
 - 📋 Product Backlog 管理
 - 🎯 Sprint 規劃和執行
 - 📊 燃盡圖 (Burndown Chart)
@@ -14,6 +26,14 @@
 - 🎓 Sprint 回顧 (Retrospective)
 - 📝 故事點估算
 - 💾 數據持久化和報表導出
+
+### AI 增強功能
+- 🤖 智能任務估時和故事點計算
+- 📊 AI 驅動的 Sprint 規劃
+- 🎯 優先級智能建議
+- 📈 Sprint 成功率預測
+- 🔍 Backlog 質量分析
+- 💡 持續改進建議
 
 ## 快速開始
 
@@ -26,14 +46,64 @@ pip install -r requirements.txt
 ### 運行應用
 
 ```bash
-# 命令行界面
+# 基礎版命令行界面
 python src/main.py
+
+# AI 增強版示例
+python src/example_ai_sprint.py
 
 # Web 界面
 streamlit run src/web_app.py
 ```
 
 ## 使用示例
+
+### AI 增強版使用（推薦）
+
+```python
+from ai_enhanced_sprint_manager import AIEnhancedSprintManager
+
+# 創建 AI 增強的 Sprint 管理器
+manager = AIEnhancedSprintManager("開發團隊")
+
+# 添加團隊成員
+manager.add_team_member("Alice", "Senior Developer", 40)
+manager.add_team_member("Bob", "Developer", 40)
+
+# 使用 AI 估算故事點
+story, estimation = manager.add_story_with_ai_estimation(
+    title="作為用戶，我想要能夠註冊帳號",
+    description="實現完整的用戶註冊功能，包括 Email 驗證",
+    complexity="MEDIUM",
+    priority="HIGH",
+    assignee_experience="SENIOR",
+    tags=['backend', 'authentication']
+)
+
+print(f"AI 估時: {estimation['estimated_hours']} 小時")
+print(f"故事點: {story.story_points}")
+print(f"信心度: {estimation['confidence'] * 100}%")
+
+# 創建 Sprint
+sprint = manager.create_sprint("Sprint 1", "實現基本認證功能", 2)
+
+# 使用 AI 規劃 Sprint
+plan = manager.plan_sprint_with_ai(sprint.id)
+print(f"AI 建議承諾: {plan['total_story_points']} 故事點")
+print(f"容量利用率: {plan['utilization']}%")
+
+# 開始 Sprint
+manager.start_sprint(sprint.id)
+
+# 獲取 AI 洞察
+insights = manager.get_ai_insights(sprint.id)
+print(f"估算準確率: {insights['estimation_accuracy']['accuracy']}%")
+
+# 獲取優先級建議
+suggestions = manager.get_story_priority_suggestions()
+for suggestion in suggestions:
+    print(f"{suggestion['title']}: {suggestion['current_priority']} → {suggestion['suggested_priority']}")
+```
 
 ### 基本操作
 

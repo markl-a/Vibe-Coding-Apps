@@ -1,0 +1,107 @@
+version: '3.8'
+
+services:
+  # Sprint Manager Web UI
+  sprint-manager:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pm-sprint-manager
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./sprint-manager:/app/sprint-manager
+      - ./ai-assistant:/app/ai-assistant
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MODULE_NAME=sprint-manager
+    command: ["streamlit", "run", "sprint-manager/src/web_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    restart: unless-stopped
+    networks:
+      - pm-network
+
+  # Kanban Board Web UI
+  kanban-board:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pm-kanban-board
+    ports:
+      - "8502:8502"
+    volumes:
+      - ./data:/app/data
+      - ./kanban-board:/app/kanban-board
+      - ./ai-assistant:/app/ai-assistant
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MODULE_NAME=kanban-board
+    command: ["streamlit", "run", "kanban-board/src/web_app.py", "--server.port=8502", "--server.address=0.0.0.0"]
+    restart: unless-stopped
+    networks:
+      - pm-network
+
+  # Gantt Chart Web UI
+  gantt-chart:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pm-gantt-chart
+    ports:
+      - "8503:8503"
+    volumes:
+      - ./data:/app/data
+      - ./gantt-chart:/app/gantt-chart
+      - ./ai-assistant:/app/ai-assistant
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MODULE_NAME=gantt-chart
+    command: ["streamlit", "run", "gantt-chart/src/web_app.py", "--server.port=8503", "--server.address=0.0.0.0"]
+    restart: unless-stopped
+    networks:
+      - pm-network
+
+  # Project Dashboard
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pm-dashboard
+    ports:
+      - "8504:8504"
+    volumes:
+      - ./data:/app/data
+      - ./project-dashboard:/app/project-dashboard
+      - ./ai-assistant:/app/ai-assistant
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MODULE_NAME=dashboard
+    command: ["streamlit", "run", "project-dashboard/src/dashboard.py", "--server.port=8504", "--server.address=0.0.0.0"]
+    restart: unless-stopped
+    networks:
+      - pm-network
+
+  # API Service (Optional - for future integration)
+  # api:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: pm-api
+  #   ports:
+  #     - "8000:8000"
+  #   volumes:
+  #     - ./data:/app/data
+  #   environment:
+  #     - PYTHONUNBUFFERED=1
+  #   command: ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+  #   restart: unless-stopped
+  #   networks:
+  #     - pm-network
+
+networks:
+  pm-network:
+    driver: bridge
+
+volumes:
+  pm-data:
+    driver: local
