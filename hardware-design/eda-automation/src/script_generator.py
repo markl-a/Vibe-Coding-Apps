@@ -219,39 +219,44 @@ class ScriptGenerator:
 
     def _generate_mock_script(self, prompt: str) -> str:
         """生成模擬腳本（當 AI 不可用時）"""
+        # 清理提示文本，移除可能導致語法錯誤的字符
+        safe_prompt = prompt.replace('"', "'").replace('\n', ' ')
+
         return f"""#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 \"\"\"
-自動生成的 {self.tool} 腳本
-任務: {prompt[:100]}...
-生成時間: {datetime.now().isoformat()}
-模式: 模擬 (AI 不可用)
+Auto-generated {self.tool} script
+Task: {safe_prompt[:80]}...
+Generated: {datetime.now().isoformat()}
+Mode: Mock (AI unavailable)
 \"\"\"
 
 import pcbnew
 
+
 def main():
-    \"\"\"主函數\"\"\"
+    '''Main function'''
     try:
         board = pcbnew.GetBoard()
         if not board:
-            print("錯誤: 無法獲取當前板子")
+            print("Error: Cannot get current board")
             return False
 
-        print(f"板子名稱: {{board.GetFileName()}}")
+        print(f"Board: {{board.GetFileName()}}")
 
-        # TODO: 實作實際功能
-        # {prompt}
+        # TODO: Implement actual functionality
+        # Task: {safe_prompt[:60]}...
 
         pcbnew.Refresh()
-        print("腳本執行成功")
+        print("Script executed successfully")
         return True
 
     except Exception as e:
-        print(f"錯誤: {{e}}")
+        print(f"Error: {{e}}")
         import traceback
         traceback.print_exc()
         return False
+
 
 if __name__ == "__main__":
     main()
