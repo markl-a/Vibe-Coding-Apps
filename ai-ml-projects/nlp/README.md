@@ -4,14 +4,17 @@
 
 ## 功能特點
 
-- ✅ 文本分類
-- ✅ 情感分析
-- ✅ 命名實體識別 (NER)
-- ✅ 文本摘要
-- ✅ 關鍵字提取
-- ✅ 文本相似度
-- ✅ 語言翻譯
-- ✅ 問答系統
+- ✅ **文本分類** - 使用 Transformers 進行多類別分類
+- ✅ **情感分析** - 正面/負面情感檢測
+- ✅ **情緒檢測** - 細緻情緒識別 (喜悅、悲傷、憤怒等)
+- ✅ **命名實體識別 (NER)** - 提取人名、地名、組織等
+- ✅ **文本摘要** - 抽取式和生成式摘要
+- ✅ **關鍵字提取** - 多種演算法 (TF-IDF, RAKE, TextRank, KeyBERT)
+- ✅ **文本相似度** - 多種相似度計算方法
+- ✅ **語言偵測** - 支援 11 種語言的自動偵測
+- ✅ **問答系統** - 基於上下文的智能問答
+- ✅ **零樣本分類** - 無需訓練資料的分類
+- ✅ **垃圾郵件檢測** - 傳統 ML 方法
 
 ## 專案結構
 
@@ -34,13 +37,61 @@ nlp/
 ├── requirements.txt       # 依賴套件
 ├── text_classifier.py     # 通用文本分類器
 ├── sentiment_analyzer.py  # 快速情感分析
-├── keyword_extractor.py  # 關鍵字提取
-├── app.py                # Streamlit UI
-├── models/               # 模型儲存
-└── data/                 # 資料集
+├── keyword_extractor.py   # 🆕 進階關鍵字提取 (RAKE, TextRank, KeyBERT)
+├── text_similarity.py     # 🆕 文本相似度比較工具
+├── qa_system.py           # 🆕 問答系統
+├── language_detector.py   # 🆕 語言偵測工具
+├── zero_shot_classifier.py # 🆕 零樣本分類器
+├── emotion_detector.py    # 🆕 情緒檢測器
+├── app.py                 # Streamlit UI
+├── models/                # 模型儲存
+└── data/                  # 資料集
 ```
 
 每個子專案都包含完整的功能、文檔和範例，可獨立使用。
+
+## 🆕 新增功能亮點
+
+### 1. 進階關鍵字提取 (keyword_extractor.py)
+- **多種演算法**：TF-IDF、RAKE、TextRank、KeyBERT
+- **AI 增強**：可選的 BERT 語義關鍵字提取
+- **方法比較**：一鍵比較所有方法的效果
+- **上下文提取**：顯示關鍵字出現的上下文
+
+### 2. 文本相似度分析 (text_similarity.py)
+- **多種相似度方法**：Cosine、Jaccard、Levenshtein、N-gram
+- **語義相似度**：基於 BERT 的語義比對（可選）
+- **文檔搜尋**：從文檔集合中找出最相似的文本
+- **重複檢測**：自動偵測近似重複的文本
+- **相似度矩陣**：計算多個文本之間的兩兩相似度
+
+### 3. 問答系統 (qa_system.py)
+- **提取式問答**：從上下文中提取精確答案
+- **多文檔問答**：跨多個文檔搜尋答案
+- **對話式問答**：維持上下文的連續問答
+- **答案驗證**：驗證給定答案的正確性
+- **批次處理**：一次處理多個問題
+
+### 4. 語言偵測 (language_detector.py)
+- **11 種語言支援**：EN, ES, FR, DE, IT, PT, ZH, JA, KO, RU, AR
+- **多種檢測方法**：腳本檢測、詞彙比對、字元頻率
+- **混合語言分析**：分析包含多種語言的文本
+- **80%+ 準確率**：特別是對非拉丁字母語言
+- **批次處理**：高效處理大量文本
+
+### 5. 零樣本分類 (zero_shot_classifier.py)
+- **無需訓練**：不需要訓練資料即可分類
+- **動態類別**：可隨時更改分類類別
+- **多標籤支援**：一個文本可屬於多個類別
+- **階層式分類**：支援多層次分類結構
+- **自訂假設模板**：靈活的分類邏輯
+
+### 6. 情緒檢測 (emotion_detector.py)
+- **細緻情緒**：joy, sadness, anger, fear, surprise, love, disgust
+- **情緒強度**：分析情緒的強烈程度
+- **對話分析**：追蹤對話中的情緒變化軌跡
+- **情緒分佈**：統計多個文本的情緒分佈
+- **社群媒體監控**：適用於即時情緒分析
 
 ## 安裝
 
@@ -128,44 +179,184 @@ summarizer = TextSummarizer(method='abstractive')
 summary = summarizer.summarize(long_text)
 ```
 
-### 5. 關鍵字提取
+### 5. 關鍵字提取（進階版）
 
 ```python
 from keyword_extractor import KeywordExtractor
 
+# 基礎使用
 extractor = KeywordExtractor()
 
-# 提取關鍵字
-text = "Machine learning is a subset of artificial intelligence..."
-keywords = extractor.extract(text, top_n=5)
+text = """
+Machine learning is a subset of artificial intelligence that focuses on
+the development of algorithms and statistical models. Deep learning uses
+neural networks with multiple layers.
+"""
 
-for keyword, score in keywords:
-    print(f"{keyword}: {score:.3f}")
+# TF-IDF 提取
+keywords = extractor.extract(text, top_n=5, method='tfidf')
+
+# RAKE 演算法（適合提取短語）
+phrases = extractor.extract_rake(text, top_n=5)
+
+# TextRank 演算法（基於圖）
+keywords = extractor.extract_textrank(text, top_n=5)
+
+# 比較所有方法
+extractor.compare_methods(text, top_n=5)
+
+# AI 增強版（需要額外安裝）
+ai_extractor = KeywordExtractor(use_ai=True)
+keywords = ai_extractor.extract_keybert(text, top_n=5, diversity=0.7)
 ```
 
-### 6. 文本相似度
+### 6. 文本相似度（全新工具）
 
 ```python
-from similarity import TextSimilarity
+from text_similarity import TextSimilarity
 
-sim = TextSimilarity()
+analyzer = TextSimilarity()
 
-# 計算相似度
-text1 = "The cat sits on the mat."
-text2 = "A cat is sitting on a mat."
+text1 = "Machine learning is a branch of artificial intelligence."
+text2 = "Machine learning is a subset of AI."
 
-similarity = sim.compute_similarity(text1, text2)
-print(f"Similarity: {similarity:.2%}")
+# 多種相似度方法
+similarities = analyzer.compute_all_similarities(text1, text2)
+# 返回: {'cosine_tfidf': 0.34, 'jaccard': 0.38, 'levenshtein': 0.57, ...}
 
-# 找最相似的文本
-query = "machine learning algorithms"
-documents = ["AI and ML", "deep learning models", "cooking recipes"]
+# 文檔搜尋
+documents = [
+    "Machine learning is transforming the world.",
+    "Python is a popular programming language.",
+    "Deep learning is a subset of machine learning.",
+]
+query = "What is machine learning?"
+results = analyzer.find_most_similar(query, documents, top_k=2)
 
-most_similar = sim.find_most_similar(query, documents)
-print(f"Most similar: {most_similar}")
+# 重複檢測
+texts = ["Text 1", "Text 1", "Different text"]
+duplicates = analyzer.find_duplicates(texts, threshold=0.9)
+
+# AI 語義相似度（可選）
+ai_analyzer = TextSimilarity(use_ai=True)
+semantic_sim = ai_analyzer.semantic_similarity(text1, text2)
 ```
 
-### 7. Web UI
+### 7. 問答系統（全新）
+
+```python
+from qa_system import QuestionAnsweringSystem
+
+qa = QuestionAnsweringSystem()
+
+context = """
+Python is a high-level programming language. It was created by
+Guido van Rossum and first released in 1991.
+"""
+
+# 單個問題
+answer = qa.answer("Who created Python?", context)
+print(answer['best_answer'])  # "Guido van Rossum"
+print(answer['confidence'])   # 0.95
+
+# 多文檔問答
+contexts = [context1, context2, context3]
+answers = qa.answer_multiple_contexts(question, contexts, top_k=3)
+
+# 對話式問答
+questions = ["What is Python?", "Who created it?", "When was it released?"]
+conversation = qa.ask_conversational(questions, context)
+```
+
+### 8. 語言偵測（全新）
+
+```python
+from language_detector import LanguageDetector
+
+detector = LanguageDetector()
+
+# 偵測單一文本
+result = detector.detect_combined("Bonjour le monde!")
+print(result['language'])    # 'fr'
+print(result['confidence'])  # 0.87
+
+# 批次處理
+texts = [
+    "Hello world!",
+    "Hola mundo!",
+    "Bonjour le monde!",
+    "这是中文"
+]
+results = detector.detect_batch(texts)
+
+# 混合語言分析
+mixed = "Hello 世界! This is mixed text. 日本語も含む。"
+scripts = detector.detect_script(mixed)
+# {'latin': 0.67, 'japanese': 0.18, 'chinese': 0.15}
+```
+
+### 9. 零樣本分類（全新）
+
+```python
+from zero_shot_classifier import ZeroShotClassifier
+
+classifier = ZeroShotClassifier()
+
+text = "Apple announced its latest iPhone with improved camera."
+
+# 新聞分類（無需訓練）
+categories = ["technology", "sports", "politics", "entertainment"]
+result = classifier.classify(text, categories)
+print(result['best_label'])  # 'technology'
+
+# 多標籤分類
+movie = "An action-packed sci-fi thriller with dramatic moments."
+genres = ["action", "drama", "science fiction", "comedy", "romance"]
+result = classifier.classify(movie, genres, multi_label=True)
+
+# 階層式分類
+hierarchy = {
+    "science": ["biology", "physics", "chemistry"],
+    "business": ["finance", "marketing", "management"]
+}
+result = classifier.hierarchical_classify(text, hierarchy)
+```
+
+### 10. 情緒檢測（全新）
+
+```python
+from emotion_detector import EmotionDetector
+
+detector = EmotionDetector()
+
+# 基本情緒檢測
+text = "I'm so happy and excited about this!"
+result = detector.detect(text, top_k=3)
+print(result['primary_emotion'])  # 'joy'
+print(result['confidence'])       # 0.94
+
+# 情緒強度
+emotion, intensity = detector.get_emotion_intensity(text)
+# ('joy', 'very strong')
+
+# 對話情緒分析
+conversation = [
+    "Hi! I'm so excited!",
+    "I have a question.",
+    "I'm getting frustrated.",
+    "Oh wait, I found the solution!",
+    "Yes! It works!"
+]
+analysis = detector.analyze_conversation(conversation)
+print(analysis['emotional_arc'])
+print(analysis['dominant_emotion'])
+
+# 批次處理
+reviews = ["Great product!", "Terrible quality.", "It's okay."]
+results = detector.detect_batch(reviews)
+```
+
+### 11. Web UI
 
 ```bash
 streamlit run app.py

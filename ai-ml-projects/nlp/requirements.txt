@@ -1,12 +1,25 @@
+# Core NLP Libraries
 transformers>=4.30.0
 torch>=2.0.0
 spacy>=3.6.0
 nltk>=3.8.0
 scikit-learn>=1.3.0
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Text Processing
 gensim>=4.3.0
 textblob>=0.17.0
-streamlit>=1.28.0
-pandas>=2.0.0
-numpy>=1.24.0
 sentencepiece>=0.1.99
 sacremoses>=0.0.53
+
+# Web UI
+streamlit>=1.28.0
+
+# Optional: AI-Enhanced Features
+# Uncomment these for advanced AI features (semantic similarity, KeyBERT, etc.)
+# sentence-transformers>=2.2.0
+# faiss-cpu>=1.7.4  # For fast similarity search
+
+# Utilities
+joblib>=1.3.0  # For model saving/loading
