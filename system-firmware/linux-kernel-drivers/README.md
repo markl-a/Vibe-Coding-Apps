@@ -1,26 +1,39 @@
 # 🐧 Linux Kernel & Drivers 開發
 > 使用 AI 驅動的方法進行 Linux 核心與驅動程式開發
 
-⚠️ **驗證階段專案** - 此領域目前處於研究與開發階段
+✅ **AI 增強版 v2.0** - 完整的驅動開發工具鏈與智能輔助
 
 ## 📋 專案概述
 
 Linux Kernel 是現代計算的核心，從伺服器到嵌入式設備無處不在。本專案展示如何使用 AI 輔助工具來開發 Linux 核心模組、驅動程式和子系統，提升開發效率和代碼品質。
 
+## 🎯 AI 增強亮點
+
+⭐ **新增 USB 驅動完整實現** - URB 管理、電源管理、詳細文檔
+⭐ **新增 PCI/PCIe 驅動** - DMA、MSI/MSI-X、配置空間訪問
+⭐ **AI 代碼生成器** - 一鍵生成驅動骨架和最佳實踐模板
+⭐ **AI 調試助手** - 智能錯誤診斷和性能分析
+⭐ **增強型字符設備** - ioctl、sysfs、非阻塞 I/O、異步通知
+⭐ **完整工具鏈** - 從代碼生成到調試優化的全流程支持
+
+📖 **[查看完整 AI 增強功能](AI_ENHANCEMENTS.md)**
+
 ## 🎯 開發領域
 
-### 1. 字元設備驅動 (Character Device Drivers)
-- **基礎字元驅動**
+### 1. 字元設備驅動 (Character Device Drivers) ✅ AI 增強
+- **基礎字元驅動** ✅
   - file_operations 結構實作
   - open/close/read/write 操作
-  - ioctl 命令處理
-  - poll/select 機制
+  - 設備節點自動創建
+  - 互斥鎖保護
 
-- **進階功能**
-  - 非阻塞 I/O
-  - 異步通知 (fasync)
-  - 記憶體映射 (mmap)
-  - 多設備支援
+- **進階功能** ⭐ NEW
+  - **ioctl 命令處理** - 完整實現 RESET/GET/SET/XCHG
+  - **sysfs 接口** - state/buffer_size/max_size/stats
+  - **非阻塞 I/O** - O_NONBLOCK 支持
+  - **異步通知 (fasync)** - SIGIO 信號
+  - **poll/select 機制** - 多路復用支持
+  - **等待隊列** - 讀寫阻塞實現
 
 ### 2. 塊設備驅動 (Block Device Drivers)
 - **塊設備基礎**
@@ -48,31 +61,46 @@ Linux Kernel 是現代計算的核心，從伺服器到嵌入式設備無處不�
   - 虛擬網路設備
   - 網路過濾器
 
-### 4. USB 驅動程式
-- **USB 核心**
-  - USB 總線驅動
-  - URB (USB Request Block)
-  - 端點配置
-  - 描述符解析
+### 4. USB 驅動程式 ⭐ NEW - 完整實現
+- **USB 核心** ✅
+  - USB 設備探測和斷開
+  - URB (USB Request Block) 管理
+  - 批量/中斷/等時傳輸
+  - 端點配置和描述符解析
+  - 電源管理（suspend/resume）
 
-- **USB 設備類別**
-  - USB Serial 驅動
-  - USB Storage 驅動
-  - HID (人機介面設備)
-  - USB Camera 驅動
+- **AI 輔助功能**
+  - 設備 VID:PID 查找指南
+  - URB 錯誤診斷
+  - usbmon 調試技巧
+  - 性能優化建議
 
-### 5. PCI/PCIe 驅動
-- **PCI 子系統**
-  - PCI 設備掃描
-  - 配置空間訪問
-  - 記憶體/IO 資源映射
-  - 中斷處理
+📁 **位置**: `usb-driver/`
+📖 **文檔**: [USB 驅動開發指南](usb-driver/README.md)
 
-- **PCIe 進階功能**
-  - MSI/MSI-X 中斷
-  - DMA 傳輸
-  - 電源管理
-  - 熱插拔支援
+### 5. PCI/PCIe 驅動 ⭐ NEW - 完整實現
+- **PCI 子系統** ✅
+  - PCI 設備探測和移除
+  - 配置空間讀寫
+  - BAR（基地址寄存器）映射
+  - MMIO/IO 端口訪問
+  - 字符設備接口
+
+- **PCIe 進階功能** ✅
+  - MSI/MSI-X 中斷處理
+  - DMA 一致性傳輸
+  - 流式 DMA 支持
+  - 電源管理（suspend/resume）
+  - 64 位地址支持
+
+- **AI 輔助功能**
+  - PCI 設備識別指南
+  - BAR 映射調試
+  - DMA 故障診斷
+  - 中斷優化建議
+
+📁 **位置**: `pci-driver/`
+📖 **文檔**: [PCI 驅動開發指南](pci-driver/README.md)
 
 ### 6. I2C/SPI 驅動
 - **I2C 驅動**
