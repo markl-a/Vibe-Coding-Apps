@@ -17,6 +17,7 @@ from .serializers import (
     LeadStatisticsSerializer,
     ActivitySerializer,
 )
+from .ai_scoring import LeadScoringEngine, BatchLeadScorer, LeadAnalytics
 
 
 class LeadViewSet(viewsets.ModelViewSet):
@@ -295,6 +296,120 @@ class LeadViewSet(viewsets.ModelViewSet):
 
         serializer = LeadStatisticsSerializer(data)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['post'])
+    def calculate_ai_score(self, request, pk=None):
+        """
+        使用 AI 計算線索評分
+
+        POST /api/leads/{id}/calculate_ai_score/
+        """
+        lead = self.get_object()
+        engine = LeadScoringEngine(lead)
+
+        # 計算評分
+        total_score, scores_detail = engine.calculate_score()
+        suggested_rating = engine.suggest_rating(total_score)
+        recommendation = engine.generate_recommendation(total_score, scores_detail)
+
+        # 更新線索評分和評級
+        old_score = lead.score
+        old_rating = lead.rating
+
+        lead.score = total_score
+        lead.rating = suggested_rating
+        lead.save(update_fields=['score', 'rating', 'updated_at'])
+
+        # 創建活動記錄
+        Activity.objects.create(
+            lead=lead,
+            activity_type='note',
+            subject='AI 自動評分',
+            description=f'AI 評分從 {old_score} 更新為 {total_score}，評級從 {old_rating} 更新為 {suggested_rating}',
+            created_by=request.user
+        )
+
+        return Response({
+            'message': 'AI 評分計算完成',
+            'old_score': old_score,
+            'new_score': total_score,
+            'old_rating': old_rating,
+            'new_rating': suggested_rating,
+            'scores_detail': scores_detail,
+            'recommendation': recommendation,
+        })
+
+    @action(detail=True, methods=['get'])
+    def predict_conversion(self, request, pk=None):
+        """
+        預測線索轉化概率
+
+        GET /api/leads/{id}/predict_conversion/
+        """
+        lead = self.get_object()
+
+        # 獲取評分詳情
+        engine = LeadScoringEngine(lead)
+        total_score, scores_detail = engine.calculate_score()
+
+        # 預測轉化概率
+        conversion_probability = LeadAnalytics.predict_conversion_probability(lead)
+
+        # 生成建議
+        recommendation = engine.generate_recommendation(total_score, scores_detail)
+
+        return Response({
+            'lead_id': lead.id,
+            'lead_name': lead.full_name,
+            'current_score': lead.score,
+            'calculated_score': total_score,
+            'scores_detail': scores_detail,
+            'conversion_probability': round(conversion_probability * 100, 2),
+            'recommendation': recommendation,
+        })
+
+    @action(detail=False, methods=['post'])
+    def batch_score(self, request):
+        """
+        批量計算線索評分
+
+        POST /api/leads/batch_score/
+        {
+            "lead_ids": [1, 2, 3]  // 可選，不提供則為所有線索
+        }
+        """
+        lead_ids = request.data.get('lead_ids')
+
+        if lead_ids:
+            queryset = Lead.objects.filter(id__in=lead_ids)
+        else:
+            queryset = Lead.objects.all()
+
+        updated_count = BatchLeadScorer.score_all_leads(queryset)
+
+        return Response({
+            'message': '批量評分完成',
+            'updated_count': updated_count,
+            'total_leads': queryset.count()
+        })
+
+    @action(detail=False, methods=['get'])
+    def score_analytics(self, request):
+        """
+        獲取評分分析報告
+
+        GET /api/leads/score_analytics/
+        """
+        # 評分分佈
+        distribution = LeadAnalytics.get_score_distribution()
+
+        # 按評分範圍的轉化率
+        conversion_by_score = LeadAnalytics.get_conversion_by_score()
+
+        return Response({
+            'score_distribution': distribution,
+            'conversion_by_score': conversion_by_score,
+        })
 
 
 class ActivityViewSet(viewsets.ModelViewSet):
