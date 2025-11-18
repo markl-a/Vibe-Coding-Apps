@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { employeeService } from '../services/employee.service';
+import { importExportService } from '../services/import-export.service';
 import { z } from 'zod';
+import multer from 'multer';
 
 const createEmployeeSchema = z.object({
   firstName: z.string().min(1),
@@ -98,6 +100,70 @@ export class EmployeeController {
       next(error);
     }
   }
+
+  async importEmployees(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
+
+      const fileType = req.file.originalname.endsWith('.csv') ? 'csv' : 'xlsx';
+      const result = await importExportService.importEmployees(req.file.buffer, fileType);
+
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async exportEmployees(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { departmentId, status } = req.query;
+
+      const buffer = await importExportService.exportEmployees({
+        departmentId: departmentId as string | undefined,
+        status: status as string | undefined,
+      });
+
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', 'attachment; filename=employees.xlsx');
+      res.send(buffer);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async downloadTemplate(req: Request, res: Response, next: NextFunction) {
+    try {
+      const buffer = importExportService.generateTemplate();
+
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', 'attachment; filename=employee_import_template.xlsx');
+      res.send(buffer);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
+
+// 配置 multer 用於文件上傳
+export const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = [
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel',
+      'text/csv',
+    ];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only Excel and CSV files are allowed.'));
+    }
+  },
+});
 
 export const employeeController = new EmployeeController();

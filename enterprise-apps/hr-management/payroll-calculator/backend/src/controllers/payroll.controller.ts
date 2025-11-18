@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { payrollService } from '../services/payroll.service';
+import { payslipService } from '../services/payslip.service';
+import { payrollAIService } from '../services/payroll-ai.service';
 
 export class PayrollController {
   async calculate(req: Request, res: Response) {
@@ -62,6 +64,71 @@ export class PayrollController {
       const { period } = req.query;
       const stats = await payrollService.getStatistics(period as string);
       res.json(stats);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async generatePayslip(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const url = await payslipService.generatePayslip(id);
+      res.json({ url, message: '薪資單生成成功' });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async generateBatchPayslips(req: Request, res: Response) {
+    try {
+      const { period } = req.body;
+      const result = await payslipService.generateBatchPayslips(period);
+      res.json(result);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async detectAnomalies(req: Request, res: Response) {
+    try {
+      const { period } = req.query;
+      const result = await payrollAIService.detectSalaryAnomalies(period as string);
+      res.json(result);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async analyzeTrends(req: Request, res: Response) {
+    try {
+      const { employeeId } = req.params;
+      const result = await payrollAIService.analyzeSalaryTrends(employeeId);
+      res.json(result);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async compareToMarket(req: Request, res: Response) {
+    try {
+      const { employeeId } = req.params;
+      const { position, industry } = req.query;
+      const result = await payrollAIService.compareSalaryToMarket(
+        employeeId,
+        position as string,
+        industry as string
+      );
+      res.json(result);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async analyzeCostOptimization(req: Request, res: Response) {
+    try {
+      const { period } = req.query;
+      const result = await payrollAIService.analyzeCostOptimization(period as string);
+      res.json(result);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }

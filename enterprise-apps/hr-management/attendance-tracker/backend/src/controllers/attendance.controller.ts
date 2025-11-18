@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { attendanceService } from '../services/attendance.service';
+import { attendanceAIService } from '../services/attendance-ai.service';
 
 export class AttendanceController {
   async checkIn(req: Request, res: Response) {
@@ -44,6 +45,43 @@ export class AttendanceController {
         month as string
       );
       res.json(stats);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async detectAnomalies(req: Request, res: Response) {
+    try {
+      const { employeeId } = req.params;
+      const { days = '30' } = req.query;
+      const result = await attendanceAIService.detectAnomalies(
+        employeeId,
+        parseInt(days as string)
+      );
+      res.json(result);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async predictAttendance(req: Request, res: Response) {
+    try {
+      const { employeeId } = req.params;
+      const result = await attendanceAIService.predictAttendance(employeeId);
+      res.json(result);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async analyzeTeam(req: Request, res: Response) {
+    try {
+      const { departmentId, period = '30' } = req.query;
+      const result = await attendanceAIService.analyzeTeamAttendance(
+        departmentId as string | undefined,
+        period as string
+      );
+      res.json(result);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }

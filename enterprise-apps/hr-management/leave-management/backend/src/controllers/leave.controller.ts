@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { leaveService } from '../services/leave.service';
+import { leaveAIService } from '../services/leave-ai.service';
 
 export class LeaveController {
   async createRequest(req: Request, res: Response) {
@@ -58,6 +59,40 @@ export class LeaveController {
         parseInt(year as string) || new Date().getFullYear()
       );
       res.json(balances);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async getApprovalRecommendation(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const recommendation = await leaveAIService.getApprovalRecommendation(id);
+      res.json(recommendation);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async analyzePattern(req: Request, res: Response) {
+    try {
+      const { employeeId } = req.params;
+      const pattern = await leaveAIService.analyzeLeavePattern(employeeId);
+      res.json(pattern);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async analyzeTeam(req: Request, res: Response) {
+    try {
+      const { departmentId, startDate, endDate } = req.query;
+      const analysis = await leaveAIService.analyzeTeamLeave(
+        departmentId as string | undefined,
+        startDate ? new Date(startDate as string) : undefined,
+        endDate ? new Date(endDate as string) : undefined
+      );
+      res.json(analysis);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
