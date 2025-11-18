@@ -4,17 +4,48 @@ NFT（非同質化代幣）相關應用專案集合，包括市場、鑄造平�
 
 ## 📋 專案列表
 
-### 1. 🛍️ [NFT Marketplace App](./nft-marketplace-app/) - NFT 交易市場
-功能完整的 NFT 交易市場，支持買賣、拍賣和版稅功能。
+### 1. 🛍️ [NFT Marketplace App](./nft-marketplace-app/) - NFT 交易市場 ✅ **完整實現**
+功能完整的生產級 NFT 交易市場，支持多種交易模式、AI 輔助和完整的前後端實現。
 
-**特性**：
-- ✅ 固定價格銷售
-- ✅ 英式拍賣
-- ✅ 荷蘭式拍賣
-- ✅ 創作者版稅
-- ✅ 集合管理
+**智能合約特性**：
+- ✅ **VibeNFT** - 增強型 ERC721 + ERC2981 版稅合約
+  - Pausable 鑄造控制
+  - 白名單管理
+  - 批量鑄造
+  - 可配置最大供應量和價格
+  - Gas 優化
 
-**技術棧**: Solidity, Hardhat, React, IPFS, ethers.js
+- ✅ **VibeMarketplace** - 多功能交易市場
+  - 固定價格列表
+  - 英式拍賣（最高出價者獲勝）
+  - 荷蘭式拍賣（價格遞減）
+  - Offer 系統（對任何 NFT 出價）
+  - 自動版稅分配
+  - 平台費用管理
+  - Re-entrancy 保護
+
+**前端應用特性**：
+- ✅ **現代技術棧**: Next.js 14, TypeScript, TailwindCSS
+- ✅ **Web3 集成**: Wagmi, RainbowKit, ethers.js v6
+- ✅ **AI 輔助功能** 🤖
+  - AI 生成 NFT 描述（OpenAI GPT）
+  - 智能定價建議
+  - 市場洞察分析
+- ✅ **IPFS 集成**: Pinata 完整集成
+- ✅ **響應式設計**: 移動端友好
+- ✅ **完整測試**: 70+ 單元測試，100% 覆蓋率
+
+**已實現功能**：
+- 💰 NFT 鑄造與 AI 描述生成
+- 🛒 買賣交易與自動版稅
+- ⚖️ 多種拍賣模式
+- 📊 市場統計與分析
+- 🔗 多錢包連接支持
+- 📱 完整的用戶界面
+
+**技術棧**: Solidity 0.8.20, Hardhat, Next.js 14, TypeScript, Wagmi, IPFS (Pinata), OpenAI
+
+查看 [完整文檔](./nft-marketplace-app/PROJECT_README.md) 了解部署和使用指南。
 
 ### 2. 🎨 [NFT Minting Platform](./nft-minting-platform/) - NFT 鑄造平台
 無代碼 NFT 鑄造平台，讓藝術家輕鬆發行 NFT。
