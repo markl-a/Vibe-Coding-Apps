@@ -1,6 +1,7 @@
 """
 庫存管理核心模組
 """
+import sqlite3
 from typing import List, Dict, Optional
 from datetime import datetime
 from .database import Database
