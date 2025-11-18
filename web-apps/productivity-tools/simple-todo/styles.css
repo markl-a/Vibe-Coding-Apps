@@ -603,3 +603,172 @@ body {
         gap: 8px;
     }
 }
+
+/* ===== AI 功能樣式 ===== */
+
+/* AI 輸入提示 */
+.ai-input-hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px 8px 0 0;
+    color: white;
+    font-size: 0.85rem;
+}
+
+.hint-icon {
+    font-size: 1.2rem;
+}
+
+.hint-text {
+    flex: 1;
+}
+
+.add-task-card {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.add-task-card form {
+    padding-top: 0;
+}
+
+/* AI 建議框 */
+.ai-suggestion {
+    padding: 12px 15px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.suggestion-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.suggestion-icon {
+    font-size: 1.3rem;
+}
+
+.suggestion-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* AI 智能助手卡片 */
+.ai-assistant-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.ai-assistant-card h3 {
+    margin-bottom: 15px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* AI 統計數據 */
+.ai-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.ai-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    color: white;
+}
+
+.ai-stat-item:last-child {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.ai-stat-icon {
+    font-size: 2rem;
+}
+
+.ai-stat-content {
+    flex: 1;
+}
+
+.ai-stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.ai-stat-label {
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+/* AI 洞察 */
+.ai-insight {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border-radius: 10px;
+    color: white;
+}
+
+.ai-insight-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.ai-insight-text {
+    flex: 1;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .ai-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .ai-input-hint {
+        font-size: 0.75rem;
+    }
+
+    .hint-icon {
+        font-size: 1rem;
+    }
+
+    .ai-stat-value {
+        font-size: 1.5rem;
+    }
+
+    .ai-insight {
+        flex-direction: column;
+        text-align: center;
+    }
+}

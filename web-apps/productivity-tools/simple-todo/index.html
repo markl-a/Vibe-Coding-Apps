@@ -81,14 +81,24 @@
             <section class="content">
                 <!-- 添加任務表單 -->
                 <div class="add-task-card">
+                    <div class="ai-input-hint">
+                        <span class="hint-icon">💡</span>
+                        <span class="hint-text">試試智能輸入：「明天下午3點完成報告 #工作 !高」</span>
+                    </div>
                     <form id="addTaskForm">
                         <input
                             type="text"
                             id="taskInput"
                             class="task-input"
-                            placeholder="添加新任務...按 Enter 鍵提交"
+                            placeholder="添加新任務...AI 會自動解析日期和優先級"
                             autocomplete="off"
                         >
+                        <div id="aiSuggestion" class="ai-suggestion" style="display: none;">
+                            <div class="suggestion-content">
+                                <span class="suggestion-icon">🤖</span>
+                                <span class="suggestion-text"></span>
+                            </div>
+                        </div>
                         <div class="task-options">
                             <input type="date" id="taskDate" class="date-input">
                             <select id="taskPriority" class="priority-select">
@@ -100,6 +110,31 @@
                             <button type="submit" class="btn btn-primary">添加任務</button>
                         </div>
                     </form>
+                </div>
+
+                <!-- AI 智能助手卡片 -->
+                <div class="ai-assistant-card">
+                    <h3>🤖 AI 智能助手</h3>
+                    <div class="ai-stats">
+                        <div class="ai-stat-item">
+                            <span class="ai-stat-icon">📊</span>
+                            <div class="ai-stat-content">
+                                <div class="ai-stat-value" id="aiCompletionRate">0%</div>
+                                <div class="ai-stat-label">完成率</div>
+                            </div>
+                        </div>
+                        <div class="ai-stat-item">
+                            <span class="ai-stat-icon">⚡</span>
+                            <div class="ai-stat-content">
+                                <div class="ai-stat-value" id="aiProductivityScore">0</div>
+                                <div class="ai-stat-label">生產力分數</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ai-insight" id="aiInsightBox">
+                        <div class="ai-insight-icon">💭</div>
+                        <div class="ai-insight-text">開始添加任務，AI 會給你智能建議！</div>
+                    </div>
                 </div>
 
                 <!-- 搜尋和排序 -->
