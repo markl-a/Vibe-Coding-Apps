@@ -2,8 +2,20 @@ const { app, BrowserWindow, ipcMain, globalShortcut, screen, desktopCapturer, cl
 const path = require('path');
 const fs = require('fs');
 const Store = require('electron-store');
+const AIHelper = require('../shared/ai-helper');
 
 const store = new Store();
+
+// 初始化 AI Helper (如果有設定 API Key)
+let aiHelper = null;
+try {
+  const apiKey = store.get('openai_api_key') || process.env.OPENAI_API_KEY;
+  if (apiKey) {
+    aiHelper = new AIHelper(apiKey);
+  }
+} catch (error) {
+  console.log('AI Helper 未初始化:', error.message);
+}
 let mainWindow;
 let editorWindow = null;
 let tray = null;
@@ -272,6 +284,59 @@ ipcMain.handle('get-history', async () => {
 ipcMain.handle('clear-history', async () => {
   store.set('history', []);
   return { success: true };
+});
+
+// AI 功能處理器
+
+ipcMain.handle('ai-recognize-text', async (event, imageBase64) => {
+  if (!aiHelper) {
+    return {
+      success: false,
+      error: '請先設定 OpenAI API Key'
+    };
+  }
+
+  try {
+    const text = await aiHelper.recognizeText(imageBase64);
+    return { success: true, result: text };
+  } catch (error) {
+    console.error('OCR Error:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('ai-describe-image', async (event, imageBase64) => {
+  if (!aiHelper) {
+    return {
+      success: false,
+      error: '請先設定 OpenAI API Key'
+    };
+  }
+
+  try {
+    const description = await aiHelper.describeImage(imageBase64);
+    return { success: true, result: description };
+  } catch (error) {
+    console.error('Image Description Error:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('ai-translate-text', async (event, text, targetLang) => {
+  if (!aiHelper) {
+    return {
+      success: false,
+      error: '請先設定 OpenAI API Key'
+    };
+  }
+
+  try {
+    const translation = await aiHelper.translate(text, targetLang);
+    return { success: true, result: translation };
+  } catch (error) {
+    console.error('Translation Error:', error);
+    return { success: false, error: error.message };
+  }
 });
 
 app.whenReady().then(() => {
