@@ -9,6 +9,7 @@ from .bom_optimizer import BOMOptimizer, Component, create_sample_bom
 from .component_selector import ComponentSelector, ComponentSpec, ComponentCategory, ComponentCandidate
 from .multi_objective import MultiObjectiveOptimizer, OptimizationObjective, Individual
 from .power_analyzer import PowerAnalyzer, ComponentPower, PowerProfile, PowerMode
+from .ai_recommender import AIComponentRecommender, SmartDesignValidator, DesignAnomaly, DesignPattern
 
 __all__ = [
     # 主優化器
@@ -36,6 +37,12 @@ __all__ = [
     'ComponentPower',
     'PowerProfile',
     'PowerMode',
+
+    # AI 推薦系統
+    'AIComponentRecommender',
+    'SmartDesignValidator',
+    'DesignAnomaly',
+    'DesignPattern',
 ]
 
 __version__ = "0.1.0"

@@ -7,10 +7,10 @@ from typing import Dict, List, Optional
 import numpy as np
 
 # 導入子模組
-from bom_optimizer import BOMOptimizer, Component
-from component_selector import ComponentSelector, ComponentSpec
-from multi_objective import MultiObjectiveOptimizer
-from power_analyzer import PowerAnalyzer, ComponentPower
+from .bom_optimizer import BOMOptimizer, Component
+from .component_selector import ComponentSelector, ComponentSpec
+from .multi_objective import MultiObjectiveOptimizer
+from .power_analyzer import PowerAnalyzer, ComponentPower
 
 
 class CircuitOptimizer:
