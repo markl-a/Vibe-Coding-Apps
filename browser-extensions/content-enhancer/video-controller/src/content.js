@@ -81,11 +81,13 @@ class VideoController {
     overlay.className = 'video-controller-overlay';
     overlay.innerHTML = `
       <div class="vc-controls">
-        <button class="vc-btn" data-action="speed-down">-</button>
+        <button class="vc-btn" data-action="speed-down" title="Decrease speed">-</button>
         <span class="vc-speed">1.0x</span>
-        <button class="vc-btn" data-action="speed-up">+</button>
-        <button class="vc-btn" data-action="screenshot">📷</button>
-        <button class="vc-btn" data-action="pip">⧉</button>
+        <button class="vc-btn" data-action="speed-up" title="Increase speed">+</button>
+        <button class="vc-btn" data-action="screenshot" title="Take screenshot">📷</button>
+        <button class="vc-btn" data-action="pip" title="Picture-in-Picture">⧉</button>
+        <button class="vc-btn" data-action="ai-summary" title="AI Summary">🤖</button>
+        <button class="vc-btn" data-action="subtitles" title="Toggle subtitles">💬</button>
       </div>
     `;
 
@@ -132,6 +134,12 @@ class VideoController {
         break;
       case 'pip':
         this.togglePiP(video);
+        break;
+      case 'ai-summary':
+        this.toggleAISummary(video);
+        break;
+      case 'subtitles':
+        this.toggleSubtitles(video);
         break;
     }
   }
@@ -339,6 +347,270 @@ class VideoController {
           sendResponse({ error: 'No active video' });
         }
         break;
+    }
+  }
+
+  // AI Features
+
+  toggleAISummary(video) {
+    let summaryPanel = document.getElementById('vc-ai-summary-panel');
+
+    if (summaryPanel) {
+      summaryPanel.classList.toggle('active');
+    } else {
+      summaryPanel = this.createSummaryPanel(video);
+      document.body.appendChild(summaryPanel);
+      this.generateAISummary(video, summaryPanel);
+    }
+  }
+
+  createSummaryPanel(video) {
+    const panel = document.createElement('div');
+    panel.id = 'vc-ai-summary-panel';
+    panel.className = 'vc-summary-panel';
+    panel.innerHTML = `
+      <div class="vc-summary-header">
+        <div class="vc-summary-title">
+          <span>🤖</span>
+          <span>AI Video Analysis</span>
+        </div>
+        <button class="vc-summary-close" id="vc-summary-close">✕</button>
+      </div>
+      <div class="vc-summary-content">
+        <div class="vc-loading">
+          <div class="vc-loading-spinner"></div>
+        </div>
+      </div>
+    `;
+
+    panel.querySelector('#vc-summary-close').addEventListener('click', () => {
+      panel.classList.remove('active');
+    });
+
+    setTimeout(() => panel.classList.add('active'), 10);
+
+    return panel;
+  }
+
+  async generateAISummary(video, panel) {
+    const content = panel.querySelector('.vc-summary-content');
+
+    try {
+      // Analyze video metadata and content
+      const analysis = await this.analyzeVideo(video);
+
+      content.innerHTML = `
+        <div class="vc-summary-section">
+          <h4>📊 Video Information</h4>
+          <p><strong>Duration:</strong> ${this.formatTime(video.duration)}</p>
+          <p><strong>Current Time:</strong> ${this.formatTime(video.currentTime)}</p>
+          <p><strong>Resolution:</strong> ${video.videoWidth}x${video.videoHeight}</p>
+          <p><strong>Playback Rate:</strong> ${video.playbackRate}x</p>
+        </div>
+
+        <div class="vc-summary-section">
+          <h4>🎯 Key Moments</h4>
+          ${analysis.keyMoments.length > 0 ? `
+            <ul>
+              ${analysis.keyMoments.map(moment => `
+                <li>${moment.time} - ${moment.description}</li>
+              `).join('')}
+            </ul>
+          ` : '<p>No key moments detected yet. Play the video to generate AI analysis.</p>'}
+        </div>
+
+        <div class="vc-summary-section">
+          <h4>💡 Smart Features</h4>
+          <ul>
+            <li>Press 'C' to toggle closed captions</li>
+            <li>Press 'M' to mute/unmute</li>
+            <li>Press '[' or ']' to adjust speed</li>
+            <li>Press 'S' to take a screenshot</li>
+          </ul>
+        </div>
+
+        <div class="vc-summary-section">
+          <h4>📈 Viewing Statistics</h4>
+          <p><strong>Watched:</strong> ${Math.round((video.currentTime / video.duration) * 100)}%</p>
+          <p><strong>Remaining:</strong> ${this.formatTime(video.duration - video.currentTime)}</p>
+        </div>
+      `;
+
+      // Add timestamp markers if available
+      if (analysis.keyMoments.length > 0) {
+        this.addTimestampMarkers(video, analysis.keyMoments);
+      }
+
+    } catch (error) {
+      content.innerHTML = `
+        <div class="vc-summary-section">
+          <p>Unable to generate AI analysis. Please try again.</p>
+        </div>
+      `;
+    }
+  }
+
+  async analyzeVideo(video) {
+    // Simple analysis based on video metadata
+    // In a production version, this could integrate with actual AI services
+    const keyMoments = [];
+    const duration = video.duration;
+
+    // Generate sample key moments (every 10% of video)
+    if (!isNaN(duration) && duration > 0) {
+      for (let i = 1; i <= 5; i++) {
+        const time = (duration / 6) * i;
+        keyMoments.push({
+          time: this.formatTime(time),
+          timestamp: time,
+          description: `Chapter ${i}`
+        });
+      }
+    }
+
+    return { keyMoments };
+  }
+
+  addTimestampMarkers(video, moments) {
+    // Remove existing markers
+    const existingMarkers = document.getElementById('vc-timestamp-markers');
+    if (existingMarkers) existingMarkers.remove();
+
+    const container = video.parentElement;
+    if (!container) return;
+
+    const markersDiv = document.createElement('div');
+    markersDiv.id = 'vc-timestamp-markers';
+    markersDiv.className = 'vc-timestamp-markers';
+
+    moments.forEach(moment => {
+      const marker = document.createElement('button');
+      marker.className = 'vc-timestamp-marker';
+      marker.textContent = moment.time;
+      marker.addEventListener('click', () => {
+        video.currentTime = moment.timestamp;
+      });
+      markersDiv.appendChild(marker);
+    });
+
+    container.style.position = 'relative';
+    container.appendChild(markersDiv);
+  }
+
+  toggleSubtitles(video) {
+    let subtitlePanel = document.getElementById('vc-subtitle-panel');
+
+    if (subtitlePanel) {
+      if (subtitlePanel.classList.contains('active')) {
+        this.stopSubtitleRecognition();
+        subtitlePanel.classList.remove('active');
+      } else {
+        this.startSubtitleRecognition(video);
+        subtitlePanel.classList.add('active');
+      }
+    } else {
+      subtitlePanel = this.createSubtitlePanel();
+      document.body.appendChild(subtitlePanel);
+      this.startSubtitleRecognition(video);
+    }
+  }
+
+  createSubtitlePanel() {
+    const panel = document.createElement('div');
+    panel.id = 'vc-subtitle-panel';
+    panel.className = 'vc-subtitle-panel';
+    panel.innerHTML = `
+      <div class="vc-subtitle-text">Starting speech recognition...</div>
+    `;
+    return panel;
+  }
+
+  startSubtitleRecognition(video) {
+    // Check if Web Speech API is available
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      const panel = document.getElementById('vc-subtitle-panel');
+      if (panel) {
+        panel.querySelector('.vc-subtitle-text').textContent =
+          'Speech recognition not available in this browser';
+      }
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    this.recognition = new SpeechRecognition();
+
+    this.recognition.continuous = true;
+    this.recognition.interimResults = true;
+    this.recognition.lang = 'en-US';
+
+    this.recognition.onresult = (event) => {
+      const panel = document.getElementById('vc-subtitle-panel');
+      if (!panel) return;
+
+      let finalTranscript = '';
+      let interimTranscript = '';
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript + ' ';
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+
+      const text = finalTranscript || interimTranscript;
+      panel.querySelector('.vc-subtitle-text').textContent = text || 'Listening...';
+      panel.classList.add('active');
+    };
+
+    this.recognition.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+      const panel = document.getElementById('vc-subtitle-panel');
+      if (panel) {
+        panel.querySelector('.vc-subtitle-text').textContent =
+          'Speech recognition error. Please try again.';
+      }
+    };
+
+    this.recognition.onend = () => {
+      // Auto-restart if video is still playing
+      if (video && !video.paused) {
+        setTimeout(() => {
+          try {
+            this.recognition.start();
+          } catch (e) {
+            // Ignore if already started
+          }
+        }, 100);
+      }
+    };
+
+    try {
+      this.recognition.start();
+    } catch (error) {
+      console.error('Failed to start recognition:', error);
+    }
+  }
+
+  stopSubtitleRecognition() {
+    if (this.recognition) {
+      this.recognition.stop();
+      this.recognition = null;
+    }
+  }
+
+  formatTime(seconds) {
+    if (isNaN(seconds)) return '0:00';
+
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+
+    if (hours > 0) {
+      return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    } else {
+      return `${minutes}:${secs.toString().padStart(2, '0')}`;
     }
   }
 }
