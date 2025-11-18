@@ -6,6 +6,7 @@ import '../widgets/transaction_card.dart';
 import '../models/category.dart';
 import 'add_transaction_screen.dart';
 import 'statistics_screen.dart';
+import 'ai_insights_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,6 +25,18 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('記帳本'),
         elevation: 0,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.auto_awesome),
+            tooltip: 'AI 財務助手',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AIInsightsScreen(),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.calendar_today),
             onPressed: () {
