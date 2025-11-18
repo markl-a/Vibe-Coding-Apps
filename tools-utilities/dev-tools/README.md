@@ -15,7 +15,146 @@
 
 ## 🎯 已實作工具
 
-### 1. **code_generator.py** - 程式碼生成器
+### 🆕 新增 AI 輔助工具
+
+#### 1. **ai_code_reviewer.py** - AI 代碼審查工具
+全面的 AI 輔助代碼審查和質量分析工具。
+
+**功能特色：**
+- 🔍 自動代碼質量分析（使用 AST 解析）
+- 🔒 安全漏洞檢測（eval、exec、硬編碼密鑰等）
+- ⚡ 性能問題識別（低效循環、字符串拼接等）
+- 📏 代碼風格檢查（PEP 8 違規、過長行等）
+- 📊 複雜度分析（循環複雜度、函數長度）
+- 💡 最佳實踐建議
+- 📄 多種輸出格式（文字、JSON、HTML）
+- 📈 詳細指標（代碼行數、可維護性指數）
+
+**使用範例：**
+```bash
+# 審查單個檔案
+python ai_code_reviewer.py file.py
+
+# 審查整個目錄
+python ai_code_reviewer.py src/
+
+# 生成 HTML 報告
+python ai_code_reviewer.py src/ --format html -o code_review.html
+
+# 生成 JSON 報告
+python ai_code_reviewer.py src/ --format json -o report.json
+```
+
+#### 2. **performance_profiler.py** - 性能分析工具
+分析程式碼性能並提供優化建議。
+
+**功能特色：**
+- 📊 CPU 性能分析（cProfile 整合）
+- 💾 內存使用追蹤（tracemalloc）
+- 🔬 函數級性能分析
+- 📝 腳本性能分析
+- 🏃 基準測試和函數比較
+- 📈 統計分析（平均、最小、最大、標準差、吞吐量）
+- 💡 自動性能優化建議
+- 📄 多種輸出格式（文字、JSON、HTML）
+
+**使用範例：**
+```bash
+# 分析腳本性能
+python performance_profiler.py script.py
+
+# 啟用內存追蹤
+python performance_profiler.py script.py --memory
+
+# 生成 HTML 報告
+python performance_profiler.py script.py -f html -o perf_report.html
+```
+
+#### 3. **security_scanner.py** - 安全掃描工具
+全面的代碼安全掃描和漏洞檢測。
+
+**功能特色：**
+- 🔐 SQL 注入檢測
+- 💉 命令注入檢測（os.system、shell=True、eval/exec）
+- 🌐 XSS 漏洞檢測
+- 🔑 硬編碼密鑰檢測（密碼、API 密鑰、私鑰）
+- 🔒 弱加密算法檢測（MD5、SHA1、DES、RC4）
+- 📦 不安全反序列化檢測（pickle、YAML）
+- 📁 文件操作漏洞（路徑遍歷）
+- 🛡️ CSRF 和調試模式檢測
+- 📊 CWE ID 映射
+- 📄 多種輸出格式（文字、JSON、HTML、SARIF for GitHub Security）
+
+**使用範例：**
+```bash
+# 掃描單個檔案
+python security_scanner.py file.py
+
+# 掃描目錄
+python security_scanner.py src/
+
+# 生成 HTML 報告
+python security_scanner.py src/ -f html -o security_report.html
+
+# 生成 SARIF 報告（用於 GitHub Security）
+python security_scanner.py src/ -f sarif -o results.sarif
+
+# 自訂掃描
+python security_scanner.py src/ --pattern "*.py" --exclude venv,tests
+```
+
+#### 4. **env_manager.py** - 環境變量管理工具
+管理和驗證環境變量配置。
+
+**功能特色：**
+- 📝 加載和解析 .env 文件
+- ✏️ 設置、獲取和刪除環境變量
+- 📋 列出所有變量（可選值遮罩）
+- ✅ 驗證必需變量
+- 📄 生成 .env.example 範本
+- 🔒 安全檢查（文件權限、弱密碼、.gitignore）
+- 🔄 比較兩個 .env 文件
+- 📤 導出為 shell 腳本
+- 🎯 自動檢測敏感變量
+
+**使用範例：**
+```bash
+# 列出所有變量
+python env_manager.py list
+
+# 列出變量及其值
+python env_manager.py list --show-values
+
+# 設置變量
+python env_manager.py set DB_HOST localhost
+
+# 獲取變量
+python env_manager.py get DB_HOST
+
+# 刪除變量
+python env_manager.py delete OLD_VAR
+
+# 驗證必需變量
+python env_manager.py validate --required DB_HOST,DB_PORT
+
+# 生成範本文件
+python env_manager.py template
+
+# 安全檢查
+python env_manager.py security
+
+# 比較環境文件
+python env_manager.py compare .env.production
+
+# 導出為 shell 腳本
+python env_manager.py export -o env.sh
+```
+
+---
+
+### 原有工具
+
+#### 5. **code_generator.py** - 程式碼生成器
 AI 輔助的程式碼生成和範本工具。
 
 **功能特色：**
@@ -419,32 +558,69 @@ python test_runner.py --coverage --html
 
 ## 📊 工具狀態
 
-| 工具 | 狀態 | 功能完整度 | 測試 |
-|------|------|------------|------|
-| code_generator.py | ✅ 完成 | 90% | ✅ |
-| code_formatter.py | ✅ 完成 | 85% | ✅ |
-| test_runner.py | ✅ 完成 | 88% | ✅ |
-| dependency_checker.py | ✅ 完成 | 85% | ✅ |
-| deploy_helper.py | ✅ 完成 | 80% | ✅ |
-| doc_generator.py | ✅ 完成 | 82% | ✅ |
+| 工具 | 狀態 | 功能完整度 | 測試 | AI 增強 |
+|------|------|------------|------|---------|
+| 🆕 ai_code_reviewer.py | ✅ 完成 | 95% | ✅ | ⭐⭐⭐ |
+| 🆕 performance_profiler.py | ✅ 完成 | 93% | ✅ | ⭐⭐⭐ |
+| 🆕 security_scanner.py | ✅ 完成 | 92% | ✅ | ⭐⭐⭐ |
+| 🆕 env_manager.py | ✅ 完成 | 90% | ✅ | ⭐⭐ |
+| code_generator.py | ✅ 完成 | 90% | ✅ | ⭐⭐ |
+| code_formatter.py | ✅ 完成 | 85% | ✅ | ⭐ |
+| test_runner.py | ✅ 完成 | 88% | ✅ | ⭐ |
+| dependency_checker.py | ✅ 完成 | 85% | ✅ | ⭐ |
+| deploy_helper.py | ✅ 完成 | 80% | ✅ | ⭐ |
+| doc_generator.py | ✅ 完成 | 82% | ✅ | ⭐ |
 
 ## 🔜 未來計劃
 
 ### 即將推出的功能
 
-- **AI Code Review** - AI 輔助程式碼審查
-- **Performance Profiler** - 效能分析工具
-- **Security Scanner** - 安全掃描工具
+- **Git Hooks Manager** - Git Hooks 管理工具 🚧
+- **Log Analyzer** - 日誌分析工具 🚧
 - **Database Migration** - 資料庫遷移工具
 - **API Mock Server** - API 模擬伺服器
+- **CI/CD Pipeline Generator** - CI/CD 流程生成器
 
 ### 改進計劃
 
+- [x] ✅ AI 程式碼審查工具
+- [x] ✅ 性能分析工具
+- [x] ✅ 安全掃描工具
+- [x] ✅ 環境變量管理工具
 - [ ] 支援更多程式語言範本
 - [ ] 增強 AI 程式碼生成能力
 - [ ] 整合更多 CI/CD 平台
 - [ ] 視覺化部署流程
 - [ ] 雲端部署支援（AWS、GCP、Azure）
+- [ ] 整合 OpenAI API 進行更智能的代碼分析
+
+## 🎉 最新更新（2025-11-18）
+
+### 新增的 AI 輔助工具
+
+1. **AI 代碼審查工具** - 全面的代碼質量分析和安全檢測
+   - 自動檢測代碼質量問題
+   - 識別安全漏洞和性能問題
+   - 提供可維護性指數評分
+   - 支持多種報告格式
+
+2. **性能分析工具** - 深入的性能分析和優化建議
+   - CPU 和內存性能追蹤
+   - 函數級別的詳細分析
+   - 基準測試功能
+   - 自動優化建議
+
+3. **安全掃描工具** - 全面的安全漏洞檢測
+   - 檢測常見安全漏洞（SQL 注入、XSS、命令注入等）
+   - 硬編碼密鑰檢測
+   - 文件權限檢查
+   - 支持 SARIF 格式（GitHub Security 整合）
+
+4. **環境變量管理工具** - 簡化環境配置管理
+   - .env 文件管理
+   - 安全檢查和驗證
+   - 範本生成
+   - 環境比較功能
 
 ## 🤝 貢獻
 
