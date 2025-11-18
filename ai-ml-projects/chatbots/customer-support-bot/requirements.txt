@@ -3,3 +3,5 @@ python-dotenv>=1.0.0
 streamlit>=1.28.0
 numpy>=1.24.0
 pandas>=2.0.0
+faiss-cpu>=1.7.4  # 向量搜索支持（可選）
+# faiss-gpu>=1.7.4  # GPU版本（可選，需要CUDA）

@@ -10,17 +10,21 @@
 
 ## 🎯 子專案列表
 
-### 1️⃣ [Customer Support Bot](./customer-support-bot/) - 客戶服務機器人
+### 1️⃣ [Customer Support Bot](./customer-support-bot/) - 客戶服務機器人 ⭐ 增強版
 
 **智能客戶服務解決方案**
 
 #### 核心功能
-- ✅ FAQ 自動回答
+- ✅ FAQ 自動回答（支援向量搜索）
 - ✅ 問題分類與優先級判斷
 - ✅ 情緒分析
 - ✅ 工單系統整合
 - ✅ 人工客服轉接
 - ✅ 知識庫整合
+- ✨ **新增** AI工具調用（訂單查詢、庫存檢查、退款處理）
+- ✨ **新增** FAISS向量搜索，提升FAQ匹配準確度
+- ✨ **新增** 對話歷史管理，支援多用戶上下文
+- ✨ **新增** 增強版多語言支持
 
 #### 適用場景
 - 電商客服
@@ -39,7 +43,7 @@ streamlit run app.py
 
 ---
 
-### 2️⃣ [RAG Chatbot](./rag-chatbot/) - 檢索增強生成機器人
+### 2️⃣ [RAG Chatbot](./rag-chatbot/) - 檢索增強生成機器人 ⭐ 增強版
 
 **基於文檔的智能問答系統**
 
@@ -50,6 +54,11 @@ streamlit run app.py
 - ✅ 來源引用追蹤
 - ✅ 上下文感知回答
 - ✅ 增量更新索引
+- ✨ **新增** 語義分塊策略（智能段落分割）
+- ✨ **新增** 混合搜索（向量 + 關鍵字，RRF算法）
+- ✨ **新增** AI重排序（使用GPT-4o-mini）
+- ✨ **新增** Word文檔(.docx)支持
+- ✨ **新增** 可配置的搜索策略
 
 #### 適用場景
 - 企業知識庫
@@ -99,7 +108,38 @@ python slack_bot.py
 
 ---
 
-### 4️⃣ [Telegram Bot](./telegram-bot/) - Telegram 聊天機器人
+### 4️⃣ [Discord Bot](./discord-bot/) - Discord 聊天機器人 ✨ 新增
+
+**Discord 伺服器 AI 助手**
+
+#### 核心功能
+- ✅ 斜線命令（/ask, /help, /clear, /stats）
+- ✅ 提及回應（@bot）
+- ✅ 私訊對話
+- ✅ 對話歷史記錄
+- ✅ Discord Embed 訊息
+- ✅ 表情符號反應
+- ✅ 多伺服器支援
+- ✅ 長訊息自動分段
+
+#### 適用場景
+- Discord 社群管理
+- 遊戲伺服器助手
+- 學習社群工具
+- 開發團隊協作
+
+#### 快速開始
+```bash
+cd discord-bot
+pip install -r requirements.txt
+# 在 Discord Developer Portal 創建 bot
+# 設定 .env 檔案
+python discord_bot.py
+```
+
+---
+
+### 5️⃣ [Telegram Bot](./telegram-bot/) - Telegram 聊天機器人
 
 **功能完整的 Telegram AI 助手**
 
@@ -297,6 +337,38 @@ MIT License
 - 除錯 API 整合
 - 改進使用者體驗
 - 撰寫測試用例
+
+---
+
+## 📝 最新更新
+
+### 🎉 2025年1月 - 重大功能增強
+
+#### Customer Support Bot 增強
+- ✨ **向量搜索**: 使用 FAISS 提升 FAQ 搜索準確度
+- 🤖 **AI工具調用**: Function Calling 支援訂單查詢、庫存檢查、退款處理
+- 💬 **對話管理**: 改進的多用戶對話歷史系統
+- 🌍 **增強多語言**: 更好的多語言檢測和回應
+
+#### RAG Chatbot 增強
+- 🧠 **語義分塊**: 基於段落和主題的智能文檔分割
+- 🔍 **混合搜索**: 結合向量和關鍵字搜索（RRF算法）
+- 🎯 **AI重排序**: 使用 GPT-4o-mini 重新排序搜索結果
+- 📄 **多格式支持**: 新增 Word 文檔 (.docx) 支持
+- ⚙️ **可配置策略**: 靈活的分塊和搜索策略選擇
+
+#### 新增 Discord Bot
+- 🎮 **完整實現**: 全新的 Discord 機器人
+- 💬 **斜線命令**: /ask, /clear, /help, /stats
+- 🔔 **多種互動**: 提及、私訊、頻道消息
+- ✨ **Discord特色**: Embed訊息、反應表情、狀態顯示
+- 📖 **豐富範例**: 4種不同使用場景的完整範例
+
+#### 技術改進
+- 🚀 **性能優化**: 更高效的向量索引和搜索
+- 🛡️ **錯誤處理**: 完善的降級和容錯機制
+- 📚 **文檔完善**: 所有專案都有詳細的 README 和範例
+- 🧪 **示例豐富**: 每個增強功能都有對應的示例代碼
 
 ---
 
