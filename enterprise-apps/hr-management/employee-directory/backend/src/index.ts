@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import employeeRoutes from './routes/employee.routes';
 import departmentRoutes from './routes/department.routes';
+import aiRoutes from './routes/ai.routes';
 import { errorHandler } from './middleware/error.middleware';
 
 dotenv.config();
@@ -24,6 +25,7 @@ app.use('/uploads', express.static('uploads'));
 // 路由
 app.use('/api/employees', employeeRoutes);
 app.use('/api/departments', departmentRoutes);
+app.use('/api/ai', aiRoutes);
 
 // 健康檢查
 app.get('/health', (req, res) => {
