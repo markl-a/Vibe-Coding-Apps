@@ -15,7 +15,158 @@
 
 ## 🎯 已實作工具
 
-### 1. **csv_processor.py** - CSV 處理工具
+### 🤖 AI 驅動的進階工具
+
+#### 1. **data_analyzer.py** - AI 驅動的資料分析工具 ⭐ NEW
+全面的資料分析和 AI 驅動的智能見解生成。
+
+**功能特色:**
+- 自動化資料分析和統計摘要
+- 相關性分析與高相關性識別
+- 資料分布分析(偏度、峰度、正態性檢驗)
+- 異常值檢測(IQR、Z-score 方法)
+- 趨勢分析
+- AI 驅動的智能見解生成
+- HTML 和 JSON 報告生成
+
+**使用範例:**
+```bash
+# 執行完整分析
+python data_analyzer.py data.csv --full
+
+# 儲存 HTML 報告
+python data_analyzer.py data.csv --full --report report.html --format html
+
+# 只執行相關性分析
+python data_analyzer.py data.csv --correlation
+```
+
+#### 2. **data_visualizer.py** - 資料視覺化工具 ⭐ NEW
+自動化資料視覺化和圖表生成。
+
+**功能特色:**
+- 多種圖表類型(直方圖、散點圖、柱狀圖、熱力圖、圓餅圖)
+- 自動視覺化推薦
+- 相關性矩陣熱力圖
+- 散點圖含趨勢線
+- 綜合儀表板創建
+- 高解析度輸出(300 DPI)
+- 中文字體支援
+
+**使用範例:**
+```bash
+# 自動生成所有建議的視覺化
+python data_visualizer.py data.csv --auto
+
+# 創建綜合儀表板
+python data_visualizer.py data.csv --dashboard
+
+# 繪製特定欄位的分布圖
+python data_visualizer.py data.csv --distribution age
+
+# 繪製散點圖
+python data_visualizer.py data.csv --scatter age salary
+
+# 繪製相關性矩陣
+python data_visualizer.py data.csv --correlation
+```
+
+#### 3. **quality_checker.py** - 智能資料品質檢測器 ⭐ NEW
+AI 驅動的全面資料品質評估。
+
+**功能特色:**
+- 多維度品質評估(完整性、一致性、有效性、唯一性)
+- 0-100 品質評分系統
+- A+/A/B/C/D 等級評定
+- 欄位級別的詳細分析
+- Email 和電話號碼驗證
+- 資料格式一致性檢查
+- 智能改進建議
+- 詳細的品質報告
+
+**使用範例:**
+```bash
+# 執行全面品質檢查
+python quality_checker.py data.csv
+
+# 只檢查完整性
+python quality_checker.py data.csv --completeness
+
+# 儲存詳細報告
+python quality_checker.py data.csv --report quality_report.json
+```
+
+**評分維度:**
+- 完整性 (Completeness): 30%
+- 一致性 (Consistency): 20%
+- 有效性 (Validity): 30%
+- 唯一性 (Uniqueness): 20%
+
+#### 4. **anomaly_detector.py** - 資料異常偵測工具 ⭐ NEW
+使用統計和機器學習方法檢測資料異常。
+
+**功能特色:**
+- 多種統計方法(IQR、Z-score、Modified Z-score)
+- 機器學習檢測(Isolation Forest)
+- 單變量模式異常檢測
+- 多維度異常分析
+- 相關性異常識別
+- 異常標記和匯出
+- 詳細的異常報告
+
+**使用範例:**
+```bash
+# 執行全面異常檢測
+python anomaly_detector.py data.csv
+
+# 使用特定方法
+python anomaly_detector.py data.csv --method zscore --threshold 3.0
+
+# 只使用機器學習方法
+python anomaly_detector.py data.csv --ml-only --contamination 0.1
+
+# 標記異常並儲存
+python anomaly_detector.py data.csv --mark data_with_anomalies.csv
+
+# 儲存異常報告
+python anomaly_detector.py data.csv --report anomaly_report.json
+```
+
+#### 5. **api_fetcher.py** - API 資料提取工具 ⭐ NEW
+從 REST API 提取資料並轉換為結構化格式。
+
+**功能特色:**
+- RESTful API 資料提取
+- 自動分頁處理
+- 批次請求
+- 重試機制(自動重試失敗的請求)
+- 支援自訂 HTTP 標頭和參數
+- 多種輸出格式(JSON、CSV、Excel)
+- Rate limiting 支援
+
+**使用範例:**
+```bash
+# 單一請求
+python api_fetcher.py https://api.example.com /users/1
+
+# 分頁請求
+python api_fetcher.py https://api.example.com /users --paginated --per-page 100 -o users.csv
+
+# 帶認證標頭
+python api_fetcher.py https://api.example.com /data \
+    --header "Authorization: Bearer TOKEN" \
+    --paginated -o data.json
+
+# POST 請求
+python api_fetcher.py https://api.example.com /search \
+    --method POST \
+    --data '{"query": "test"}' \
+    -o results.json
+```
+
+### 📁 核心處理工具
+
+#### 6. **csv_processor.py** - CSV 處理工具
 強大的 CSV 檔案處理和轉換工具。
 
 **功能特色：**
@@ -388,32 +539,57 @@ python csv_processor.py examples/sample_data.csv --info
 
 ## 📊 工具狀態
 
-| 工具 | 狀態 | 功能完整度 | 測試 |
-|------|------|------------|------|
-| csv_processor.py | ✅ 完成 | 95% | ✅ |
-| json_transformer.py | ✅ 完成 | 90% | ✅ |
-| data_cleaner.py | ✅ 完成 | 85% | ✅ |
-| excel_converter.py | ✅ 完成 | 90% | ✅ |
-| data_merger.py | ✅ 完成 | 85% | ✅ |
-| batch_processor.py | ✅ 完成 | 80% | ✅ |
+| 工具 | 狀態 | 功能完整度 | 測試 | AI 輔助 |
+|------|------|------------|------|---------|
+| **AI 驅動工具** |
+| data_analyzer.py | ✅ 完成 | 95% | ✅ | 🤖 AI 見解生成 |
+| data_visualizer.py | ✅ 完成 | 95% | ✅ | 🤖 自動推薦 |
+| quality_checker.py | ✅ 完成 | 95% | ✅ | 🤖 智能評分 |
+| anomaly_detector.py | ✅ 完成 | 95% | ✅ | 🤖 ML 檢測 |
+| api_fetcher.py | ✅ 完成 | 90% | ✅ | - |
+| **核心工具** |
+| csv_processor.py | ✅ 完成 | 95% | ✅ | - |
+| json_transformer.py | ✅ 完成 | 90% | ✅ | - |
+| data_cleaner.py | ✅ 完成 | 85% | ✅ | - |
+| excel_converter.py | ✅ 完成 | 90% | ✅ | - |
+| data_merger.py | ✅ 完成 | 85% | ✅ | - |
+| batch_processor.py | ✅ 完成 | 80% | ✅ | - |
+
+## 🎉 最新更新 (2025-01)
+
+### ✨ 新增功能
+
+1. **AI 驅動的資料分析器** - 全面的統計分析和智能見解生成
+2. **資料視覺化工具** - 自動化圖表生成和儀表板創建
+3. **智能品質檢測器** - 多維度資料品質評估(0-100 評分)
+4. **異常檢測器** - 統計+機器學習的異常識別
+5. **API 資料提取器** - 從 REST API 提取和轉換資料
+
+### 📈 改進項目
+
+- ✅ 新增 5 個 AI 驅動的進階工具
+- ✅ 完整的使用教程和範例
+- ✅ 更新依賴套件(scipy, scikit-learn, 視覺化庫)
+- ✅ 改進錯誤處理和重試機制
+- ✅ 高解析度視覺化輸出(300 DPI)
 
 ## 🔜 未來計劃
 
 ### 即將推出的功能
 
-- **資料庫連接器** - 直接連接資料庫進行 ETL
-- **API 整合** - 從 REST API 提取資料
-- **即時處理** - 串流資料處理
-- **機器學習整合** - 資料預處理管道
-- **Web 介面** - 視覺化資料處理介面
+- **資料庫連接器** - 直接連接 SQL/NoSQL 資料庫
+- **Streamlit Web 儀表板** - 互動式資料探索介面
+- **即時處理** - 串流資料處理支援
+- **進階 ML 整合** - 自動特徵工程和模型訓練
+- **協作功能** - 多人資料處理協作
 
 ### 改進計劃
 
-- [ ] 支援更多資料格式（Parquet、Avro）
-- [ ] 增強大數據處理能力
-- [ ] 更多資料視覺化選項
-- [ ] 自動化資料品質檢查
-- [ ] 資料血緣追蹤
+- [ ] 支援更多資料格式（Parquet、Avro、HDF5）
+- [ ] 增強大數據處理能力(Dask 整合)
+- [ ] 更多互動式視覺化選項
+- [ ] 資料血緣追蹤和版本控制
+- [ ] 自動化測試套件擴展
 
 ## 🤝 貢獻
 
