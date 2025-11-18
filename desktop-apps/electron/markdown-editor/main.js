@@ -2,9 +2,21 @@ const { app, BrowserWindow, ipcMain, dialog, Menu } = require('electron');
 const path = require('path');
 const fs = require('fs').promises;
 const Store = require('electron-store');
+const AIHelper = require('../shared/ai-helper');
 
 const store = new Store();
 let mainWindow;
+
+// 初始化 AI Helper
+let aiHelper = null;
+try {
+  const apiKey = store.get('openai_api_key') || process.env.OPENAI_API_KEY;
+  if (apiKey) {
+    aiHelper = new AIHelper(apiKey);
+  }
+} catch (error) {
+  console.log('AI Helper 未初始化:', error.message);
+}
 
 // 建立主視窗
 function createWindow() {
@@ -326,6 +338,78 @@ ipcMain.handle('set-config', async (event, key, value) => {
 // 取得最近開啟的檔案
 ipcMain.handle('get-recent-files', async () => {
   return store.get('recentFiles', []);
+});
+
+// AI 功能處理器
+
+ipcMain.handle('ai-improve-text', async (event, text) => {
+  if (!aiHelper) {
+    return { success: false, error: '請先設定 OpenAI API Key' };
+  }
+
+  try {
+    const result = await aiHelper.improveSuggestions(text, 'general');
+    return { success: true, result };
+  } catch (error) {
+    console.error('AI Improve Error:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('ai-summarize', async (event, text) => {
+  if (!aiHelper) {
+    return { success: false, error: '請先設定 OpenAI API Key' };
+  }
+
+  try {
+    const result = await aiHelper.summarizeText(text, 200);
+    return { success: true, result };
+  } catch (error) {
+    console.error('AI Summarize Error:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('ai-autocomplete', async (event, text, context) => {
+  if (!aiHelper) {
+    return { success: false, error: '請先設定 OpenAI API Key' };
+  }
+
+  try {
+    const result = await aiHelper.autocomplete(text, context);
+    return { success: true, result };
+  } catch (error) {
+    console.error('AI Autocomplete Error:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('ai-translate', async (event, text, targetLang) => {
+  if (!aiHelper) {
+    return { success: false, error: '請先設定 OpenAI API Key' };
+  }
+
+  try {
+    const result = await aiHelper.translate(text, targetLang);
+    return { success: true, result };
+  } catch (error) {
+    console.error('AI Translate Error:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('ai-extract-keywords', async (event, text) => {
+  if (!aiHelper) {
+    return { success: false, error: '請先設定 OpenAI API Key' };
+  }
+
+  try {
+    const result = await aiHelper.extractKeywords(text, 5);
+    return { success: true, result };
+  } catch (error) {
+    console.error('AI Keywords Error:', error);
+    return { success: false, error: error.message };
+  }
 });
 
 // 輔助函數

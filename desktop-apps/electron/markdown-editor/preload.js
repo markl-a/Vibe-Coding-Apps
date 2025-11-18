@@ -19,6 +19,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // 最近檔案
   getRecentFiles: () => ipcRenderer.invoke('get-recent-files'),
 
+  // AI 功能
+  aiImprove: (text) => ipcRenderer.invoke('ai-improve-text', text),
+  aiSummarize: (text) => ipcRenderer.invoke('ai-summarize', text),
+  aiAutocomplete: (text, context) => ipcRenderer.invoke('ai-autocomplete', text, context),
+  aiTranslate: (text, targetLang) => ipcRenderer.invoke('ai-translate', text, targetLang),
+  aiExtractKeywords: (text) => ipcRenderer.invoke('ai-extract-keywords', text),
+
   // 選單事件監聽
   onMenuNewFile: (callback) => ipcRenderer.on('menu-new-file', callback),
   onMenuOpenFile: (callback) => ipcRenderer.on('menu-open-file', callback),
