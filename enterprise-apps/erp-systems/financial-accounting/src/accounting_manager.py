@@ -184,8 +184,11 @@ class AccountingManager:
             conn.close()
             raise ValueError(f"借貸不平衡！借方: {total_debit}, 貸方: {total_credit}")
 
-        # 生成憑證編號
-        voucher_no = f"V{datetime.now().strftime('%Y%m%d%H%M%S')}"
+        # 生成唯一憑證編號（加入微秒避免重複）
+        import time
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        microsecond = int(time.time() * 1000000) % 1000000
+        voucher_no = f"V{timestamp}{microsecond:06d}"
 
         # 創建憑證
         cursor = conn.execute(
@@ -417,17 +420,22 @@ class AccountingManager:
         """獲取期間範圍內的科目餘額合計"""
         conn = self._get_connection()
 
-        rows = conn.execute(
-            '''SELECT a.code, a.name,
-                      SUM(COALESCE(b.credit_total, 0) - COALESCE(b.debit_total, 0)) as balance
+        # 收入科目使用貸方-借方，費用科目使用借方-貸方
+        if account_type == 'EXPENSE':
+            balance_formula = 'SUM(COALESCE(b.debit_total, 0) - COALESCE(b.credit_total, 0))'
+        else:  # REVENUE and others
+            balance_formula = 'SUM(COALESCE(b.credit_total, 0) - COALESCE(b.debit_total, 0))'
+
+        query = f'''SELECT a.code, a.name,
+                      {balance_formula} as balance
                FROM accounts a
                LEFT JOIN account_balances b ON a.code = b.account_code
                   AND b.period >= ? AND b.period <= ?
                WHERE a.type = ?
                GROUP BY a.code, a.name
-               ORDER BY a.code''',
-            (start_period, end_period, account_type)
-        ).fetchall()
+               ORDER BY a.code'''
+
+        rows = conn.execute(query, (start_period, end_period, account_type)).fetchall()
 
         conn.close()
         return [dict(row) for row in rows]

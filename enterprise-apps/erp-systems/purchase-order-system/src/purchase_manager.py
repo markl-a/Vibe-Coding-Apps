@@ -148,8 +148,11 @@ class PurchaseManager:
             conn.close()
             raise ValueError(f"供應商 {supplier_code} 不存在")
 
-        # 生成訂單編號
-        order_no = f"PO{datetime.now().strftime('%Y%m%d%H%M%S')}"
+        # 生成唯一訂單編號（加入微秒避免重複）
+        import time
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        microsecond = int(time.time() * 1000000) % 1000000
+        order_no = f"PO{timestamp}{microsecond:06d}"
 
         # 計算訂單總額
         total_amount = sum(item['quantity'] * item['unit_price'] for item in items)
