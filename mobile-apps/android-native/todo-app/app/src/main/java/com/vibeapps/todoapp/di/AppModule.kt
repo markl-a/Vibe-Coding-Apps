@@ -2,8 +2,11 @@ package com.vibeapps.todoapp.di
 
 import android.content.Context
 import androidx.room.Room
+import com.vibeapps.todoapp.data.ai.AIService
+import com.vibeapps.todoapp.data.ai.LocalAIService
 import com.vibeapps.todoapp.data.dao.TodoDao
 import com.vibeapps.todoapp.data.database.TodoDatabase
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -43,4 +46,17 @@ object AppModule {
     fun provideTodoDao(database: TodoDatabase): TodoDao {
         return database.todoDao()
     }
+}
+
+/**
+ * AI 服務綁定模組
+ */
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class AIModule {
+    @Binds
+    @Singleton
+    abstract fun bindAIService(
+        localAIService: LocalAIService
+    ): AIService
 }

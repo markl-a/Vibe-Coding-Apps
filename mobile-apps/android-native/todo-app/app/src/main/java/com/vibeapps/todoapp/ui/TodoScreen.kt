@@ -8,16 +8,16 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.vibeapps.todoapp.data.model.Priority
-import com.vibeapps.todoapp.ui.components.AddTodoDialog
-import com.vibeapps.todoapp.ui.components.TodoItem
+import com.vibeapps.todoapp.ui.components.*
 
 /**
- * 待辦事項主畫面
- * 顯示待辦事項列表和 FAB 新增按鈕
+ * 待辦事項主畫面（增強版）
+ * 集成 AI 建議、搜索、過濾和統計功能
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,13 +25,18 @@ fun TodoScreen(
     viewModel: TodoViewModel = hiltViewModel()
 ) {
     val todos by viewModel.todos.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
+    val filterType by viewModel.filterType.collectAsState()
+    val aiSuggestions by viewModel.aiSuggestions.collectAsState()
+    val aiSummary by viewModel.aiSummary.collectAsState()
+
     var showDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("待辦事項") },
+                title = { Text("AI 智能待辦") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -63,29 +68,61 @@ fun TodoScreen(
             }
         }
     ) { paddingValues ->
-        if (todos.isEmpty()) {
-            // 空狀態顯示
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = androidx.compose.ui.Alignment.Center
-            ) {
-                Text(
-                    text = "沒有待辦事項\n點擊 + 新增第一個項目",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentPadding = PaddingValues(bottom = 80.dp) // FAB 的空間
+        ) {
+            // 搜索欄
+            item {
+                TodoSearchBar(
+                    searchQuery = searchQuery,
+                    onSearchQueryChange = { viewModel.updateSearchQuery(it) },
+                    filterType = filterType,
+                    onFilterChange = { viewModel.updateFilter(it) }
                 )
             }
-        } else {
+
+            // AI 建議卡片
+            if (aiSuggestions.isNotEmpty() && searchQuery.isEmpty()) {
+                item {
+                    AISuggestionsCard(
+                        suggestions = aiSuggestions,
+                        onRefresh = { viewModel.refreshAISuggestions() }
+                    )
+                }
+            }
+
+            // 統計卡片
+            if (todos.isNotEmpty() && searchQuery.isEmpty()) {
+                item {
+                    StatsCard(aiSummary = aiSummary)
+                }
+            }
+
             // 待辦事項列表
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentPadding = PaddingValues(vertical = 8.dp)
-            ) {
+            if (todos.isEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = if (searchQuery.isNotEmpty()) {
+                                "沒有找到符合的待辦事項"
+                            } else {
+                                "沒有待辦事項\n點擊 + 新增第一個項目"
+                            },
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            } else {
                 items(todos, key = { it.id }) { todo ->
                     TodoItem(
                         todo = todo,
@@ -97,12 +134,12 @@ fun TodoScreen(
         }
     }
 
-    // 新增待辦事項對話框
+    // 新增待辦事項對話框（帶 AI 功能）
     if (showDialog) {
         AddTodoDialog(
             onDismiss = { showDialog = false },
             onAdd = { title, description, priority ->
-                viewModel.addTodo(title, description, priority)
+                viewModel.addTodo(title, description, priority, useAI = true)
                 showDialog = false
             }
         )

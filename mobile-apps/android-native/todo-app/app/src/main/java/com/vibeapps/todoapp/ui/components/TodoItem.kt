@@ -76,6 +76,60 @@ fun TodoItem(
                     )
                 }
 
+                // 分類和標籤
+                if (todo.category.isNotBlank() || todo.tags.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        // 分類徽章
+                        if (todo.category.isNotBlank()) {
+                            AssistChip(
+                                onClick = { },
+                                label = {
+                                    Text(
+                                        text = todo.category,
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+                                },
+                                modifier = Modifier.height(24.dp)
+                            )
+                        }
+
+                        // 標籤徽章（最多顯示2個）
+                        todo.tags.take(2).forEach { tag ->
+                            AssistChip(
+                                onClick = { },
+                                label = {
+                                    Text(
+                                        text = tag,
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+                                },
+                                modifier = Modifier.height(24.dp),
+                                colors = AssistChipDefaults.assistChipColors(
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                                )
+                            )
+                        }
+
+                        // 如果有更多標籤
+                        if (todo.tags.size > 2) {
+                            AssistChip(
+                                onClick = { },
+                                label = {
+                                    Text(
+                                        text = "+${todo.tags.size - 2}",
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+                                },
+                                modifier = Modifier.height(24.dp)
+                            )
+                        }
+                    }
+                }
+
                 // 優先級指示器
                 if (todo.priority != Priority.MEDIUM) {
                     Spacer(modifier = Modifier.height(4.dp))

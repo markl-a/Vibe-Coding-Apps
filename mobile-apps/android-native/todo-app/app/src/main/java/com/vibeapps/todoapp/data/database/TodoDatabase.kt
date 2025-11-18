@@ -2,7 +2,9 @@ package com.vibeapps.todoapp.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.vibeapps.todoapp.data.dao.TodoDao
+import com.vibeapps.todoapp.data.model.Converters
 import com.vibeapps.todoapp.data.model.Todo
 
 /**
@@ -11,9 +13,10 @@ import com.vibeapps.todoapp.data.model.Todo
  */
 @Database(
     entities = [Todo::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
+@TypeConverters(Converters::class)
 abstract class TodoDatabase : RoomDatabase() {
     /**
      * 取得 TodoDao 實例
