@@ -113,4 +113,67 @@ class WeatherService:
 
         return result
 
+    def get_air_quality(self, city=None, lat=None, lon=None):
+        """獲取空氣質量指數 (AQI)"""
+        cache_key = f"weather:aqi:{city or f'{lat},{lon}'}"
+
+        cached_data = cache_service.get(cache_key)
+        if cached_data:
+            return cached_data
+
+        params = {
+            'appid': self.api_key,
+        }
+
+        if city:
+            params['q'] = city
+        elif lat and lon:
+            params['lat'] = lat
+            params['lon'] = lon
+        else:
+            raise ValueError("Must provide either city or lat/lon")
+
+        try:
+            response = requests.get(f"{self.openweather_base_url}/air_pollution", params=params)
+            response.raise_for_status()
+            data = response.json()
+
+            if 'list' not in data or len(data['list']) == 0:
+                raise ValueError("No air quality data available")
+
+            aqi_data = data['list'][0]
+
+            result = {
+                'aqi': aqi_data['main']['aqi'],
+                'components': {
+                    'co': aqi_data['components'].get('co', 0),
+                    'no': aqi_data['components'].get('no', 0),
+                    'no2': aqi_data['components'].get('no2', 0),
+                    'o3': aqi_data['components'].get('o3', 0),
+                    'so2': aqi_data['components'].get('so2', 0),
+                    'pm2_5': aqi_data['components'].get('pm2_5', 0),
+                    'pm10': aqi_data['components'].get('pm10', 0),
+                    'nh3': aqi_data['components'].get('nh3', 0),
+                },
+                'timestamp': aqi_data['dt']
+            }
+
+            # 將 OpenWeatherMap 的 AQI (1-5) 轉換為標準 AQI (0-500)
+            aqi_mapping = {1: 50, 2: 100, 3: 150, 4: 200, 5: 300}
+            result['aqi_standard'] = aqi_mapping.get(result['aqi'], 150)
+
+            cache_service.set(cache_key, result, expiration=1800)  # 30 分鐘快取
+
+            return result
+
+        except requests.exceptions.RequestException as e:
+            # 如果 API 不支持或出錯，返回模擬數據
+            return {
+                'aqi': 2,
+                'aqi_standard': 75,
+                'components': {},
+                'note': '空氣質量數據暫時不可用',
+                'timestamp': 0
+            }
+
 weather_service = WeatherService()

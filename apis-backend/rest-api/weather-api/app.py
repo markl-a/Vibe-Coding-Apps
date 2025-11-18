@@ -7,7 +7,7 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from app.config import Config
-from app.routes import weather_bp, location_bp, history_bp
+from app.routes import weather_bp, location_bp, history_bp, ai_bp
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -28,17 +28,27 @@ def create_app(config_class=Config):
     app.register_blueprint(weather_bp, url_prefix='/api/v1/weather')
     app.register_blueprint(location_bp, url_prefix='/api/v1/location')
     app.register_blueprint(history_bp, url_prefix='/api/v1/history')
+    app.register_blueprint(ai_bp, url_prefix='/api/v1/ai')
 
     @app.route('/')
     def index():
         return {
-            'message': '歡迎使用 Weather API',
-            'version': '1.0.0',
+            'message': '歡迎使用 Weather API with AI Enhancement 🤖',
+            'version': '2.0.0',
+            'features': [
+                '天氣查詢與預報',
+                'AI 智能建議',
+                '空氣質量指數',
+                '完整天氣報告'
+            ],
             'endpoints': {
                 'current_weather': '/api/v1/weather/current',
                 'forecast': '/api/v1/weather/forecast',
                 'location_search': '/api/v1/location/search',
                 'history': '/api/v1/history',
+                'ai_weather_advice': '/api/v1/ai/weather-advice',
+                'air_quality': '/api/v1/ai/air-quality',
+                'complete_report': '/api/v1/ai/complete-report'
             }
         }
 
