@@ -1,0 +1,144 @@
+service: ai-assistant-service
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ${opt:region, 'us-east-1'}
+  stage: ${opt:stage, 'dev'}
+  memorySize: 512
+  timeout: 30
+
+  environment:
+    OPENAI_API_KEY: ${env:OPENAI_API_KEY}
+    ANTHROPIC_API_KEY: ${env:ANTHROPIC_API_KEY}
+    GOOGLE_CLOUD_API_KEY: ${env:GOOGLE_CLOUD_API_KEY}
+    AWS_REGION: ${self:provider.region}
+    STAGE: ${self:provider.stage}
+
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - rekognition:*
+            - comprehend:*
+            - translate:*
+            - transcribe:*
+          Resource: "*"
+
+functions:
+  # AI 聊天助手
+  aiChat:
+    handler: handlers/ai-chat.handler
+    description: AI 聊天助手 API
+    events:
+      - http:
+          path: ai-chat
+          method: post
+          cors: true
+    environment:
+      DEFAULT_MODEL: gpt-3.5-turbo
+      MAX_TOKENS: 1000
+
+  # 文本生成
+  textGeneration:
+    handler: handlers/text-generation.handler
+    description: AI 文本生成 API
+    events:
+      - http:
+          path: text-generation
+          method: post
+          cors: true
+    environment:
+      DEFAULT_MODEL: gpt-3.5-turbo
+
+  # 圖片識別
+  imageRecognition:
+    handler: handlers/image-recognition.handler
+    description: 圖片識別和分析 API
+    events:
+      - http:
+          path: image-recognition
+          method: post
+          cors: true
+    memorySize: 1024
+    timeout: 60
+
+  # 情感分析
+  sentimentAnalysis:
+    handler: handlers/sentiment-analysis.handler
+    description: 文本情感分析 API
+    events:
+      - http:
+          path: sentiment-analysis
+          method: post
+          cors: true
+
+  # 文本摘要
+  summarize:
+    handler: handlers/summarize.handler
+    description: 文本摘要生成 API
+    events:
+      - http:
+          path: summarize
+          method: post
+          cors: true
+
+  # 翻譯服務
+  translate:
+    handler: handlers/translate.handler
+    description: AI 翻譯服務 API
+    events:
+      - http:
+          path: translate
+          method: post
+          cors: true
+
+  # 代碼解釋
+  explainCode:
+    handler: handlers/explain-code.handler
+    description: 代碼解釋和分析 API
+    events:
+      - http:
+          path: explain-code
+          method: post
+          cors: true
+
+  # 語音轉文字
+  speechToText:
+    handler: handlers/speech-to-text.handler
+    description: 語音轉文字 API
+    events:
+      - http:
+          path: speech-to-text
+          method: post
+          cors: true
+    memorySize: 1024
+    timeout: 60
+
+  # 內容審核
+  contentModeration:
+    handler: handlers/content-moderation.handler
+    description: AI 內容審核 API
+    events:
+      - http:
+          path: content-moderation
+          method: post
+          cors: true
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+custom:
+  serverless-offline:
+    httpPort: 3001
+    noPrependStageInUrl: true
