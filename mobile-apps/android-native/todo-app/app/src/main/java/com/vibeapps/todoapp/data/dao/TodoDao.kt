@@ -57,4 +57,64 @@ interface TodoDao {
      */
     @Query("SELECT * FROM todos WHERE title LIKE '%' || :query || '%' ORDER BY createdAt DESC")
     fun searchTodos(query: String): Flow<List<Todo>>
+
+    /**
+     * 根據標題和描述搜尋待辦事項
+     */
+    @Query("SELECT * FROM todos WHERE title LIKE '%' || :query || '%' OR description LIKE '%' || :query || '%' ORDER BY createdAt DESC")
+    fun searchTodosInTitleAndDescription(query: String): Flow<List<Todo>>
+
+    /**
+     * 根據分類獲取待辦事項
+     */
+    @Query("SELECT * FROM todos WHERE category = :category ORDER BY createdAt DESC")
+    fun getTodosByCategory(category: String): Flow<List<Todo>>
+
+    /**
+     * 根據優先級獲取待辦事項
+     */
+    @Query("SELECT * FROM todos WHERE priority = :priority ORDER BY createdAt DESC")
+    fun getTodosByPriority(priority: String): Flow<List<Todo>>
+
+    /**
+     * 獲取即將到期的待辦事項
+     */
+    @Query("SELECT * FROM todos WHERE isCompleted = 0 AND dueDate IS NOT NULL AND dueDate <= :timestamp ORDER BY dueDate ASC")
+    fun getUpcomingTodos(timestamp: Long): Flow<List<Todo>>
+
+    /**
+     * 獲取已過期的待辦事項
+     */
+    @Query("SELECT * FROM todos WHERE isCompleted = 0 AND dueDate IS NOT NULL AND dueDate < :currentTime ORDER BY dueDate ASC")
+    fun getOverdueTodos(currentTime: Long): Flow<List<Todo>>
+
+    /**
+     * 獲取今日創建的待辦事項
+     */
+    @Query("SELECT * FROM todos WHERE createdAt >= :startOfDay AND createdAt < :endOfDay ORDER BY createdAt DESC")
+    fun getTodosCreatedToday(startOfDay: Long, endOfDay: Long): Flow<List<Todo>>
+
+    /**
+     * 獲取所有不同的分類
+     */
+    @Query("SELECT DISTINCT category FROM todos WHERE category != '' ORDER BY category ASC")
+    fun getAllCategories(): Flow<List<String>>
+
+    /**
+     * 獲取待辦事項總數
+     */
+    @Query("SELECT COUNT(*) FROM todos")
+    suspend fun getTodoCount(): Int
+
+    /**
+     * 獲取已完成的待辦事項數量
+     */
+    @Query("SELECT COUNT(*) FROM todos WHERE isCompleted = 1")
+    suspend fun getCompletedCount(): Int
+
+    /**
+     * 獲取未完成的待辦事項數量
+     */
+    @Query("SELECT COUNT(*) FROM todos WHERE isCompleted = 0")
+    suspend fun getPendingCount(): Int
 }
