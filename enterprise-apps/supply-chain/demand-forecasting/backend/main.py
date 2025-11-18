@@ -441,6 +441,227 @@ async def get_items(db: Session = Depends(get_db)):
         ]
     }
 
+# ==================== AI 增強功能 ====================
+
+from ai_models import LSTMForecaster, GRUForecaster, AIForecastingService
+from ai_assistant import DemandForecastingAssistant, generate_natural_language_report
+
+class LSTMForecastRequest(BaseModel):
+    """LSTM 預測請求"""
+    item_id: str
+    periods: int = Field(12, description="預測未來幾個時期")
+    lookback_window: int = Field(30, description="回看窗口大小")
+    model_type: str = Field("lstm", description="模型類型: lstm 或 gru")
+
+class ChatRequest(BaseModel):
+    """AI 助手對話請求"""
+    message: str
+    item_id: Optional[str] = None
+
+@app.post("/api/forecast/lstm")
+async def forecast_with_lstm(
+    request: LSTMForecastRequest,
+    db: Session = Depends(get_db)
+):
+    """使用 LSTM 深度學習模型進行預測"""
+    try:
+        # 獲取歷史數據
+        historical_records = db.query(DemandHistory).filter(
+            DemandHistory.item_id == request.item_id
+        ).order_by(DemandHistory.date).all()
+
+        if len(historical_records) < request.lookback_window + 10:
+            raise HTTPException(
+                status_code=400,
+                detail=f"歷史數據不足，至少需要 {request.lookback_window + 10} 筆記錄"
+            )
+
+        # 準備數據
+        df = pd.DataFrame([
+            {'date': r.date, 'quantity': r.quantity}
+            for r in historical_records
+        ])
+
+        data_series = pd.Series(
+            df['quantity'].values,
+            index=pd.to_datetime(df['date'])
+        )
+
+        # 選擇模型
+        if request.model_type.lower() == 'gru':
+            model = GRUForecaster(
+                lookback_window=request.lookback_window,
+                forecast_horizon=request.periods
+            )
+        else:
+            model = LSTMForecaster(
+                lookback_window=request.lookback_window,
+                forecast_horizon=request.periods
+            )
+
+        # 訓練模型
+        training_metrics = model.train(
+            data_series,
+            epochs=50,
+            batch_size=16,
+            verbose=0
+        )
+
+        # 預測
+        predictions = model.predict(data_series, steps=request.periods)
+
+        # 生成預測日期
+        last_date = df['date'].max()
+        forecast_dates = pd.date_range(
+            start=last_date + timedelta(days=30),
+            periods=request.periods,
+            freq='M'
+        )
+
+        # 構建結果
+        forecasts = [
+            {
+                'date': date.isoformat(),
+                'predicted_quantity': float(pred),
+                'model_type': request.model_type.upper()
+            }
+            for date, pred in zip(forecast_dates, predictions)
+        ]
+
+        return {
+            "status": "success",
+            "item_id": request.item_id,
+            "model_type": request.model_type.upper(),
+            "forecasts": forecasts,
+            "training_metrics": training_metrics,
+            "model_info": {
+                "lookback_window": request.lookback_window,
+                "forecast_horizon": request.periods,
+                "training_samples": training_metrics['training_samples'],
+                "epochs_trained": training_metrics['epochs_trained']
+            }
+        }
+
+    except Exception as e:
+        logger.error(f"LSTM 預測失敗: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"LSTM 預測失敗: {str(e)}")
+
+@app.post("/api/forecast/smart")
+async def smart_forecast(
+    request: ForecastRequest,
+    db: Session = Depends(get_db)
+):
+    """智能預測（自動選擇最佳模型）"""
+    try:
+        # 獲取歷史數據
+        historical_records = db.query(DemandHistory).filter(
+            DemandHistory.item_id == request.item_id
+        ).order_by(DemandHistory.date).all()
+
+        if len(historical_records) < 10:
+            raise HTTPException(
+                status_code=400,
+                detail="歷史數據不足"
+            )
+
+        # 自動選擇模型
+        ai_service = AIForecastingService()
+        recommended_model = ai_service.auto_select_model(
+            len(historical_records),
+            request.periods
+        )
+
+        logger.info(f"為 {request.item_id} 推薦使用 {recommended_model} 模型")
+
+        # 根據推薦使用相應的預測方法
+        if recommended_model in ['lstm', 'gru']:
+            lstm_request = LSTMForecastRequest(
+                item_id=request.item_id,
+                periods=request.periods,
+                model_type=recommended_model
+            )
+            return await forecast_with_lstm(lstm_request, db)
+        else:
+            # 使用 Prophet
+            return await generate_forecast(request, db)
+
+    except Exception as e:
+        logger.error(f"智能預測失敗: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/ai/analyze")
+async def ai_analysis(
+    request: ForecastRequest,
+    db: Session = Depends(get_db)
+):
+    """AI 分析預測結果"""
+    try:
+        # 先生成預測
+        forecast_result = await generate_forecast(request, db)
+
+        # 獲取歷史數據
+        historical_records = db.query(DemandHistory).filter(
+            DemandHistory.item_id == request.item_id
+        ).order_by(DemandHistory.date).all()
+
+        historical_df = pd.DataFrame([
+            {'date': r.date, 'quantity': r.quantity}
+            for r in historical_records
+        ])
+
+        # AI 分析
+        assistant = DemandForecastingAssistant()
+        analysis = assistant.analyze_forecast(
+            historical_df,
+            forecast_result['forecasts'],
+            forecast_result['accuracy_metrics']
+        )
+
+        # 生成自然語言報告
+        item_name = historical_records[0].item_name if historical_records else request.item_id
+        report = generate_natural_language_report(
+            item_name,
+            forecast_result['forecasts'],
+            forecast_result['accuracy_metrics'],
+            analysis
+        )
+
+        return {
+            "status": "success",
+            "item_id": request.item_id,
+            "forecasts": forecast_result['forecasts'],
+            "accuracy_metrics": forecast_result['accuracy_metrics'],
+            "ai_analysis": analysis,
+            "natural_language_report": report
+        }
+
+    except Exception as e:
+        logger.error(f"AI 分析失敗: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/ai/chat")
+async def ai_chat(request: ChatRequest):
+    """AI 助手對話"""
+    try:
+        assistant = DemandForecastingAssistant()
+
+        # 如果提供了 item_id，獲取相關上下文
+        context = {}
+        # 這裡可以從數據庫獲取上下文信息
+
+        response = assistant.chat(request.message, context)
+
+        return {
+            "status": "success",
+            "user_message": request.message,
+            "ai_response": response,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+    except Exception as e:
+        logger.error(f"AI 對話失敗: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
