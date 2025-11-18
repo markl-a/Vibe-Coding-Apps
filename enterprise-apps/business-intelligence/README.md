@@ -6,11 +6,13 @@
 ## 📋 目錄
 
 - [BI 系統概述](#bi-系統概述)
+- [完整应用列表](#完整应用列表)
 - [核心功能](#核心功能)
 - [技術架構](#技術架構)
 - [推薦技術棧](#推薦技術棧)
 - [AI 增強分析](#ai-增強分析)
 - [數據可視化](#數據可視化)
+- [快速开始](#快速开始)
 
 ---
 
@@ -25,6 +27,262 @@
 - **自助分析**：拖拽式報表、數據探索
 - **預測分析**：機器學習、趨勢預測
 - **數據治理**：數據質量、元數據管理
+- **AI 洞察**：智能異常檢測、自動洞察生成
+- **自然語言查詢**：用日常語言提問數據
+
+---
+
+## 📦 完整应用列表
+
+本 BI 系統包含以下完整應用：
+
+### 🆕 AI 增強應用
+
+#### 1. [AI 洞察引擎](ai-insights-engine/)
+🧠 **智能數據分析引擎**
+
+自動發現數據中的趨勢、異常、相關性和模式，生成可操作的業務洞察。
+
+**核心功能:**
+- ✅ 多種異常檢測方法（Z-Score, IQR, Isolation Forest, LOF）
+- ✅ 趨勢識別和季節性分析
+- ✅ 相關性發現
+- ✅ 模式發現（K-Means, DBSCAN）
+- ✅ AI 驅動的綜合洞察生成
+
+**快速開始:**
+```bash
+cd ai-insights-engine
+pip install -r requirements.txt
+python data_generator.py
+streamlit run app.py
+```
+
+---
+
+#### 2. [自然語言查詢接口](nlq-interface/)
+💬 **對話式數據查詢**
+
+使用日常語言提問數據，無需編寫 SQL，AI 自動轉換並執行查詢。
+
+**核心功能:**
+- ✅ 中文/英文問題理解
+- ✅ 自動生成 SQL 查詢
+- ✅ 支持聚合、分組、排名、時間範圍查詢
+- ✅ 智能可視化推薦
+- ✅ 上下文記憶和追問
+
+**示例問題:**
+- "總銷售額是多少？"
+- "按產品類別分組的銷售額"
+- "銷售額最高的5個產品"
+
+**快速開始:**
+```bash
+cd nlq-interface
+pip install -r requirements.txt
+python data_generator.py
+streamlit run app.py
+```
+
+---
+
+#### 3. [預測分析平台](predictive-analytics/)
+🔮 **AI 驅動的智能預測**
+
+使用機器學習預測未來趨勢、客戶行為和業務指標。
+
+**核心功能:**
+- ✅ 時間序列預測（Prophet, ARIMA）
+- ✅ 客戶流失預測
+- ✅ 回歸預測（價格、收入）
+- ✅ 異常預測和風險預警
+
+**支持的模型:**
+- Prophet (Facebook)
+- ARIMA
+- XGBoost
+- Random Forest
+
+**快速開始:**
+```bash
+cd predictive-analytics
+pip install -r requirements.txt
+python data_generator.py
+streamlit run app.py
+```
+
+---
+
+### 📊 完整 BI 應用
+
+#### 4. [銷售分析系統](sales-analytics/)
+📈 **全方位銷售數據分析**
+
+**核心功能:**
+- ✅ RFM 客戶分群分析
+- ✅ 銷售漏斗分析
+- ✅ 產品關聯分析
+- ✅ 銷售趨勢預測
+- 🆕 AI 智能銷售預測
+- 🆕 異常檢測和自動洞察
+
+**快速開始:**
+```bash
+cd sales-analytics
+pip install -r requirements.txt
+python data_generator.py
+streamlit run app.py
+```
+
+---
+
+#### 5. [交互式儀表板](interactive-dashboard/)
+📊 **企業級可視化平台**
+
+**核心功能:**
+- ✅ 多種圖表類型
+- ✅ 實時數據更新
+- ✅ 互動式過濾器
+- ✅ 數據鑽取分析
+- ✅ 響應式設計
+
+**技術棧:** Dash, Plotly, Redis
+
+**快速開始:**
+```bash
+cd interactive-dashboard
+pip install -r requirements.txt
+python data_generator.py
+python app.py  # http://localhost:8050
+```
+
+---
+
+#### 6. [ETL 數據管道](etl-pipeline/)
+🔄 **數據集成和轉換**
+
+**核心功能:**
+- ✅ 多源數據提取（DB, API, 文件）
+- ✅ 數據清洗和轉換
+- ✅ 增量更新
+- ✅ 數據質量檢查
+- ✅ 任務調度（Airflow, Prefect）
+
+**支持的數據源:**
+- PostgreSQL, MySQL, MongoDB
+- CSV, JSON, Excel, Parquet
+- REST API, GraphQL
+- Kafka, RabbitMQ
+
+**快速開始:**
+```bash
+cd etl-pipeline
+pip install -r requirements.txt
+python run_pipeline.py
+```
+
+---
+
+#### 7. [KPI 監控系統](kpi-monitoring/)
+📊 **實時 KPI 追蹤和預警**
+
+**核心功能:**
+- ✅ 多維度 KPI 定義
+- ✅ 實時監控和更新
+- ✅ 自動閾值預警
+- ✅ 趨勢分析
+- 🆕 AI 驅動的 KPI 預測
+- 🆕 智能異常預警
+
+**通知渠道:**
+- 郵件 (SMTP)
+- Slack
+- 微信企業號
+
+**快速開始:**
+```bash
+cd kpi-monitoring
+pip install -r requirements.txt
+python data_generator.py
+streamlit run app.py
+```
+
+---
+
+## 🚀 快速开始
+
+### 系統要求
+
+- Python 3.8+
+- 4GB+ RAM
+- 支持的操作系統：Windows, macOS, Linux
+
+### 通用安裝步驟
+
+1. **克隆倉庫**
+```bash
+git clone <repository-url>
+cd enterprise-apps/business-intelligence
+```
+
+2. **選擇應用並安裝依賴**
+```bash
+cd <app-name>
+pip install -r requirements.txt
+```
+
+3. **生成演示數據**
+```bash
+python data_generator.py
+```
+
+4. **啟動應用**
+```bash
+# Streamlit 應用
+streamlit run app.py
+
+# Dash 應用
+python app.py
+```
+
+### Docker 部署（可選）
+
+```bash
+cd <app-name>
+docker build -t bi-app .
+docker run -p 8501:8501 bi-app
+```
+
+---
+
+## 🆕 AI 功能亮點
+
+### 1. 自動洞察生成
+系統自動分析數據並生成業務洞察：
+- 趨勢識別："銷售額呈上升趨勢，增長15%"
+- 異常檢測："3月15日收入異常下降44%"
+- 相關性發現："廣告支出與新用戶數高度相關(r=0.87)"
+- 模式識別："識別出3個不同的客戶群體"
+
+### 2. 自然語言查詢
+用日常語言提問數據：
+```
+問：上個月銷售額最高的5個產品是什麼？
+答：自動生成 SQL → 執行 → 返回結果 + 圖表
+```
+
+### 3. 智能預測
+AI 驅動的預測分析：
+- 時間序列預測（未來30天銷售）
+- 客戶流失預測（識別高風險客戶）
+- KPI 預測（提前預警）
+
+### 4. 異常檢測
+多種方法檢測數據異常：
+- 統計方法（Z-Score, IQR）
+- 機器學習（Isolation Forest, LOF）
+- 實時監控和警報
 
 ---
 
