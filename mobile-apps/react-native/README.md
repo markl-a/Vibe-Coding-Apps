@@ -388,6 +388,79 @@ AI 協助美化界面：
 - ⭐⭐⭐ 視頻串流應用
 - ⭐⭐⭐ 位置分享應用
 
+## 🎁 本倉庫提供的完整應用
+
+### 1. Dashboard Mobile App 📊
+儀表板和數據視覺化應用
+- 關鍵指標展示
+- 數據圖表
+- 報表生成
+- 設定管理
+
+### 2. Social Mobile App 🤖
+社交網絡應用
+- 動態牆
+- 即時聊天
+- 通知中心
+- 個人資料管理
+
+### 3. Marketplace Mobile App 🛒
+電商市場應用
+- 商品瀏覽
+- 購物車管理
+- 分類導航
+- 訂單處理
+
+### 4. AI Voice Notes App 🎤🤖 **NEW!**
+AI 驅動的語音筆記應用
+- 🎙️ 高質量語音錄製
+- 📝 AI 語音轉文字
+- 🤖 智能摘要生成
+- 🏷️ 自動標籤提取
+- ⭐ 收藏管理
+- 🔍 筆記搜索
+
+## 🔧 共享資源庫
+
+本倉庫提供了一套完整的共享資源，可在所有 React Native 項目中使用：
+
+### UI 組件庫 (`shared/components/`)
+- **Button** - 多樣式按鈕組件
+- **Card** - 靈活的卡片容器
+- **Input** - 功能完整的輸入框
+- **LoadingSpinner** - 加載指示器
+- **EmptyState** - 空狀態展示
+- **AIChatBot** - AI 聊天機器人組件
+- **AIAssistantButton** - AI 助手浮動按鈕
+- **AITextEnhancer** - 文本增強組件
+- **ThemeToggle** - 主題切換組件
+
+### 自定義 Hooks (`shared/hooks/`)
+- **useDebounce** - 防抖處理
+- **useToggle** - 布爾值切換
+- **useKeyboard** - 鍵盤狀態監聽
+- **useAsync** - 異步操作管理
+- **usePrevious** - 獲取上一次的值
+- **useInterval** - React 友好的定時器
+- **useOnlineStatus** - 網絡狀態監聽
+- **useAppState** - 應用前後台狀態
+- **useTheme** - 主題管理
+
+### AI 服務 (`shared/services/`)
+- 支持多個 AI 提供商（OpenAI, Anthropic, Gemini, Ollama）
+- 統一的 API 接口
+- 流式響應支持
+- 預設 AI 助手角色
+- 完整的錯誤處理
+
+### 主題系統 (`shared/theme/`)
+- 🌞 亮色模式
+- 🌙 暗色模式
+- 🔄 自動跟隨系統
+- 💾 主題偏好持久化
+- 🎨 完整的設計系統
+- 統一的顏色、間距、排版規範
+
 ## 🔧 常用開發工具
 
 ### IDE / 編輯器
@@ -587,7 +660,44 @@ end
 
 ---
 
+## 📚 額外資源
+
+- [性能優化指南](./PERFORMANCE.md) - 完整的性能優化最佳實踐
+- [共享組件文檔](./shared/components/README.md) - UI 組件庫使用指南
+- [自定義 Hooks 文檔](./shared/hooks/README.md) - Hooks 使用指南
+- [AI 服務文檔](./shared/services/README.md) - AI 集成完整指南
+- [主題系統文檔](./shared/theme/README.md) - 主題和深色模式指南
+
+## 🚀 快速開始新項目
+
+使用我們的共享資源快速啟動項目：
+
+```typescript
+// 1. 導入共享組件
+import { Button, Card, Input, LoadingSpinner } from './shared/components';
+
+// 2. 使用自定義 Hooks
+import { useDebounce, useAsync, useTheme } from './shared/hooks';
+
+// 3. 集成 AI 功能
+import { chat, AIConfig } from './shared/services/aiService';
+import { AIChatBot, AIAssistantButton } from './shared/components';
+
+// 4. 使用主題系統
+import { ThemeProvider, useTheme } from './shared/context/ThemeContext';
+```
+
+---
+
 **🚀 使用 AI 加速你的 React Native 開發之旅！**
 
-**最後更新**: 2025-11-16
+**最後更新**: 2025-11-18
 **維護狀態**: ✅ 活躍開發
+
+**新增功能**:
+- ✅ 共享 UI 組件庫
+- ✅ 自定義 Hooks 集合
+- ✅ 完整的 AI 集成服務
+- ✅ AI 語音筆記應用
+- ✅ 主題系統和深色模式
+- ✅ 性能優化指南
