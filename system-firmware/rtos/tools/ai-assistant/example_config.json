@@ -1,0 +1,87 @@
+{
+  "project_name": "smart_sensor_node",
+  "rtos_type": "freertos",
+  "description": "Smart sensor node with multiple sensors and network connectivity",
+  "hardware": {
+    "mcu": "STM32F407VG",
+    "frequency_mhz": 168,
+    "ram_kb": 192,
+    "flash_kb": 1024
+  },
+  "tasks": [
+    {
+      "name": "SensorRead",
+      "description": "Read temperature and humidity sensors via I2C",
+      "priority": 3,
+      "stack_size": 512,
+      "function_name": "vSensorReadTask",
+      "period_ms": 1000,
+      "parameters": []
+    },
+    {
+      "name": "DataProcess",
+      "description": "Process sensor data and apply filtering",
+      "priority": 2,
+      "stack_size": 512,
+      "function_name": "vDataProcessTask",
+      "parameters": []
+    },
+    {
+      "name": "NetworkTx",
+      "description": "Transmit data over network using TCP/IP",
+      "priority": 2,
+      "stack_size": 2048,
+      "function_name": "vNetworkTxTask",
+      "parameters": []
+    },
+    {
+      "name": "Display",
+      "description": "Update LCD display with sensor readings",
+      "priority": 1,
+      "stack_size": 1024,
+      "function_name": "vDisplayTask",
+      "period_ms": 2000,
+      "parameters": []
+    },
+    {
+      "name": "Logger",
+      "description": "Log data to SD card filesystem",
+      "priority": 1,
+      "stack_size": 1024,
+      "function_name": "vLoggerTask",
+      "parameters": []
+    }
+  ],
+  "queues": [
+    {
+      "name": "sensor_data_queue",
+      "length": 10,
+      "item_size": "SensorData_t",
+      "description": "Queue for raw sensor data"
+    },
+    {
+      "name": "processed_data_queue",
+      "length": 10,
+      "item_size": "ProcessedData_t",
+      "description": "Queue for processed data"
+    }
+  ],
+  "semaphores": [
+    {
+      "name": "i2c_mutex",
+      "type": "mutex",
+      "description": "Protect I2C bus access"
+    },
+    {
+      "name": "network_semaphore",
+      "type": "binary",
+      "description": "Network ready signal"
+    }
+  ],
+  "config_overrides": {
+    "configTOTAL_HEAP_SIZE": 20480,
+    "configMAX_PRIORITIES": 5,
+    "configUSE_TICKLESS_IDLE": 1,
+    "configGENERATE_RUN_TIME_STATS": 1
+  }
+}
