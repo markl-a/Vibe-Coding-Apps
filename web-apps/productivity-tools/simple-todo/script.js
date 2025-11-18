@@ -445,6 +445,315 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+// ===== AI 自然語言解析功能 =====
+
+class AITaskParser {
+    constructor() {
+        this.patterns = {
+            // 日期模式
+            tomorrow: /明天|tmr|tomorrow/i,
+            today: /今天|today/i,
+            nextWeek: /下週|下周|next\s*week/i,
+
+            // 優先級模式
+            urgent: /緊急|!緊|!urgent|!高|!!!/i,
+            high: /高優先|!高|high|!!/i,
+            low: /低優先|!低|low|!/i,
+
+            // 標籤模式
+            tags: /#(\S+)/g,
+
+            // 時間模式
+            time: /(\d{1,2})[:\s]*([0-5]\d)?(?:\s*(上午|下午|AM|PM))?/i
+        };
+    }
+
+    parse(input) {
+        let result = {
+            title: input,
+            date: null,
+            priority: 'medium',
+            tags: [],
+            suggestions: []
+        };
+
+        // 解析日期
+        const dateInfo = this.parseDate(input);
+        if (dateInfo) {
+            result.date = dateInfo.date;
+            result.suggestions.push(dateInfo.message);
+            result.title = input.replace(dateInfo.matched, '').trim();
+        }
+
+        // 解析優先級
+        const priorityInfo = this.parsePriority(input);
+        if (priorityInfo) {
+            result.priority = priorityInfo.priority;
+            result.suggestions.push(priorityInfo.message);
+            result.title = result.title.replace(priorityInfo.matched, '').trim();
+        }
+
+        // 解析標籤
+        const tags = this.parseTags(result.title);
+        if (tags.length > 0) {
+            result.tags = tags;
+            result.suggestions.push(`識別到標籤: ${tags.join(', ')}`);
+            result.title = result.title.replace(this.patterns.tags, '').trim();
+        }
+
+        // 清理標題
+        result.title = result.title.replace(/\s+/g, ' ').trim();
+
+        return result;
+    }
+
+    parseDate(input) {
+        const today = new Date();
+
+        if (this.patterns.today.test(input)) {
+            return {
+                date: this.formatDate(today),
+                matched: input.match(this.patterns.today)[0],
+                message: '已設定為今天'
+            };
+        }
+
+        if (this.patterns.tomorrow.test(input)) {
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            return {
+                date: this.formatDate(tomorrow),
+                matched: input.match(this.patterns.tomorrow)[0],
+                message: '已設定為明天'
+            };
+        }
+
+        if (this.patterns.nextWeek.test(input)) {
+            const nextWeek = new Date(today);
+            nextWeek.setDate(nextWeek.getDate() + 7);
+            return {
+                date: this.formatDate(nextWeek),
+                matched: input.match(this.patterns.nextWeek)[0],
+                message: '已設定為下週'
+            };
+        }
+
+        return null;
+    }
+
+    parsePriority(input) {
+        if (this.patterns.urgent.test(input)) {
+            return {
+                priority: 'urgent',
+                matched: input.match(this.patterns.urgent)[0],
+                message: '優先級：緊急'
+            };
+        }
+
+        if (this.patterns.high.test(input)) {
+            return {
+                priority: 'high',
+                matched: input.match(this.patterns.high)[0],
+                message: '優先級：高'
+            };
+        }
+
+        if (this.patterns.low.test(input)) {
+            return {
+                priority: 'low',
+                matched: input.match(this.patterns.low)[0],
+                message: '優先級：低'
+            };
+        }
+
+        return null;
+    }
+
+    parseTags(input) {
+        const tags = [];
+        let match;
+        while ((match = this.patterns.tags.exec(input)) !== null) {
+            tags.push(match[1]);
+        }
+        return tags;
+    }
+
+    formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+}
+
+// AI 智能助手類
+class AIAssistant {
+    calculateCompletionRate(tasks) {
+        if (tasks.length === 0) return 0;
+        const completed = tasks.filter(t => t.completed).length;
+        return Math.round((completed / tasks.length) * 100);
+    }
+
+    calculateProductivityScore(tasks) {
+        if (tasks.length === 0) return 0;
+
+        let score = 0;
+        const completed = tasks.filter(t => t.completed);
+
+        // 基礎分數：完成數量
+        score += completed.length * 10;
+
+        // 優先級獎勵
+        completed.forEach(task => {
+            if (task.priority === 'urgent') score += 20;
+            else if (task.priority === 'high') score += 10;
+            else if (task.priority === 'medium') score += 5;
+        });
+
+        // 按時完成獎勵
+        const today = new Date().toISOString().split('T')[0];
+        const onTime = completed.filter(t =>
+            !t.dueDate || new Date(t.dueDate) >= new Date(t.completedAt)
+        ).length;
+        score += onTime * 5;
+
+        return Math.min(100, score);
+    }
+
+    getSmartInsight(tasks) {
+        if (tasks.length === 0) {
+            return '開始添加任務，AI 會給你智能建議！';
+        }
+
+        const activeTasks = tasks.filter(t => !t.completed);
+        const completedTasks = tasks.filter(t => t.completed);
+        const today = new Date().toISOString().split('T')[0];
+        const todayTasks = activeTasks.filter(t => t.dueDate === today);
+        const overdueTasks = activeTasks.filter(t => t.dueDate && t.dueDate < today);
+        const urgentTasks = activeTasks.filter(t => t.priority === 'urgent');
+
+        if (overdueTasks.length > 0) {
+            return `⚠️ 你有 ${overdueTasks.length} 個逾期任務需要處理！建議優先完成這些任務。`;
+        }
+
+        if (urgentTasks.length > 0) {
+            return `🔥 你有 ${urgentTasks.length} 個緊急任務。建議專注於這些高優先級任務。`;
+        }
+
+        if (todayTasks.length > 0) {
+            return `📅 今天有 ${todayTasks.length} 個任務待完成。你可以的！`;
+        }
+
+        if (completedTasks.length > activeTasks.length && activeTasks.length > 0) {
+            return `🎉 做得好！你已完成大部分任務，繼續保持！`;
+        }
+
+        if (activeTasks.length > 10) {
+            return `💡 任務清單較長。建議將大任務分解成小任務，更容易完成。`;
+        }
+
+        if (activeTasks.length === 0 && completedTasks.length > 0) {
+            return `✨ 太棒了！所有任務都已完成。休息一下或添加新任務吧！`;
+        }
+
+        return `💪 保持專注！你正在穩步推進任務。`;
+    }
+}
+
+// 初始化 AI 功能
+const aiParser = new AITaskParser();
+const aiAssistant = new AIAssistant();
+
+// AI 建議顯示元素
+const aiSuggestion = document.getElementById('aiSuggestion');
+const aiSuggestionText = aiSuggestion.querySelector('.suggestion-text');
+
+// 監聽輸入框變化
+taskInput.addEventListener('input', function(e) {
+    const input = e.target.value;
+
+    if (input.length > 3) {
+        const parsed = aiParser.parse(input);
+
+        if (parsed.suggestions.length > 0) {
+            aiSuggestionText.textContent = 'AI 解析: ' + parsed.suggestions.join(' | ');
+            aiSuggestion.style.display = 'block';
+
+            // 自動填充
+            if (parsed.date) taskDate.value = parsed.date;
+            if (parsed.priority) taskPriority.value = parsed.priority;
+        } else {
+            aiSuggestion.style.display = 'none';
+        }
+    } else {
+        aiSuggestion.style.display = 'none';
+    }
+});
+
+// 修改原有的 handleAddTask 使用 AI 解析
+const originalHandleAddTask = handleAddTask;
+function handleAddTask(e) {
+    e.preventDefault();
+
+    const input = taskInput.value.trim();
+    if (!input) return;
+
+    // 使用 AI 解析
+    const parsed = aiParser.parse(input);
+
+    const task = {
+        id: Date.now().toString(),
+        title: parsed.title,
+        description: parsed.tags.length > 0 ? `標籤: ${parsed.tags.join(', ')}` : '',
+        completed: false,
+        priority: parsed.priority,
+        dueDate: parsed.date || taskDate.value || null,
+        createdAt: new Date().toISOString(),
+        completedAt: null
+    };
+
+    tasks.unshift(task);
+    saveTasks();
+
+    // 重置表單
+    taskInput.value = '';
+    taskDate.value = '';
+    taskPriority.value = 'medium';
+    aiSuggestion.style.display = 'none';
+
+    renderTasks();
+    updateStats();
+    updateAIAssistant();
+
+    // 聚焦回輸入框
+    taskInput.focus();
+}
+
+// 更新 AI 助手
+function updateAIAssistant() {
+    const completionRate = aiAssistant.calculateCompletionRate(tasks);
+    const productivityScore = aiAssistant.calculateProductivityScore(tasks);
+    const insight = aiAssistant.getSmartInsight(tasks);
+
+    document.getElementById('aiCompletionRate').textContent = completionRate + '%';
+    document.getElementById('aiProductivityScore').textContent = productivityScore;
+    document.querySelector('.ai-insight-text').textContent = insight;
+}
+
+// 修改原有的 init
+const originalInit = init;
+function init() {
+    originalInit();
+    updateAIAssistant();
+}
+
+// 修改原有的 toggleTask 以更新 AI 助手
+const originalToggleTask = toggleTask;
+function toggleTask(taskId) {
+    originalToggleTask(taskId);
+    updateAIAssistant();
+}
+
 // 頁面載入時初始化
 document.addEventListener('DOMContentLoaded', init);
 
