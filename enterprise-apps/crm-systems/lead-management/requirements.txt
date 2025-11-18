@@ -8,6 +8,7 @@ mysqlclient==2.2.1
 # REST API
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.3.1
+django-filter==23.5
 
 # Forms
 django-crispy-forms==2.1
