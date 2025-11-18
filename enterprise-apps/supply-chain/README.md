@@ -1,15 +1,32 @@
 # 供應鏈管理系統 (Supply Chain Management System)
-🤖 **AI-Driven | AI-Native** 🚀
+🤖 **AI-Driven | AI-Native | Production-Ready** 🚀
 
-供應鏈管理系統幫助企業優化從供應商到客戶的整個流程,包括採購、庫存、物流和配送。使用 AI 輔助開發可以建立智能化、高效率的供應鏈系統。
+先進的 AI 驅動供應鏈管理系統，提供需求預測、庫存優化、路線規劃和供應商管理的完整解決方案。結合深度學習、機器學習和傳統優化算法，為企業提供智能化的決策支持。
+
+## 🌟 主要特點
+
+✨ **AI 增強功能**
+- 🧠 LSTM/GRU 深度學習需求預測
+- 💬 AI 助手自然語言交互
+- 📊 自動化智能分析和洞察
+- 🎯 智能模型選擇和集成預測
+
+🚀 **生產就緒**
+- 🐳 Docker 容器化部署
+- 📦 微服務架構設計
+- 🔄 健康檢查和自動重啟
+- 📈 完整的測試覆蓋
 
 ## 📋 目錄
 
 - [供應鏈概述](#供應鏈概述)
 - [核心功能模組](#核心功能模組)
+- [快速開始](#快速開始)
+- [Docker 部署](#docker-部署)
 - [技術架構](#技術架構)
 - [AI 智能功能](#ai-智能功能)
-- [IoT 整合](#iot-整合)
+- [API 文檔](#api-文檔)
+- [測試和範例](#測試和範例)
 
 ---
 
@@ -550,6 +567,321 @@ export class IoTIntegrationService {
     }
   }
 }
+```
+
+---
+
+## 🚀 快速開始
+
+### 使用 Docker Compose (推薦)
+
+```bash
+# 克隆專案
+git clone <repository-url>
+cd enterprise-apps/supply-chain
+
+# 啟動所有服務
+docker-compose up -d
+
+# 查看服務狀態
+docker-compose ps
+
+# 查看日誌
+docker-compose logs -f
+```
+
+服務地址：
+- 需求預測: http://localhost:8000
+- 供應商績效: http://localhost:8001
+- 庫存優化: http://localhost:8002
+- 路線優化: http://localhost:8003
+
+### 手動啟動單個服務
+
+#### 需求預測服務
+
+```bash
+cd demand-forecasting/backend
+pip install -r requirements.txt
+python main.py
+```
+
+訪問 http://localhost:8000/docs 查看 API 文檔
+
+#### 庫存優化服務
+
+```bash
+cd inventory-optimization/backend
+pip install -r requirements.txt
+python main.py
+```
+
+訪問 http://localhost:8002/docs 查看 API 文檔
+
+#### 運行範例測試
+
+```bash
+# 需求預測範例
+cd demand-forecasting/backend
+python example_usage.py
+
+# 庫存優化範例
+cd inventory-optimization/backend
+python example_usage.py
+```
+
+---
+
+## 🐳 Docker 部署
+
+### 服務架構
+
+本系統采用微服務架構，包含四個獨立的服務：
+
+| 服務 | 端口 | 描述 |
+|------|------|------|
+| demand-forecasting | 8000 | 需求預測服務（Prophet + LSTM/GRU）|
+| supplier-performance | 8001 | 供應商績效管理服務 |
+| inventory-optimization | 8002 | 庫存優化服務（EOQ + ABC分析）|
+| route-optimization | 8003 | 路線優化服務（TSP + VRP）|
+
+### Docker Compose 配置
+
+```yaml
+version: '3.8'
+
+services:
+  demand-forecasting:
+    build: ./demand-forecasting/backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - demand-forecasting-data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # ... 其他服務 ...
+```
+
+### 常用命令
+
+```bash
+# 構建所有服務
+docker-compose build
+
+# 啟動服務（後台運行）
+docker-compose up -d
+
+# 停止服務
+docker-compose down
+
+# 停止並移除數據卷
+docker-compose down -v
+
+# 重啟特定服務
+docker-compose restart demand-forecasting
+
+# 查看特定服務日誌
+docker-compose logs -f demand-forecasting
+
+# 進入容器
+docker-compose exec demand-forecasting bash
+
+# 擴展服務
+docker-compose up -d --scale demand-forecasting=3
+```
+
+### 健康檢查
+
+所有服務都配置了健康檢查端點：
+
+```bash
+# 檢查需求預測服務
+curl http://localhost:8000/health
+
+# 檢查所有服務
+for port in 8000 8001 8002 8003; do
+  echo "Checking port $port..."
+  curl http://localhost:$port/health
+done
+```
+
+### 數據持久化
+
+系統使用 Docker volumes 來持久化數據：
+
+- `demand-forecasting-data`: 需求預測歷史數據和模型
+- `supplier-performance-data`: 供應商績效數據
+
+```bash
+# 備份數據
+docker run --rm -v demand-forecasting-data:/data \
+  -v $(pwd):/backup alpine \
+  tar czf /backup/demand-data-backup.tar.gz /data
+
+# 恢復數據
+docker run --rm -v demand-forecasting-data:/data \
+  -v $(pwd):/backup alpine \
+  tar xzf /backup/demand-data-backup.tar.gz -C /
+```
+
+---
+
+## 📊 API 文檔
+
+### Swagger UI
+
+每個服務都提供交互式 API 文檔（Swagger UI）：
+
+- 需求預測: http://localhost:8000/docs
+- 供應商績效: http://localhost:8001/docs
+- 庫存優化: http://localhost:8002/docs
+- 路線優化: http://localhost:8003/docs
+
+### 主要 API 端點
+
+#### 需求預測服務 (8000)
+
+- `POST /api/forecast/` - Prophet 時間序列預測
+- `POST /api/forecast/lstm` - LSTM 深度學習預測
+- `POST /api/forecast/smart` - 智能預測（自動選模型）
+- `POST /api/ai/analyze` - AI 智能分析
+- `POST /api/ai/chat` - AI 助手對話
+- `GET /api/anomalies/{item_id}` - 異常檢測
+
+#### 庫存優化服務 (8002)
+
+- `POST /api/eoq` - 經濟訂購量計算
+- `POST /api/safety-stock` - 安全庫存計算
+- `POST /api/reorder-point` - 補貨點計算
+- `POST /api/abc-analysis` - ABC 分類分析
+- `POST /api/optimize` - 綜合庫存優化
+
+#### 路線優化服務 (8003)
+
+- `POST /api/optimize/tsp` - TSP 單車輛路線優化
+- `POST /api/optimize/vrp` - VRP 多車輛路線優化
+- `POST /api/distance-matrix` - 距離矩陣計算
+
+#### 供應商績效服務 (8001)
+
+- `POST /api/suppliers/` - 創建供應商
+- `GET /api/suppliers/` - 獲取供應商列表
+- `POST /api/metrics/` - 創建績效記錄
+- `POST /api/risk/assess` - 風險評估
+- `GET /api/ranking` - 供應商排名
+
+---
+
+## 🧪 測試和範例
+
+### 自動化測試
+
+#### 需求預測服務測試
+
+```bash
+cd demand-forecasting/backend
+python test_models.py
+```
+
+測試內容：
+- LSTM/GRU 模型訓練和預測
+- AI 助手功能
+- 自然語言報告生成
+- 趨勢分析和異常檢測
+
+#### 完整功能測試
+
+```bash
+# 需求預測完整測試（包括 API 調用）
+cd demand-forecasting/backend
+python example_usage.py
+
+# 庫存優化完整測試
+cd inventory-optimization/backend
+python example_usage.py
+```
+
+### 範例場景
+
+#### 場景 1: 電子產品需求預測
+
+```python
+import requests
+
+# 生成 36 個月歷史數據並預測未來 12 個月
+response = requests.post(
+    "http://localhost:8000/api/forecast/smart",
+    json={
+        "item_id": "LAPTOP-001",
+        "periods": 12,
+        "frequency": "M"
+    }
+)
+
+result = response.json()
+print(f"推薦模型: {result['model_type']}")
+print(f"預測準確度 MAPE: {result['accuracy_metrics']['mape']}%")
+```
+
+#### 場景 2: 庫存策略優化
+
+```python
+# 計算最優庫存策略
+response = requests.post(
+    "http://localhost:8002/api/optimize",
+    json={
+        "item_id": "LAPTOP-001",
+        "annual_demand": 5000,
+        "ordering_cost": 5000,
+        "holding_cost_rate": 0.20,
+        "unit_cost": 20000,
+        "avg_daily_demand": 13.7,
+        "demand_std": 50.0,
+        "lead_time_days": 14.0,
+        "service_level": 0.95
+    }
+)
+
+policy = response.json()['inventory_policy']
+print(f"訂購量: {policy['order_quantity']} 台")
+print(f"補貨點: {policy['reorder_point']} 台")
+print(f"安全庫存: {policy['safety_stock']} 台")
+```
+
+#### 場景 3: 配送路線優化
+
+```python
+# 優化配送路線
+response = requests.post(
+    "http://localhost:8003/api/optimize/vrp",
+    json={
+        "depot": {
+            "id": "DEPOT",
+            "name": "配送中心",
+            "latitude": 25.0330,
+            "longitude": 121.5654
+        },
+        "locations": [
+            {"id": "C1", "name": "客戶1", "latitude": 25.0122, "longitude": 121.4654, "demand": 15},
+            {"id": "C2", "name": "客戶2", "latitude": 25.0378, "longitude": 121.4323, "demand": 20},
+            # ... 更多客戶
+        ],
+        "vehicles": [
+            {"id": "V1", "capacity": 100, "cost_per_km": 10},
+            {"id": "V2", "capacity": 100, "cost_per_km": 10}
+        ]
+    }
+)
+
+summary = response.json()['summary']
+print(f"使用車輛數: {summary['vehicles_used']}")
+print(f"總距離: {summary['total_distance_km']} km")
+print(f"總成本: ${summary['total_cost']}")
 ```
 
 ---

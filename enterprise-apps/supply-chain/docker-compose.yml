@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  # 需求預測服務
+  demand-forecasting:
+    build: ./demand-forecasting/backend
+    container_name: supply-chain-demand-forecasting
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./demand-forecasting/backend:/app
+      - demand-forecasting-data:/app/data
+    environment:
+      - DATABASE_URL=sqlite:///./demand_forecasting.db
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+    restart: unless-stopped
+    networks:
+      - supply-chain-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "com.supply-chain.service=demand-forecasting"
+      - "com.supply-chain.description=AI-powered demand forecasting service"
+
+  # 供應商績效管理服務
+  supplier-performance:
+    build: ./supplier-performance/backend
+    container_name: supply-chain-supplier-performance
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./supplier-performance/backend:/app
+      - supplier-performance-data:/app/data
+    environment:
+      - DATABASE_URL=sqlite:///./supplier_performance.db
+      - API_HOST=0.0.0.0
+      - API_PORT=8001
+    restart: unless-stopped
+    networks:
+      - supply-chain-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "com.supply-chain.service=supplier-performance"
+      - "com.supply-chain.description=Supplier performance management service"
+
+  # 庫存優化服務
+  inventory-optimization:
+    build: ./inventory-optimization/backend
+    container_name: supply-chain-inventory-optimization
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./inventory-optimization/backend:/app
+    environment:
+      - API_HOST=0.0.0.0
+      - API_PORT=8002
+    restart: unless-stopped
+    networks:
+      - supply-chain-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "com.supply-chain.service=inventory-optimization"
+      - "com.supply-chain.description=Inventory optimization and EOQ calculation service"
+
+  # 路線優化服務
+  route-optimization:
+    build: ./route-optimization/backend
+    container_name: supply-chain-route-optimization
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./route-optimization/backend:/app
+    environment:
+      - API_HOST=0.0.0.0
+      - API_PORT=8003
+    restart: unless-stopped
+    networks:
+      - supply-chain-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "com.supply-chain.service=route-optimization"
+      - "com.supply-chain.description=Route optimization and logistics planning service"
+
+networks:
+  supply-chain-network:
+    driver: bridge
+    labels:
+      - "com.supply-chain.network=main"
+
+volumes:
+  demand-forecasting-data:
+    labels:
+      - "com.supply-chain.volume=demand-forecasting"
+  supplier-performance-data:
+    labels:
+      - "com.supply-chain.volume=supplier-performance"
