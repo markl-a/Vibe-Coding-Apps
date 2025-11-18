@@ -11,6 +11,8 @@ import RevenueChart from '@/components/RevenueChart';
 import CategoryChart from '@/components/CategoryChart';
 import RegionChart from '@/components/RegionChart';
 import TopProductsTable from '@/components/TopProductsTable';
+import AISalesForecast from '@/components/AISalesForecast';
+import SmartRecommendations from '@/components/SmartRecommendations';
 
 export default function Home() {
   const [dateRange, setDateRange] = useState<DateRange>('month');
@@ -87,6 +89,20 @@ export default function Home() {
             icon={<Users className="w-6 h-6" />}
             format="percentage"
           />
+        </div>
+
+        {/* AI 智能推荐 - 新增 */}
+        <div className="mb-6">
+          <SmartRecommendations
+            revenueData={dashboardData.revenueData}
+            products={dashboardData.topProducts}
+            regions={dashboardData.regionSales}
+          />
+        </div>
+
+        {/* AI 销售预测 - 新增 */}
+        <div className="mb-6">
+          <AISalesForecast historicalData={dashboardData.revenueData} />
         </div>
 
         {/* 收入趨勢圖表 */}
