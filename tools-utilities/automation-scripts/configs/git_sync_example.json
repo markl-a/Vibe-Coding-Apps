@@ -1,0 +1,13 @@
+{
+  "repos": [
+    "/path/to/project1",
+    "/path/to/project2",
+    "/path/to/project3"
+  ],
+  "options": {
+    "pull": true,
+    "push": true,
+    "commit_changes": false,
+    "rebase": false
+  }
+}

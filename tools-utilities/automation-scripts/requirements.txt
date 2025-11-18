@@ -10,13 +10,36 @@ psutil>=5.9.0
 # YAML 配置
 PyYAML>=6.0
 
-# 郵件通知
-secure-smtplib>=0.1.1
+# HTTP請求
+requests>=2.31.0
+
+# 進度條
+tqdm>=4.66.0
+
+# 加密和安全
+cryptography>=41.0.0
+
+# 數據庫支援
+pymongo>=4.5.0
+pymysql>=1.1.0
+psycopg2-binary>=2.9.0
 
 # 測試框架
 pytest>=7.4.0
 pytest-cov>=4.1.0
+pytest-mock>=3.11.0
 
 # 程式碼品質
 black>=23.0.0
 ruff>=0.0.290
+mypy>=1.5.0
+
+# 日期時間處理
+python-dateutil>=2.8.0
+
+# JSON/YAML處理增強
+jsonschema>=4.19.0
+
+# CLI美化
+rich>=13.5.0
+colorama>=0.4.6
