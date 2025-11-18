@@ -273,3 +273,105 @@ footer {
         transform: scale(1);
     }
 }
+
+/* AI 智能洞察卡 */
+.ai-insights-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+}
+
+.ai-insights-card h3 {
+    margin-bottom: 20px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.insight-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 12px;
+    margin-bottom: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.insight-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.insight-item:last-child {
+    margin-bottom: 0;
+}
+
+.insight-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.insight-content {
+    flex: 1;
+}
+
+.insight-title {
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+}
+
+.insight-text {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* 為不同類型的洞察添加不同的背景色 */
+#productivityInsight {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+#productivityInsight .insight-title,
+#productivityInsight .insight-text {
+    color: white;
+}
+
+#restSuggestion {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+#restSuggestion .insight-title,
+#restSuggestion .insight-text {
+    color: white;
+}
+
+#patternInsight {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+#patternInsight .insight-title,
+#patternInsight .insight-text {
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .ai-insights-card {
+        margin-top: 20px;
+    }
+
+    .insight-item {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .insight-icon {
+        font-size: 2.5rem;
+    }
+}

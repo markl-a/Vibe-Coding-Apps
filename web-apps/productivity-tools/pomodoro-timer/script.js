@@ -327,3 +327,225 @@ if ('Notification' in window && Notification.permission === 'default') {
         Notification.requestPermission();
     }, 2000);
 }
+
+// ===== AI 智能功能 =====
+
+// AI 分析類
+class AIInsights {
+    constructor() {
+        this.sessionHistory = this.loadSessionHistory();
+    }
+
+    // 載入會話歷史
+    loadSessionHistory() {
+        const history = localStorage.getItem('pomodoroHistory');
+        return history ? JSON.parse(history) : [];
+    }
+
+    // 儲存會話
+    saveSession(type, duration) {
+        const session = {
+            type, // 'work' or 'break'
+            duration,
+            timestamp: new Date().toISOString(),
+            hour: new Date().getHours()
+        };
+
+        this.sessionHistory.push(session);
+
+        // 只保留最近 100 個會話
+        if (this.sessionHistory.length > 100) {
+            this.sessionHistory = this.sessionHistory.slice(-100);
+        }
+
+        localStorage.setItem('pomodoroHistory', JSON.stringify(this.sessionHistory));
+    }
+
+    // 生產力分析
+    getProductivityInsight(completedPomodoros, totalFocusTime) {
+        if (completedPomodoros === 0) {
+            return {
+                icon: '📊',
+                title: '生產力分析',
+                text: '完成第一個番茄鐘來開始追蹤你的生產力！'
+            };
+        }
+
+        if (completedPomodoros < 4) {
+            return {
+                icon: '🌱',
+                title: '生產力分析',
+                text: `太好了！你已完成 ${completedPomodoros} 個番茄鐘。保持這個節奏！`
+            };
+        }
+
+        if (completedPomodoros >= 4 && completedPomodoros < 8) {
+            return {
+                icon: '🔥',
+                title: '生產力分析',
+                text: `表現優秀！${completedPomodoros} 個番茄鐘已完成。你的專注力正在提升！`
+            };
+        }
+
+        if (completedPomodoros >= 8) {
+            return {
+                icon: '🏆',
+                title: '生產力分析',
+                text: `驚人的成就！${completedPomodoros} 個番茄鐘！你是生產力大師！`
+            };
+        }
+    }
+
+    // 休息建議
+    getRestSuggestion(completedPomodoros, currentMode) {
+        if (currentMode === MODES.work && completedPomodoros > 0) {
+            const hoursSinceStart = totalFocusTime / 60;
+
+            if (hoursSinceStart > 2) {
+                return {
+                    icon: '🧘',
+                    title: '休息建議',
+                    text: '你已經專注工作超過 2 小時了！建議做一些伸展運動或散步。'
+                };
+            }
+
+            if (completedPomodoros % 4 === 3) {
+                return {
+                    icon: '☕',
+                    title: '休息建議',
+                    text: '完成下一個番茄鐘後，記得休息 15 分鐘來恢復精力！'
+                };
+            }
+
+            return {
+                icon: '💪',
+                title: '休息建議',
+                text: '保持專注！短暫休息後繼續前進。'
+            };
+        }
+
+        if (currentMode !== MODES.work) {
+            return {
+                icon: '🌟',
+                title: '休息建議',
+                text: '好好休息！大腦需要時間來處理和記憶信息。'
+            };
+        }
+
+        return {
+            icon: '💡',
+            title: '休息建議',
+            text: '開始第一個番茄鐘，我會給你智能休息建議！'
+        };
+    }
+
+    // 工作模式分析
+    getPatternInsight() {
+        if (this.sessionHistory.length < 5) {
+            return {
+                icon: '📈',
+                title: '工作模式',
+                text: '收集更多數據來分析你的工作模式...'
+            };
+        }
+
+        // 分析最佳工作時段
+        const hourStats = {};
+        this.sessionHistory
+            .filter(s => s.type === 'work')
+            .forEach(session => {
+                hourStats[session.hour] = (hourStats[session.hour] || 0) + 1;
+            });
+
+        if (Object.keys(hourStats).length === 0) {
+            return {
+                icon: '🎯',
+                title: '工作模式',
+                text: '開始追蹤你的工作模式！'
+            };
+        }
+
+        const bestHour = Object.entries(hourStats)
+            .sort((a, b) => b[1] - a[1])[0][0];
+
+        const timeRange = this.getTimeRange(parseInt(bestHour));
+
+        return {
+            icon: '⭐',
+            title: '工作模式',
+            text: `你在 ${timeRange} 最有生產力！這是你的黃金時段。`
+        };
+    }
+
+    getTimeRange(hour) {
+        if (hour >= 6 && hour < 12) return '早上';
+        if (hour >= 12 && hour < 14) return '中午';
+        if (hour >= 14 && hour < 18) return '下午';
+        if (hour >= 18 && hour < 22) return '晚上';
+        return '深夜';
+    }
+
+    // 獲取所有洞察
+    getAllInsights(completedPomodoros, totalFocusTime, currentMode) {
+        return {
+            productivity: this.getProductivityInsight(completedPomodoros, totalFocusTime),
+            rest: this.getRestSuggestion(completedPomodoros, currentMode),
+            pattern: this.getPatternInsight()
+        };
+    }
+}
+
+// 初始化 AI
+const aiInsights = new AIInsights();
+
+// 更新 AI 洞察顯示
+function updateAIInsights() {
+    const insights = aiInsights.getAllInsights(completedPomodoros, totalFocusTime, currentMode);
+
+    // 更新生產力洞察
+    const productivityEl = document.getElementById('productivityInsight');
+    productivityEl.querySelector('.insight-icon').textContent = insights.productivity.icon;
+    productivityEl.querySelector('.insight-title').textContent = insights.productivity.title;
+    productivityEl.querySelector('.insight-text').textContent = insights.productivity.text;
+
+    // 更新休息建議
+    const restEl = document.getElementById('restSuggestion');
+    restEl.querySelector('.insight-icon').textContent = insights.rest.icon;
+    restEl.querySelector('.insight-title').textContent = insights.rest.title;
+    restEl.querySelector('.insight-text').textContent = insights.rest.text;
+
+    // 更新工作模式
+    const patternEl = document.getElementById('patternInsight');
+    patternEl.querySelector('.insight-icon').textContent = insights.pattern.icon;
+    patternEl.querySelector('.insight-title').textContent = insights.pattern.title;
+    patternEl.querySelector('.insight-text').textContent = insights.pattern.text;
+}
+
+// 修改原有的 timerComplete 函數以記錄會話
+const originalTimerComplete = timerComplete;
+function timerComplete() {
+    // 記錄會話
+    const durations = {
+        work: settings.workDuration,
+        shortBreak: settings.shortBreakDuration,
+        longBreak: settings.longBreakDuration
+    };
+
+    aiInsights.saveSession(
+        currentMode === MODES.work ? 'work' : 'break',
+        durations[currentMode]
+    );
+
+    // 調用原始函數
+    originalTimerComplete();
+
+    // 更新 AI 洞察
+    updateAIInsights();
+}
+
+// 在初始化時更新 AI 洞察
+const originalInit = init;
+function init() {
+    originalInit();
+    updateAIInsights();
+}
