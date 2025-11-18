@@ -130,6 +130,41 @@ services:
       - social-network
     restart: unless-stopped
 
+  # MongoDB for AI Service
+  ai-db:
+    image: mongo:7
+    container_name: social-ai-db
+    environment:
+      MONGO_INITDB_DATABASE: social_ai
+    ports:
+      - "27025:27017"
+    volumes:
+      - ai-data:/data/db
+    networks:
+      - social-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # AI Service (NEW - Content Moderation, Sentiment Analysis, Recommendations)
+  ai-service:
+    build: ./ai-service
+    container_name: social-ai-service
+    environment:
+      PORT: 4005
+      MONGODB_URI: mongodb://ai-db:27017/social_ai
+      NODE_ENV: production
+    ports:
+      - "4005:4005"
+    depends_on:
+      ai-db:
+        condition: service_healthy
+    networks:
+      - social-network
+    restart: unless-stopped
+
   # API Gateway
   api-gateway:
     build: ./api-gateway
@@ -140,6 +175,7 @@ services:
       POST_SERVICE_URL: http://post-service:4002
       COMMENT_SERVICE_URL: http://comment-service:4003
       NOTIFICATION_SERVICE_URL: http://notification-service:4004
+      AI_SERVICE_URL: http://ai-service:4005
       JWT_SECRET: social-media-secret-key-2024
     ports:
       - "4000:4000"
@@ -148,6 +184,7 @@ services:
       - post-service
       - comment-service
       - notification-service
+      - ai-service
     networks:
       - social-network
     restart: unless-stopped
@@ -161,3 +198,4 @@ volumes:
   post-data:
   comment-data:
   redis-data:
+  ai-data:

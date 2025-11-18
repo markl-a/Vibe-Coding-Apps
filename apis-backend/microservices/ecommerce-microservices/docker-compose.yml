@@ -4,103 +4,202 @@ services:
   # MongoDB for User Service
   user-db:
     image: mongo:7
-    container_name: user-db
+    container_name: ecommerce-user-db
     environment:
-      MONGO_INITDB_DATABASE: users
+      MONGO_INITDB_DATABASE: ecommerce_users
     ports:
-      - "27017:27017"
+      - "27021:27017"
     volumes:
       - user-data:/data/db
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # MongoDB for Product Service
   product-db:
     image: mongo:7
-    container_name: product-db
+    container_name: ecommerce-product-db
     environment:
-      MONGO_INITDB_DATABASE: products
+      MONGO_INITDB_DATABASE: ecommerce_products
     ports:
-      - "27018:27017"
+      - "27022:27017"
     volumes:
       - product-data:/data/db
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # PostgreSQL for Order Service
+  # MongoDB for Order Service
   order-db:
-    image: postgres:16
-    container_name: order-db
+    image: mongo:7
+    container_name: ecommerce-order-db
     environment:
-      POSTGRES_DB: orders
-      POSTGRES_USER: orderuser
-      POSTGRES_PASSWORD: orderpass
+      MONGO_INITDB_DATABASE: ecommerce_orders
     ports:
-      - "5432:5432"
+      - "27023:27017"
     volumes:
-      - order-data:/var/lib/postgresql/data
+      - order-data:/data/db
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MongoDB for Payment Service
+  payment-db:
+    image: mongo:7
+    container_name: ecommerce-payment-db
+    environment:
+      MONGO_INITDB_DATABASE: ecommerce_payments
+    ports:
+      - "27024:27017"
+    volumes:
+      - payment-data:/data/db
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # Redis for caching
   redis:
     image: redis:7-alpine
-    container_name: redis
+    container_name: ecommerce-redis
+    command: redis-server --appendonly yes
     ports:
-      - "6379:6379"
+      - "6381:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
   # User Service
   user-service:
     build: ./user-service
-    container_name: user-service
+    container_name: ecommerce-user-service
     environment:
       PORT: 3001
-      MONGODB_URI: mongodb://user-db:27017/users
-      JWT_SECRET: your-secret-key
+      MONGODB_URI: mongodb://user-db:27017/ecommerce_users
+      JWT_SECRET: ecommerce-secret-key-2024
+      JWT_EXPIRES_IN: 7d
+      NODE_ENV: production
     ports:
       - "3001:3001"
     depends_on:
-      - user-db
+      user-db:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
 
   # Product Service
   product-service:
     build: ./product-service
-    container_name: product-service
+    container_name: ecommerce-product-service
     environment:
       PORT: 3002
-      MONGODB_URI: mongodb://product-db:27017/products
+      MONGODB_URI: mongodb://product-db:27017/ecommerce_products
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: production
     ports:
       - "3002:3002"
     depends_on:
-      - product-db
+      product-db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
 
   # Order Service
   order-service:
     build: ./order-service
-    container_name: order-service
+    container_name: ecommerce-order-service
     environment:
       PORT: 3003
-      DATABASE_URL: postgresql://orderuser:orderpass@order-db:5432/orders
+      MONGODB_URI: mongodb://order-db:27017/ecommerce_orders
       USER_SERVICE_URL: http://user-service:3001
       PRODUCT_SERVICE_URL: http://product-service:3002
+      PAYMENT_SERVICE_URL: http://payment-service:3004
+      NODE_ENV: production
     ports:
       - "3003:3003"
     depends_on:
-      - order-db
-      - user-service
-      - product-service
+      order-db:
+        condition: service_healthy
+      user-service:
+        condition: service_started
+      product-service:
+        condition: service_started
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  # Payment Service
+  payment-service:
+    build: ./payment-service
+    container_name: ecommerce-payment-service
+    environment:
+      PORT: 3004
+      MONGODB_URI: mongodb://payment-db:27017/ecommerce_payments
+      NODE_ENV: production
+    ports:
+      - "3004:3004"
+    depends_on:
+      payment-db:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
 
   # API Gateway
   api-gateway:
     build: ./api-gateway
-    container_name: api-gateway
+    container_name: ecommerce-api-gateway
     environment:
       PORT: 3000
       USER_SERVICE_URL: http://user-service:3001
       PRODUCT_SERVICE_URL: http://product-service:3002
       ORDER_SERVICE_URL: http://order-service:3003
+      PAYMENT_SERVICE_URL: http://payment-service:3004
+      JWT_SECRET: ecommerce-secret-key-2024
+      NODE_ENV: production
     ports:
       - "3000:3000"
     depends_on:
       - user-service
       - product-service
       - order-service
+      - payment-service
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+networks:
+  ecommerce-network:
+    driver: bridge
 
 volumes:
   user-data:
   product-data:
   order-data:
+  payment-data:
+  redis-data:
