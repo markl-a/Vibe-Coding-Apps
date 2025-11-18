@@ -4,11 +4,17 @@ CC = gcc
 CFLAGS = -Wall -Wextra -O2
 LDFLAGS = -lm
 
-TARGETS = bme280_example i2c_scan i2c_test
+TARGETS = bme280_example mpu6050_example bh1750_example i2c_scan i2c_test
 
 all: $(TARGETS)
 
 bme280_example: bme280_example.c
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
+
+mpu6050_example: mpu6050_example.c
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
+
+bh1750_example: bh1750_example.c
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 i2c_scan: i2c_scan.c
