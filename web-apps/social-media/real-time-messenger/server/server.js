@@ -2,6 +2,7 @@ const express = require('express')
 const http = require('http')
 const { Server } = require('socket.io')
 const cors = require('cors')
+const aiBot = require('./aiBot')
 
 const app = express()
 app.use(cors())
@@ -157,7 +158,7 @@ io.on('connection', (socket) => {
   })
 
   // Handle new message
-  socket.on('message:send', (data) => {
+  socket.on('message:send', async (data) => {
     const room = rooms.get(data.roomId)
     if (!room) return
 
@@ -182,6 +183,24 @@ io.on('connection', (socket) => {
 
     // Broadcast message to all users in the room
     io.to(data.roomId).emit('message:new', message)
+
+    // Check if AI bot should respond
+    try {
+      const aiResponse = await aiBot.processMessage(message, room)
+      if (aiResponse) {
+        // Wait a bit before responding (simulate thinking)
+        setTimeout(() => {
+          // Store AI response
+          room.messages.push(aiResponse)
+
+          // Broadcast AI response
+          io.to(data.roomId).emit('message:new', aiResponse)
+          console.log(`🤖 AI Bot responded in ${room.name}`)
+        }, 1000 + Math.random() * 1000) // 1-2 seconds delay
+      }
+    } catch (error) {
+      console.error('AI Bot error:', error)
+    }
   })
 
   // Handle typing start
@@ -199,6 +218,126 @@ io.on('connection', (socket) => {
       userId: data.userId,
       roomId: data.roomId,
     })
+  })
+
+  // Handle message reaction (emoji reaction)
+  socket.on('message:react', (data) => {
+    const { roomId, messageId, emoji, userId, username } = data
+    const room = rooms.get(roomId)
+    if (!room) return
+
+    // Find the message and add reaction
+    const message = room.messages.find(m => m.id === messageId)
+    if (message) {
+      if (!message.reactions) {
+        message.reactions = {}
+      }
+      if (!message.reactions[emoji]) {
+        message.reactions[emoji] = []
+      }
+
+      // Toggle reaction (add or remove)
+      const index = message.reactions[emoji].findIndex(u => u.userId === userId)
+      if (index > -1) {
+        message.reactions[emoji].splice(index, 1)
+        if (message.reactions[emoji].length === 0) {
+          delete message.reactions[emoji]
+        }
+      } else {
+        message.reactions[emoji].push({ userId, username })
+      }
+
+      // Broadcast updated reactions
+      io.to(roomId).emit('message:reaction', {
+        messageId,
+        reactions: message.reactions,
+      })
+
+      console.log(`👍 Reaction ${emoji} on message ${messageId.substring(0, 10)}...`)
+    }
+  })
+
+  // Handle private message
+  socket.on('message:private', async (data) => {
+    const { toUserId, content, fromUserId, fromUsername } = data
+
+    // Find the recipient's socket
+    let recipientSocketId = null
+    for (const [socketId, user] of users.entries()) {
+      if (user.id === toUserId) {
+        recipientSocketId = socketId
+        break
+      }
+    }
+
+    if (recipientSocketId) {
+      const privateMessage = {
+        id: `pm_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        fromUserId,
+        fromUsername,
+        content,
+        timestamp: new Date().toISOString(),
+        isPrivate: true,
+      }
+
+      // Send to recipient
+      io.to(recipientSocketId).emit('message:private', privateMessage)
+
+      // Send back to sender (for confirmation)
+      socket.emit('message:private:sent', privateMessage)
+
+      console.log(`📩 Private message from ${fromUsername} to ${toUserId}`)
+    } else {
+      socket.emit('message:private:error', {
+        error: 'User not online',
+        toUserId,
+      })
+    }
+  })
+
+  // Handle message deletion
+  socket.on('message:delete', (data) => {
+    const { roomId, messageId, userId } = data
+    const room = rooms.get(roomId)
+    if (!room) return
+
+    const messageIndex = room.messages.findIndex(m =>
+      m.id === messageId && m.userId === userId
+    )
+
+    if (messageIndex > -1) {
+      room.messages.splice(messageIndex, 1)
+
+      // Broadcast deletion
+      io.to(roomId).emit('message:deleted', { messageId })
+      console.log(`🗑️ Message deleted: ${messageId}`)
+    }
+  })
+
+  // Handle message edit
+  socket.on('message:edit', (data) => {
+    const { roomId, messageId, userId, newContent } = data
+    const room = rooms.get(roomId)
+    if (!room) return
+
+    const message = room.messages.find(m =>
+      m.id === messageId && m.userId === userId
+    )
+
+    if (message) {
+      message.content = newContent
+      message.edited = true
+      message.editedAt = new Date().toISOString()
+
+      // Broadcast edit
+      io.to(roomId).emit('message:edited', {
+        messageId,
+        content: newContent,
+        editedAt: message.editedAt,
+      })
+
+      console.log(`✏️ Message edited: ${messageId}`)
+    }
   })
 
   // Handle disconnection
