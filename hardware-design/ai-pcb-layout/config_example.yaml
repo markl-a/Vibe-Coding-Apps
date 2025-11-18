@@ -1,0 +1,135 @@
+# AI PCB Layout 配置文件示例
+
+general:
+  project_name: AI PCB Layout
+  version: 1.0.0
+  debug: false
+
+# 路由配置
+routing:
+  # 默认算法: 'astar', 'lee', 'rl'
+  algorithm: astar
+
+  # 启发函数: 'manhattan', 'euclidean', 'chebyshev'
+  heuristic: manhattan
+
+  # 是否允许对角移动
+  diagonal_movement: false
+
+  # 网格分辨率 (mm)
+  grid_resolution: 0.1
+
+  # 成本参数
+  via_cost: 10
+  bend_cost: 1
+  layer_change_cost: 5
+
+  # 设计规则
+  design_rules:
+    min_trace_width: 0.15      # mm
+    min_clearance: 0.15        # mm
+    min_via_diameter: 0.3      # mm
+    max_trace_length: 500      # mm
+
+# 热分析配置
+thermal:
+  # 求解器: 'fdm', 'fem', 'ml'
+  solver: fdm
+
+  # FDM求解参数
+  max_iterations: 1000
+  convergence: 0.01
+
+  # 环境条件
+  ambient_temp: 25.0           # °C
+  convection_coeff: 10.0       # W/(m²·K)
+  emissivity: 0.9
+
+  # 材料
+  substrate_material: fr4
+
+  # 热点检测
+  hotspot_threshold: 60.0      # °C
+
+# 机器学习配置
+ml:
+  # 模型类型: 'simple', 'unet'
+  model_type: simple
+
+  # 训练参数
+  learning_rate: 0.001
+  batch_size: 8
+  epochs: 100
+
+  # 设备: 'cpu', 'cuda', 'auto'
+  device: auto
+
+  # 模型路径
+  router_model: models/rl_router_model.pth
+  thermal_model: models/thermal_ml_model.pth
+
+# 可视化配置
+visualization:
+  # 色彩映射: 'hot', 'viridis', 'plasma', 'coolwarm'
+  colormap: hot
+
+  # 图像DPI
+  dpi: 150
+
+  # 是否显示网格
+  show_grid: true
+
+  # 图形尺寸 [width, height]
+  figure_size: [12, 10]
+
+  # 3D视图角度
+  view_elevation: 30
+  view_azimuth: 45
+
+# 日志配置
+logging:
+  # 日志级别: 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'
+  level: INFO
+
+  # 日志文件
+  file: logs/pcb_layout.log
+
+  # 日志格式
+  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+  # 是否输出到控制台
+  console_output: true
+
+  # 是否输出到文件
+  file_output: true
+
+# 约束检查配置
+constraint_checking:
+  # 启用的检查项
+  checks:
+    - trace_width
+    - clearance
+    - via_diameter
+    - annular_ring
+    - trace_length
+
+  # 严格模式（任何违规都报错）
+  strict_mode: false
+
+# 优化配置
+optimization:
+  # 优化目标
+  objectives:
+    - minimize_wire_length
+    - minimize_vias
+    - minimize_layer_changes
+
+  # 优化算法
+  algorithm: genetic  # 'genetic', 'simulated_annealing'
+
+  # 遗传算法参数
+  genetic:
+    population_size: 100
+    generations: 50
+    mutation_rate: 0.1
+    crossover_rate: 0.8
