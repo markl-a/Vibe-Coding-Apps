@@ -19,7 +19,25 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6
   },
+  avatar: {
+    type: String,
+    trim: true
+  },
+  bio: {
+    type: String,
+    trim: true,
+    maxlength: 500
+  },
+  role: {
+    type: String,
+    enum: ['ADMIN', 'USER', 'GUEST'],
+    default: 'USER'
+  },
   createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
     type: Date,
     default: Date.now
   }
@@ -29,6 +47,9 @@ const userSchema = new mongoose.Schema({
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 10);
+
+  // 更新 updatedAt
+  this.updatedAt = Date.now();
   next();
 });
 
