@@ -5,7 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
+    "start:enhanced": "node src/index.enhanced.js",
     "dev": "nodemon src/index.js",
+    "dev:enhanced": "nodemon src/index.enhanced.js",
     "test": "node examples/test-queries.js"
   },
   "keywords": [
