@@ -11,6 +11,7 @@ from .multi_objective import MultiObjectiveOptimizer, OptimizationObjective, Ind
 from .power_analyzer import PowerAnalyzer, ComponentPower, PowerProfile, PowerMode
 from .ai_recommender import AIComponentRecommender, SmartDesignValidator, DesignAnomaly, DesignPattern
 from .visualizer import CircuitVisualizer
+from .circuit_analyzer import CircuitAnalyzer, FrequencyAnalyzer, TransferFunction
 
 __all__ = [
     # 主優化器
@@ -47,6 +48,11 @@ __all__ = [
 
     # 可視化
     'CircuitVisualizer',
+
+    # 電路分析
+    'CircuitAnalyzer',
+    'FrequencyAnalyzer',
+    'TransferFunction',
 ]
 
 __version__ = "0.1.0"
