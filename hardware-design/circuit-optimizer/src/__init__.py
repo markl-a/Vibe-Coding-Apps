@@ -10,6 +10,7 @@ from .component_selector import ComponentSelector, ComponentSpec, ComponentCateg
 from .multi_objective import MultiObjectiveOptimizer, OptimizationObjective, Individual
 from .power_analyzer import PowerAnalyzer, ComponentPower, PowerProfile, PowerMode
 from .ai_recommender import AIComponentRecommender, SmartDesignValidator, DesignAnomaly, DesignPattern
+from .visualizer import CircuitVisualizer
 
 __all__ = [
     # 主優化器
@@ -43,6 +44,9 @@ __all__ = [
     'SmartDesignValidator',
     'DesignAnomaly',
     'DesignPattern',
+
+    # 可視化
+    'CircuitVisualizer',
 ]
 
 __version__ = "0.1.0"
