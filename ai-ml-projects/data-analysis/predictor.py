@@ -1,5 +1,6 @@
 """
 Predictive Modeling
+Enhanced with XGBoost, LightGBM, and CatBoost support
 """
 import pandas as pd
 import numpy as np
@@ -10,11 +11,35 @@ from sklearn.metrics import (
     mean_squared_error, mean_absolute_error, r2_score,
     confusion_matrix, classification_report
 )
-from sklearn.linear_model import LogisticRegression, LinearRegression
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.linear_model import LogisticRegression, LinearRegression, Ridge, Lasso
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor, GradientBoostingClassifier, GradientBoostingRegressor
 from sklearn.svm import SVC, SVR
-from typing import Dict, Optional, Any
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from typing import Dict, Optional, Any, List
 import joblib
+import warnings
+warnings.filterwarnings('ignore')
+
+# Try to import XGBoost
+try:
+    import xgboost as xgb
+    XGBOOST_AVAILABLE = True
+except ImportError:
+    XGBOOST_AVAILABLE = False
+
+# Try to import LightGBM
+try:
+    import lightgbm as lgb
+    LIGHTGBM_AVAILABLE = True
+except ImportError:
+    LIGHTGBM_AVAILABLE = False
+
+# Try to import CatBoost
+try:
+    from catboost import CatBoostClassifier, CatBoostRegressor
+    CATBOOST_AVAILABLE = True
+except ImportError:
+    CATBOOST_AVAILABLE = False
 
 
 class Predictor:
@@ -48,16 +73,76 @@ class Predictor:
         """
         if self.task == 'classification':
             models = {
-                'logistic': LogisticRegression(max_iter=1000),
-                'random_forest': RandomForestClassifier(n_estimators=100),
-                'svm': SVC(probability=True)
+                'logistic': LogisticRegression(max_iter=1000, random_state=42),
+                'random_forest': RandomForestClassifier(n_estimators=100, random_state=42),
+                'gradient_boosting': GradientBoostingClassifier(n_estimators=100, random_state=42),
+                'decision_tree': DecisionTreeClassifier(random_state=42),
+                'svm': SVC(probability=True, random_state=42)
             }
+
+            # Add XGBoost if available
+            if XGBOOST_AVAILABLE:
+                models['xgboost'] = xgb.XGBClassifier(
+                    n_estimators=100,
+                    learning_rate=0.1,
+                    random_state=42,
+                    eval_metric='logloss'
+                )
+
+            # Add LightGBM if available
+            if LIGHTGBM_AVAILABLE:
+                models['lightgbm'] = lgb.LGBMClassifier(
+                    n_estimators=100,
+                    learning_rate=0.1,
+                    random_state=42,
+                    verbose=-1
+                )
+
+            # Add CatBoost if available
+            if CATBOOST_AVAILABLE:
+                models['catboost'] = CatBoostClassifier(
+                    iterations=100,
+                    learning_rate=0.1,
+                    random_state=42,
+                    verbose=False
+                )
+
         else:  # regression
             models = {
                 'linear': LinearRegression(),
-                'random_forest': RandomForestRegressor(n_estimators=100),
+                'ridge': Ridge(random_state=42),
+                'lasso': Lasso(random_state=42),
+                'random_forest': RandomForestRegressor(n_estimators=100, random_state=42),
+                'gradient_boosting': GradientBoostingRegressor(n_estimators=100, random_state=42),
+                'decision_tree': DecisionTreeRegressor(random_state=42),
                 'svm': SVR()
             }
+
+            # Add XGBoost if available
+            if XGBOOST_AVAILABLE:
+                models['xgboost'] = xgb.XGBRegressor(
+                    n_estimators=100,
+                    learning_rate=0.1,
+                    random_state=42
+                )
+
+            # Add LightGBM if available
+            if LIGHTGBM_AVAILABLE:
+                models['lightgbm'] = lgb.LGBMRegressor(
+                    n_estimators=100,
+                    learning_rate=0.1,
+                    random_state=42,
+                    verbose=-1
+                )
+
+            # Add CatBoost if available
+            if CATBOOST_AVAILABLE:
+                models['catboost'] = CatBoostRegressor(
+                    iterations=100,
+                    learning_rate=0.1,
+                    random_state=42,
+                    verbose=False
+                )
 
         if model_type not in models:
             available = ', '.join(models.keys())
@@ -263,6 +348,88 @@ class Predictor:
         self.is_fitted = True
 
         print(f"Model loaded from {path}")
+
+    def list_available_models(self) -> List[str]:
+        """
+        List all available models for the current task
+
+        Returns:
+            List of available model names
+        """
+        if self.task == 'classification':
+            models = ['logistic', 'random_forest', 'gradient_boosting', 'decision_tree', 'svm']
+            if XGBOOST_AVAILABLE:
+                models.append('xgboost')
+            if LIGHTGBM_AVAILABLE:
+                models.append('lightgbm')
+            if CATBOOST_AVAILABLE:
+                models.append('catboost')
+        else:  # regression
+            models = ['linear', 'ridge', 'lasso', 'random_forest', 'gradient_boosting', 'decision_tree', 'svm']
+            if XGBOOST_AVAILABLE:
+                models.append('xgboost')
+            if LIGHTGBM_AVAILABLE:
+                models.append('lightgbm')
+            if CATBOOST_AVAILABLE:
+                models.append('catboost')
+
+        return models
+
+    def compare_models(
+        self,
+        X_train: pd.DataFrame,
+        y_train: pd.Series,
+        X_test: pd.DataFrame,
+        y_test: pd.Series,
+        models: Optional[List[str]] = None,
+        cv: int = 5
+    ) -> pd.DataFrame:
+        """
+        Compare multiple models
+
+        Args:
+            X_train: Training features
+            y_train: Training labels
+            X_test: Test features
+            y_test: Test labels
+            models: List of model names to compare (None = all available)
+            cv: Number of cross-validation folds
+
+        Returns:
+            DataFrame with comparison results
+        """
+        if models is None:
+            models = self.list_available_models()
+
+        results = []
+
+        for model_name in models:
+            print(f"Training {model_name}...")
+            try:
+                # Create new instance for each model
+                temp_predictor = Predictor(task=self.task)
+                temp_predictor.train(X_train, y_train, model_type=model_name, cv=cv)
+
+                # Evaluate
+                metrics = temp_predictor.evaluate(X_test, y_test)
+
+                result = {'model': model_name}
+                result.update(metrics)
+                results.append(result)
+
+            except Exception as e:
+                print(f"Error training {model_name}: {str(e)}")
+                continue
+
+        results_df = pd.DataFrame(results)
+
+        # Sort by main metric
+        if self.task == 'classification':
+            results_df = results_df.sort_values('accuracy', ascending=False)
+        else:
+            results_df = results_df.sort_values('r2', ascending=False)
+
+        return results_df
 
 
 def main():

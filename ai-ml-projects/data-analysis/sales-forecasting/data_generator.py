@@ -72,11 +72,11 @@ class SalesDataGenerator:
         df['is_holiday'] = 0
         for date in df['date']:
             month, day = date.month, date.day
-            # 主要假日
-            if (month == 1 and day == 1) or \  # 元旦
-               (month == 7 and day == 4) or \  # 美國國慶
-               (month == 11 and day == 11) or \  # 雙11
-               (month == 12 and day == 25):  # 聖誕節
+            # 主要假日: 元旦, 美國國慶, 雙11, 聖誕節
+            if ((month == 1 and day == 1) or
+                (month == 7 and day == 4) or
+                (month == 11 and day == 11) or
+                (month == 12 and day == 25)):
                 df.loc[df['date'] == date, 'is_holiday'] = 1
                 df.loc[df['date'] == date, 'sales'] *= np.random.uniform(1.5, 2.0)
 
