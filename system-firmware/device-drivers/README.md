@@ -7,6 +7,42 @@
 
 設備驅動程式是作業系統與硬體設備之間的橋樑，負責管理和控制硬體設備。本專案展示如何使用 AI 輔助工具在不同平台上開發設備驅動程式。
 
+## ⭐ AI 增強功能 (最新更新)
+
+本專案現已整合強大的 AI 輔助診斷和配置工具！
+
+### 🎯 核心特性
+
+**GPIO Controller**
+- ✅ **PWM 支援**: 軟體 PWM 實現，支援 LED 調光、馬達控制、伺服控制
+- ✅ **中斷去抖動**: 智能去抖動機制，可配置時間和統計分析
+- ✅ **AI 診斷工具**: 自動狀態分析、權限檢查、速度測試、配置建議
+
+**I2C Device Driver**
+- ✅ **完整感測器範例**: MPU6050 (IMU)、BH1750 (光感測器)、BME280
+- ✅ **AI 診斷工具**: 設備自動識別、通訊測試、故障排除建議
+- ✅ **豐富的設備資料庫**: 20+ 常見 I2C 設備即時識別
+
+### 🚀 快速體驗
+
+```bash
+# GPIO AI 診斷
+./gpio-controller/tools/gpio_ai_diagnostics.py -g 17 18
+./gpio-controller/tools/gpio_ai_diagnostics.py --suggest led
+
+# I2C AI 診斷
+./i2c-device-driver/tools/i2c_ai_diagnostics.py
+./i2c-device-driver/tools/i2c_ai_diagnostics.py --suggest IMU
+
+# PWM LED 呼吸燈
+./gpio-controller/examples/pwm_control 0 breathing 5
+
+# MPU6050 姿態角測量
+./i2c-device-driver/examples/mpu6050_example -c -r 50
+```
+
+📖 詳細說明請參閱 [AI_ENHANCEMENTS.md](./AI_ENHANCEMENTS.md)
+
 ## 🎯 支援平台
 
 ### 1. Windows 驅動開發
