@@ -40,9 +40,18 @@ INITIAL_BALL_SPEED = 5
 class GameMode(Enum):
     """遊戲模式"""
     MENU = 0
-    SINGLE_PLAYER = 1
-    TWO_PLAYER = 2
-    GAME_OVER = 3
+    DIFFICULTY_SELECT = 1
+    SINGLE_PLAYER = 2
+    TWO_PLAYER = 3
+    GAME_OVER = 4
+
+
+class AIDifficulty(Enum):
+    """AI 難度等級"""
+    EASY = {"name": "簡單", "accuracy": 0.60, "speed": 0.7, "reaction_delay": 0.15}
+    MEDIUM = {"name": "中等", "accuracy": 0.85, "speed": 1.0, "reaction_delay": 0.05}
+    HARD = {"name": "困難", "accuracy": 0.95, "speed": 1.2, "reaction_delay": 0.02}
+    EXPERT = {"name": "專家", "accuracy": 0.98, "speed": 1.5, "reaction_delay": 0.0, "predict": True}
 
 
 class Paddle:
@@ -54,33 +63,77 @@ class Paddle:
         self.color = color
         self.speed = PADDLE_SPEED
         self.score = 0
+        self.ai_difficulty = None
+        self.last_reaction_time = 0
 
     def move_up(self):
         """向上移動"""
-        self.rect.y -= self.speed
+        speed = self.speed
+        if self.ai_difficulty:
+            speed *= self.ai_difficulty.value["speed"]
+        self.rect.y -= speed
         if self.rect.y < 0:
             self.rect.y = 0
 
     def move_down(self):
         """向下移動"""
-        self.rect.y += self.speed
+        speed = self.speed
+        if self.ai_difficulty:
+            speed *= self.ai_difficulty.value["speed"]
+        self.rect.y += speed
         if self.rect.y > WINDOW_HEIGHT - PADDLE_HEIGHT:
             self.rect.y = WINDOW_HEIGHT - PADDLE_HEIGHT
 
-    def ai_move(self, ball):
-        """AI 移動邏輯"""
+    def ai_move(self, ball, current_time):
+        """改進的 AI 移動邏輯"""
+        if not self.ai_difficulty:
+            self.ai_difficulty = AIDifficulty.MEDIUM
+
+        difficulty = self.ai_difficulty.value
+
         # AI 只在球向它移動時才反應
         if ball.velocity_x > 0:
-            # 添加一些隨機性和延遲使 AI 不完美
-            target_y = ball.rect.centery
+            # 檢查反應延遲
+            if current_time - self.last_reaction_time < difficulty["reaction_delay"]:
+                return
+
+            self.last_reaction_time = current_time
+
+            # 專家模式：預測球的軌跡
+            if difficulty.get("predict", False):
+                target_y = self._predict_ball_position(ball)
+            else:
+                target_y = ball.rect.centery
+
             paddle_center = self.rect.centery
 
-            # AI 反應速度（不完美）
-            if random.random() < 0.85:  # 85% 機率正確反應
-                if paddle_center < target_y - 10:
+            # 根據難度調整準確度
+            if random.random() < difficulty["accuracy"]:
+                tolerance = 10 if difficulty["accuracy"] < 0.9 else 5
+                if paddle_center < target_y - tolerance:
                     self.move_down()
-                elif paddle_center > target_y + 10:
+                elif paddle_center > target_y + tolerance:
                     self.move_up()
+
+    def _predict_ball_position(self, ball):
+        """預測球將到達的 Y 座標（專家模式）"""
+        if ball.velocity_x == 0:
+            return ball.rect.centery
+
+        # 計算球到達右側球拍的時間
+        time_to_reach = (self.rect.x - ball.rect.x) / ball.velocity_x
+
+        # 預測 Y 座標（考慮反彈）
+        predicted_y = ball.rect.centery + ball.velocity_y * time_to_reach
+
+        # 處理牆壁反彈
+        while predicted_y < 0 or predicted_y > WINDOW_HEIGHT:
+            if predicted_y < 0:
+                predicted_y = -predicted_y
+            elif predicted_y > WINDOW_HEIGHT:
+                predicted_y = 2 * WINDOW_HEIGHT - predicted_y
+
+        return predicted_y
 
     def draw(self, screen):
         """繪製球拍"""
@@ -183,7 +236,7 @@ class PongGame:
     def __init__(self):
         """初始化遊戲"""
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-        pygame.display.set_caption("Pong 遊戲")
+        pygame.display.set_caption("Pong 遊戲 - AI 增強版")
         self.clock = pygame.time.Clock()
         self.running = True
         self.mode = GameMode.MENU
@@ -206,6 +259,8 @@ class PongGame:
         # 遊戲狀態
         self.winning_score = 5
         self.paused = False
+        self.selected_difficulty = AIDifficulty.MEDIUM
+        self.difficulty_menu_index = 1  # 默認選擇中等難度
 
     def handle_events(self):
         """處理事件"""
@@ -222,9 +277,23 @@ class PongGame:
 
                 if self.mode == GameMode.MENU:
                     if event.key == pygame.K_1:
-                        self.start_game(GameMode.SINGLE_PLAYER)
+                        self.mode = GameMode.DIFFICULTY_SELECT
                     elif event.key == pygame.K_2:
                         self.start_game(GameMode.TWO_PLAYER)
+
+                elif self.mode == GameMode.DIFFICULTY_SELECT:
+                    if event.key == pygame.K_UP:
+                        self.difficulty_menu_index = max(0, self.difficulty_menu_index - 1)
+                    elif event.key == pygame.K_DOWN:
+                        self.difficulty_menu_index = min(3, self.difficulty_menu_index + 1)
+                    elif event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+                        difficulties = [AIDifficulty.EASY, AIDifficulty.MEDIUM,
+                                      AIDifficulty.HARD, AIDifficulty.EXPERT]
+                        self.selected_difficulty = difficulties[self.difficulty_menu_index]
+                        self.right_paddle.ai_difficulty = self.selected_difficulty
+                        self.start_game(GameMode.SINGLE_PLAYER)
+                    elif event.key == pygame.K_ESCAPE:
+                        self.mode = GameMode.MENU
 
                 elif self.mode == GameMode.GAME_OVER:
                     if event.key == pygame.K_SPACE:
@@ -265,7 +334,8 @@ class PongGame:
                 self.right_paddle.move_down()
         else:
             # 單人模式：AI 控制
-            self.right_paddle.ai_move(self.ball)
+            current_time = pygame.time.get_ticks() / 1000.0
+            self.right_paddle.ai_move(self.ball, current_time)
 
         # 更新球
         self.ball.update(self.left_paddle, self.right_paddle)
@@ -294,6 +364,8 @@ class PongGame:
 
         if self.mode == GameMode.MENU:
             self.draw_menu()
+        elif self.mode == GameMode.DIFFICULTY_SELECT:
+            self.draw_difficulty_select()
         elif self.mode == GameMode.GAME_OVER:
             self.draw_game_over()
         else:
@@ -325,13 +397,65 @@ class PongGame:
             "左邊玩家: W/S 鍵控制",
             "右邊玩家: ↑/↓ 鍵控制",
             f"先得 {self.winning_score} 分獲勝",
-            "按空白鍵暫停"
+            "按空白鍵暫停",
+            "",
+            "🤖 AI 增強版 - 多種難度挑戰"
         ]
 
         for i, instruction in enumerate(instructions):
             text = self.info_font.render(instruction, True, GRAY)
             text_rect = text.get_rect(center=(WINDOW_WIDTH // 2, 450 + i * 30))
             self.screen.blit(text, text_rect)
+
+    def draw_difficulty_select(self):
+        """繪製難度選擇畫面"""
+        # 標題
+        title = self.title_font.render("選擇 AI 難度", True, WHITE)
+        title_rect = title.get_rect(center=(WINDOW_WIDTH // 2, 100))
+        self.screen.blit(title, title_rect)
+
+        # 難度選項
+        difficulties = [
+            (AIDifficulty.EASY, "簡單 - 適合新手"),
+            (AIDifficulty.MEDIUM, "中等 - 標準挑戰"),
+            (AIDifficulty.HARD, "困難 - 高手對決"),
+            (AIDifficulty.EXPERT, "專家 - 終極挑戰（預測軌跡）")
+        ]
+
+        for i, (difficulty, desc) in enumerate(difficulties):
+            y_pos = 220 + i * 80
+
+            # 選中高亮
+            if i == self.difficulty_menu_index:
+                # 繪製選擇框
+                highlight_rect = pygame.Rect(
+                    WINDOW_WIDTH // 2 - 250,
+                    y_pos - 10,
+                    500,
+                    60
+                )
+                pygame.draw.rect(self.screen, YELLOW, highlight_rect, 3, 10)
+
+                # 難度名稱（高亮）
+                name_text = self.menu_font.render(desc, True, YELLOW)
+            else:
+                # 難度名稱（普通）
+                name_text = self.menu_font.render(desc, True, WHITE)
+
+            name_rect = name_text.get_rect(center=(WINDOW_WIDTH // 2, y_pos))
+            self.screen.blit(name_text, name_rect)
+
+            # 難度詳情
+            stats = difficulty.value
+            detail_text = f"準確度: {stats['accuracy']*100:.0f}% | 速度: {stats['speed']:.1f}x | 反應: {stats['reaction_delay']:.2f}s"
+            detail = self.info_font.render(detail_text, True, GRAY)
+            detail_rect = detail.get_rect(center=(WINDOW_WIDTH // 2, y_pos + 25))
+            self.screen.blit(detail, detail_rect)
+
+        # 操作提示
+        hint = self.info_font.render("↑/↓ 選擇難度 | Enter/空白鍵 確認 | ESC 返回", True, WHITE)
+        hint_rect = hint.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT - 50))
+        self.screen.blit(hint, hint_rect)
 
     def draw_game(self):
         """繪製遊戲畫面"""
@@ -354,9 +478,17 @@ class PongGame:
         self.screen.blit(left_score, left_score_rect)
         self.screen.blit(right_score, right_score_rect)
 
-        # 繪製控制提示
+        # 繪製控制提示和AI信息
         if self.mode == GameMode.SINGLE_PLAYER:
-            mode_text = "單人模式 - vs AI"
+            difficulty_name = self.selected_difficulty.value["name"]
+            mode_text = f"單人模式 - vs AI ({difficulty_name})"
+
+            # AI 訓練建議
+            tips = self._get_ai_tips()
+            if tips:
+                tip_surface = self.info_font.render(f"💡 提示: {tips}", True, PURPLE)
+                tip_rect = tip_surface.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT - 60))
+                self.screen.blit(tip_surface, tip_rect)
         else:
             mode_text = "雙人模式"
 
@@ -377,6 +509,38 @@ class PongGame:
 
             self.screen.blit(pause_text, pause_rect)
 
+    def _get_ai_tips(self):
+        """獲取 AI 訓練建議"""
+        if self.mode != GameMode.SINGLE_PLAYER:
+            return None
+
+        score_diff = self.right_paddle.score - self.left_paddle.score
+        difficulty = self.selected_difficulty
+
+        # 根據比分和難度給出建議
+        if difficulty == AIDifficulty.EASY:
+            if score_diff > 2:
+                return "AI 太簡單了？試試中等難度吧！"
+            else:
+                return "保持節奏，控制好反彈角度"
+        elif difficulty == AIDifficulty.MEDIUM:
+            if score_diff > 2:
+                return "嘗試用不同角度擊球來迷惑 AI"
+            elif score_diff < -2:
+                return "觀察球的軌跡，提前移動到位"
+            else:
+                return "勢均力敵！繼續保持"
+        elif difficulty == AIDifficulty.HARD:
+            if score_diff > 0:
+                return "打得好！用變化的角度繼續挑戰"
+            else:
+                return "AI 反應很快，試著打向邊角"
+        else:  # EXPERT
+            if score_diff > 0:
+                return "太強了！你擊敗了預測軌跡的專家 AI！"
+            else:
+                return "專家 AI 能預測軌跡，嘗試突然改變球速"
+
     def draw_game_over(self):
         """繪製遊戲結束畫面"""
         # 半透明覆蓋
@@ -389,6 +553,16 @@ class PongGame:
         if self.left_paddle.score > self.right_paddle.score:
             winner_text = "左邊玩家獲勝!"
             winner_color = BLUE
+
+            # 顯示擊敗AI的成就
+            if self.mode == GameMode.SINGLE_PLAYER:
+                achievement = self.menu_font.render(
+                    f"🏆 擊敗了 {self.selected_difficulty.value['name']} AI！",
+                    True,
+                    YELLOW
+                )
+                achievement_rect = achievement.get_rect(center=(WINDOW_WIDTH // 2, 150))
+                self.screen.blit(achievement, achievement_rect)
         else:
             if self.mode == GameMode.SINGLE_PLAYER:
                 winner_text = "AI 獲勝!"
