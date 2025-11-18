@@ -65,12 +65,21 @@
     .toolbar {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       padding: 12px 15px;
       background: #16213e;
       border-bottom: 1px solid #2a3550;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
     .toolbar-left {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-right {
       display: flex;
       gap: 8px;
     }
@@ -105,6 +114,74 @@
 
     .clear-btn:hover {
       background: #dc2626;
+    }
+
+    .ai-btn {
+      padding: 6px 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: white;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 600;
+    }
+
+    .ai-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .ai-actions {
+      display: flex;
+      gap: 4px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #2a3550;
+    }
+
+    .ai-action-btn {
+      padding: 4px 8px;
+      background: #2a3550;
+      border: 1px solid #3a4560;
+      color: #9ca3af;
+      border-radius: 4px;
+      font-size: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .ai-action-btn:hover {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+
+    .item-tags {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .tag {
+      padding: 2px 6px;
+      background: #2a3550;
+      color: #9ca3af;
+      border-radius: 3px;
+      font-size: 10px;
+    }
+
+    .tag.sensitive {
+      background: #ef4444;
+      color: white;
+    }
+
+    .tag.category {
+      background: #667eea;
+      color: white;
     }
 
     .content {
@@ -324,8 +401,13 @@
       <button class="filter-btn active" data-filter="all">全部</button>
       <button class="filter-btn" data-filter="pinned">📌 已釘選</button>
       <button class="filter-btn" data-filter="recent">⏰ 最近</button>
+      <button class="filter-btn" data-filter="code">💻 程式碼</button>
+      <button class="filter-btn" data-filter="url">🔗 連結</button>
     </div>
-    <button class="clear-btn" id="clearBtn">🗑️ 清空</button>
+    <div class="toolbar-right">
+      <button class="ai-btn" id="categorizeBtn" title="AI 分類">🤖</button>
+      <button class="clear-btn" id="clearBtn">🗑️ 清空</button>
+    </div>
   </div>
 
   <div class="content" id="clipboardList">

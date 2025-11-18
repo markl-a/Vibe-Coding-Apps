@@ -57,7 +57,8 @@ class ClipboardManagerPopup {
     // Apply search filter
     if (this.searchQuery) {
       filtered = filtered.filter(item =>
-        item.text.toLowerCase().includes(this.searchQuery)
+        item.text.toLowerCase().includes(this.searchQuery) ||
+        (item.tags && item.tags.some(tag => tag.toLowerCase().includes(this.searchQuery)))
       );
     }
 
@@ -70,6 +71,12 @@ class ClipboardManagerPopup {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         filtered = filtered.filter(item => item.timestamp >= today.getTime());
+        break;
+      case 'code':
+        filtered = filtered.filter(item => item.type === 'code' || item.type === 'json');
+        break;
+      case 'url':
+        filtered = filtered.filter(item => item.type === 'url');
         break;
     }
 
@@ -92,33 +99,50 @@ class ClipboardManagerPopup {
       return;
     }
 
-    container.innerHTML = this.filteredHistory.map((item, index) => `
-      <div class="clipboard-item ${item.pinned ? 'pinned' : ''}" data-index="${index}">
-        <div class="item-header">
-          <span class="item-type">${item.type || 'text'}</span>
-          <div class="item-actions">
-            <button class="action-btn ${item.pinned ? 'pinned' : ''}" data-action="pin" title="釘選">
-              📌
-            </button>
-            <button class="action-btn" data-action="copy" title="複製">
-              📄
-            </button>
-            <button class="action-btn" data-action="delete" title="刪除">
-              🗑️
-            </button>
+    container.innerHTML = this.filteredHistory.map((item, index) => {
+      const tagsHtml = item.tags && item.tags.length > 0
+        ? `<div class="item-tags">
+            ${item.category ? `<span class="tag category">📁 ${item.category}</span>` : ''}
+            ${item.sensitive ? '<span class="tag sensitive">⚠️ 敏感</span>' : ''}
+            ${item.tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
+          </div>`
+        : '';
+
+      return `
+        <div class="clipboard-item ${item.pinned ? 'pinned' : ''} ${item.sensitive ? 'sensitive-item' : ''}" data-index="${index}">
+          <div class="item-header">
+            <span class="item-type">${item.type || 'text'}</span>
+            <div class="item-actions">
+              <button class="action-btn ${item.pinned ? 'pinned' : ''}" data-action="pin" title="釘選">
+                📌
+              </button>
+              <button class="action-btn" data-action="copy" title="複製">
+                📄
+              </button>
+              <button class="action-btn" data-action="delete" title="刪除">
+                🗑️
+              </button>
+            </div>
+          </div>
+          <div class="item-text" title="${this.escapeHtml(item.text)}">
+            ${this.highlightSearch(this.escapeHtml(this.truncateText(item.text, 200)))}
+          </div>
+          ${tagsHtml}
+          <div class="ai-actions">
+            <button class="ai-action-btn" data-action="translate" title="AI 翻譯">🌐 翻譯</button>
+            <button class="ai-action-btn" data-action="summarize" title="AI 摘要">📝 摘要</button>
+            <button class="ai-action-btn" data-action="improve" title="AI 優化">✨ 優化</button>
+            <button class="ai-action-btn" data-action="similar" title="尋找相似">🔍 相似</button>
+          </div>
+          <div class="item-meta">
+            <span class="item-time">
+              🕒 ${this.formatTime(item.timestamp)}
+            </span>
+            <span class="item-length">${item.text.length} 字元 • ${item.accessCount || 1} 次使用</span>
           </div>
         </div>
-        <div class="item-text" title="${this.escapeHtml(item.text)}">
-          ${this.highlightSearch(this.escapeHtml(this.truncateText(item.text, 200)))}
-        </div>
-        <div class="item-meta">
-          <span class="item-time">
-            🕒 ${this.formatTime(item.timestamp)}
-          </span>
-          <span class="item-length">${item.text.length} 字元</span>
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
 
     // Add click listeners
     container.querySelectorAll('.clipboard-item').forEach((el, index) => {
@@ -146,6 +170,30 @@ class ClipboardManagerPopup {
               break;
             case 'delete':
               this.deleteItem(realIndex);
+              break;
+          }
+        });
+      });
+
+      // AI action buttons
+      el.querySelectorAll('.ai-action-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const action = e.currentTarget.dataset.action;
+          const realIndex = this.history.findIndex(h => h.id === this.filteredHistory[index].id);
+
+          switch (action) {
+            case 'translate':
+              this.translateItem(realIndex);
+              break;
+            case 'summarize':
+              this.summarizeItem(realIndex);
+              break;
+            case 'improve':
+              this.improveItem(realIndex);
+              break;
+            case 'similar':
+              this.findSimilarItems(realIndex);
               break;
           }
         });
@@ -250,6 +298,88 @@ class ClipboardManagerPopup {
     setTimeout(() => {
       toast.classList.remove('show');
     }, 2000);
+  }
+
+  // AI功能方法
+  async translateItem(index) {
+    try {
+      this.showToast('🌐 正在翻譯...');
+      const response = await chrome.runtime.sendMessage({
+        action: 'translateItem',
+        index: index
+      });
+
+      if (response.success) {
+        await this.copyToClipboard(response.translated);
+        this.showToast('✓ 翻譯完成並已複製');
+      } else {
+        this.showToast('✗ 翻譯失敗: ' + (response.error || '未知錯誤'), 'error');
+      }
+    } catch (error) {
+      this.showToast('✗ 翻譯失敗', 'error');
+      console.error(error);
+    }
+  }
+
+  async summarizeItem(index) {
+    try {
+      this.showToast('📝 正在生成摘要...');
+      const response = await chrome.runtime.sendMessage({
+        action: 'summarizeItem',
+        index: index,
+        maxLength: 100
+      });
+
+      if (response.success) {
+        await this.copyToClipboard(response.summary);
+        this.showToast('✓ 摘要完成並已複製');
+      } else {
+        this.showToast('✗ 摘要失敗: ' + (response.error || '未知錯誤'), 'error');
+      }
+    } catch (error) {
+      this.showToast('✗ 摘要失敗', 'error');
+      console.error(error);
+    }
+  }
+
+  async improveItem(index) {
+    try {
+      this.showToast('✨ 正在優化文字...');
+      const response = await chrome.runtime.sendMessage({
+        action: 'improveFormatting',
+        index: index
+      });
+
+      if (response.success) {
+        await this.copyToClipboard(response.improved);
+        this.showToast('✓ 文字優化完成並已複製');
+      } else {
+        this.showToast('✗ 優化失敗: ' + (response.error || '未知錯誤'), 'error');
+      }
+    } catch (error) {
+      this.showToast('✗ 優化失敗', 'error');
+      console.error(error);
+    }
+  }
+
+  async findSimilarItems(index) {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        action: 'findSimilar',
+        index: index
+      });
+
+      if (response.success && response.similar.length > 0) {
+        const count = response.similar.length;
+        this.showToast(`🔍 找到 ${count} 個相似項目`);
+        // 可以考慮顯示相似項目列表
+      } else {
+        this.showToast('未找到相似項目');
+      }
+    } catch (error) {
+      this.showToast('✗ 搜尋失敗', 'error');
+      console.error(error);
+    }
   }
 }
 

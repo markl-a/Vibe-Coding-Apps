@@ -1,7 +1,12 @@
 // Clipboard Manager Background Script
+// Enhanced with AI capabilities
+
+// Import AI service
+importScripts('services/ai.js');
 
 let clipboardHistory = [];
 const MAX_HISTORY = 100;
+const ai = aiService;
 
 // Initialize
 chrome.runtime.onInstalled.addListener(async () => {
@@ -62,6 +67,93 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       pinItem(request.index);
       sendResponse({ success: true });
       break;
+
+    // AI-related actions
+    case 'translateItem':
+      (async () => {
+        try {
+          const item = clipboardHistory[request.index];
+          if (item) {
+            const translated = await ai.translateText(item.text, request.targetLang);
+            sendResponse({ success: true, translated });
+          } else {
+            sendResponse({ success: false, error: 'Item not found' });
+          }
+        } catch (error) {
+          sendResponse({ success: false, error: error.message });
+        }
+      })();
+      return true;
+
+    case 'improveFormatting':
+      (async () => {
+        try {
+          const item = clipboardHistory[request.index];
+          if (item) {
+            const improved = await ai.improveFormatting(item.text);
+            sendResponse({ success: true, improved });
+          } else {
+            sendResponse({ success: false, error: 'Item not found' });
+          }
+        } catch (error) {
+          sendResponse({ success: false, error: error.message });
+        }
+      })();
+      return true;
+
+    case 'summarizeItem':
+      (async () => {
+        try {
+          const item = clipboardHistory[request.index];
+          if (item) {
+            const summary = await ai.summarize(item.text, request.maxLength || 100);
+            sendResponse({ success: true, summary });
+          } else {
+            sendResponse({ success: false, error: 'Item not found' });
+          }
+        } catch (error) {
+          sendResponse({ success: false, error: error.message });
+        }
+      })();
+      return true;
+
+    case 'findSimilar':
+      (async () => {
+        try {
+          const item = clipboardHistory[request.index];
+          if (item) {
+            const similar = ai.findSimilarItems(item.text, clipboardHistory);
+            sendResponse({ success: true, similar });
+          } else {
+            sendResponse({ success: false, error: 'Item not found' });
+          }
+        } catch (error) {
+          sendResponse({ success: false, error: error.message });
+        }
+      })();
+      return true;
+
+    case 'setApiKey':
+      (async () => {
+        try {
+          await ai.setApiKey(request.apiKey);
+          sendResponse({ success: true });
+        } catch (error) {
+          sendResponse({ success: false, error: error.message });
+        }
+      })();
+      return true;
+
+    case 'getCategorized':
+      (async () => {
+        try {
+          const categorized = await ai.categorizeItems(clipboardHistory);
+          sendResponse({ success: true, categorized });
+        } catch (error) {
+          sendResponse({ success: false, error: error.message });
+        }
+      })();
+      return true;
   }
   return true;
 });
@@ -76,16 +168,41 @@ async function addToHistory(text, type = 'text') {
     // Move to top
     const item = clipboardHistory.splice(existingIndex, 1)[0];
     item.timestamp = Date.now();
+    item.accessCount = (item.accessCount || 0) + 1;
     clipboardHistory.unshift(item);
   } else {
-    // Add new item
+    // AI-powered content detection
+    const detectedType = await ai.detectContentType(text);
+    const sensitiveInfo = ai.detectSensitiveInfo(text);
+    const tags = await ai.generateTags(text);
+    const category = await ai.detectCategory(text, detectedType);
+
+    // Add new item with AI metadata
     const item = {
       text: text,
-      type: type,
+      type: detectedType || type,
       timestamp: Date.now(),
       pinned: false,
-      id: generateId()
+      id: generateId(),
+      category: category,
+      tags: tags,
+      sensitive: sensitiveInfo.hasSensitiveInfo,
+      sensitiveTypes: sensitiveInfo.types || [],
+      accessCount: 1,
+      lastAccessed: Date.now()
     };
+
+    // Warn if sensitive
+    if (item.sensitive) {
+      console.warn('Sensitive information detected:', item.sensitiveTypes);
+      // Optionally show notification
+      chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'icons/icon48.png',
+        title: '⚠️ 敏感資訊警告',
+        message: '偵測到可能包含敏感資訊的內容已被複製'
+      });
+    }
 
     clipboardHistory.unshift(item);
 
