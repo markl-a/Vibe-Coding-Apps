@@ -13,6 +13,12 @@ public class UIManager : MonoBehaviour
     [Tooltip("生命值文字")]
     public Text livesText;
 
+    [Tooltip("生命值條（血條）")]
+    public Image healthBar;
+
+    [Tooltip("生命值數值文字")]
+    public Text healthText;
+
     [Tooltip("時間文字")]
     public Text timerText;
 
@@ -133,6 +139,39 @@ public class UIManager : MonoBehaviour
         for (int i = 0; i < lives; i++)
         {
             Instantiate(lifeIconPrefab, livesIconContainer);
+        }
+    }
+
+    /// <summary>
+    /// 更新生命值（血條版本）
+    /// </summary>
+    public void UpdateHealth(int currentHealth, int maxHealth)
+    {
+        // 更新血條
+        if (healthBar != null)
+        {
+            float healthPercent = (float)currentHealth / maxHealth;
+            healthBar.fillAmount = healthPercent;
+
+            // 根據血量改變顏色
+            if (healthPercent > 0.6f)
+            {
+                healthBar.color = Color.green;
+            }
+            else if (healthPercent > 0.3f)
+            {
+                healthBar.color = Color.yellow;
+            }
+            else
+            {
+                healthBar.color = Color.red;
+            }
+        }
+
+        // 更新生命值文字
+        if (healthText != null)
+        {
+            healthText.text = $"{currentHealth} / {maxHealth}";
         }
     }
 

@@ -875,4 +875,110 @@ AI 提示：
 
 ---
 
+## 🆕 最新更新
+
+### AI 輔助開發工具 (2025-11-18)
+
+本專案現已包含完整的 AI 輔助開發工具和範例！
+
+#### Unity 專案增強 ✅
+- **AICodeGenerator.cs** - Unity 編輯器整合的 AI 代碼生成器
+  - 10+ 預設功能模板
+  - 編輯器菜單快速訪問
+  - 自動複製到剪貼板
+- **新增實用腳本**:
+  - EnemyAI.cs - 完整的敵人 AI (巡邏/追擊/攻擊)
+  - PlayerHealth.cs - 生命值系統
+  - PowerUp.cs - 多種道具系統
+  - MovingPlatform.cs - 移動平台
+  - SaveSystem.cs - JSON 存檔系統
+- **AI-GUIDE.md** - 完整的 Unity AI 輔助開發指南
+
+#### Godot 專案增強 ✅
+- **AIHelper.gd** - Godot 專用 AI 提示詞生成器
+  - GDScript 語法優化
+  - EditorScript 支援
+  - 場景設置提示詞
+- **Dodge 遊戲**:
+  - SETUP-GUIDE.md - 詳細的場景創建步驟指南
+  - AI-GUIDE.md - Godot AI 輔助開發指南
+- **Roguelike 遊戲**:
+  - 完整的物品系統實作 (item.gd, inventory.gd)
+  - 物品數據庫系統 (item_database.gd)
+  - 消耗品和裝備系統
+  - ITEM-SYSTEM-GUIDE.md - 物品系統完整文檔
+
+#### 跨引擎 AI 工具 ✅
+- **AI-TOOLS-GUIDE.md** - 跨引擎 AI 輔助工具集合
+  - 通用提示詞模板
+  - 引擎特定技巧
+  - 完整開發流程
+  - 最佳實踐指南
+
+### 使用 AI 工具快速開始
+
+**Unity**:
+```csharp
+// 在編輯器中
+Tools > AI Tools > Generate Player Controller
+
+// 或在代碼中
+var prompt = AICodeGenerator.GenerateFeaturePrompt(
+    AICodeGenerator.Templates.ENEMY_AI
+);
+AICodeGenerator.PrintToConsole(prompt);
+```
+
+**Godot**:
+```gdscript
+# 使用 AIHelper
+var prompt = AIHelper.generate_common_prompt("inventory")
+AIHelper.copy_to_clipboard(prompt)
+
+# 或使用 EditorScript
+@tool
+extends EditorScript
+func _run():
+    print(AIHelper.PromptTemplates.PLAYER_CONTROLLER)
+```
+
+### 專案結構更新
+
+```
+game-engines/
+├── AI-TOOLS-GUIDE.md          # 跨引擎 AI 工具指南 ✨ NEW
+├── unity-platformer-2d/
+│   ├── AI-GUIDE.md            # Unity AI 指南 ✨ NEW
+│   └── Assets/Scripts/
+│       ├── AI-Tools/
+│       │   └── AICodeGenerator.cs  ✨ NEW
+│       ├── EnemyAI.cs         ✨ NEW
+│       ├── PlayerHealth.cs    ✨ NEW
+│       ├── PowerUp.cs         ✨ NEW
+│       ├── MovingPlatform.cs  ✨ NEW
+│       └── SaveSystem.cs      ✨ NEW
+├── godot-dodge-game/
+│   ├── SETUP-GUIDE.md         # 完整場景設置指南 ✨ NEW
+│   ├── AI-GUIDE.md            # Godot AI 指南 ✨ NEW
+│   └── scripts/
+│       └── AIHelper.gd        ✨ NEW
+└── godot-roguelike-2d/
+    ├── ITEM-SYSTEM-GUIDE.md   # 物品系統指南 ✨ NEW
+    └── scripts/
+        ├── item.gd            ✨ NEW
+        ├── inventory.gd       ✨ NEW
+        ├── consumable_item.gd ✨ NEW
+        └── item_database.gd   ✨ NEW
+```
+
+### 查看詳細文檔
+
+- [Unity AI 輔助開發指南](unity-platformer-2d/AI-GUIDE.md)
+- [Godot AI 輔助開發指南](godot-dodge-game/AI-GUIDE.md)
+- [Godot Dodge 遊戲設置指南](godot-dodge-game/SETUP-GUIDE.md)
+- [Godot Roguelike 物品系統指南](godot-roguelike-2d/ITEM-SYSTEM-GUIDE.md)
+- [跨引擎 AI 工具集合](AI-TOOLS-GUIDE.md)
+
+---
+
 **🎮 選擇適合的引擎，用 AI 加速開發，創造你的遊戲世界！**
