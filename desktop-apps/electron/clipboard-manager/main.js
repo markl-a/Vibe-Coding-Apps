@@ -1,8 +1,20 @@
 const { app, BrowserWindow, ipcMain, clipboard, globalShortcut, Tray, Menu, nativeImage } = require('electron');
 const path = require('path');
 const Store = require('electron-store');
+const AIHelper = require('../shared/ai-helper');
 
 const store = new Store();
+
+// 初始化 AI Helper
+let aiHelper = null;
+try {
+  const apiKey = store.get('openai_api_key') || process.env.OPENAI_API_KEY;
+  if (apiKey) {
+    aiHelper = new AIHelper(apiKey);
+  }
+} catch (error) {
+  console.log('AI Helper 未初始化:', error.message);
+}
 let mainWindow;
 let tray = null;
 
@@ -211,6 +223,36 @@ ipcMain.handle('set-config', async (event, newConfig) => {
   registerShortcuts();
 
   return { success: true };
+});
+
+// AI 功能處理器
+
+ipcMain.handle('ai-classify', async (event, text) => {
+  if (!aiHelper) {
+    return { success: false, error: '請先設定 OpenAI API Key' };
+  }
+
+  try {
+    const category = await aiHelper.classifyText(text, ['工作', '個人', '程式碼', '網址', '其他']);
+    return { success: true, result: category };
+  } catch (error) {
+    console.error('AI Classify Error:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('ai-summarize', async (event, text) => {
+  if (!aiHelper) {
+    return { success: false, error: '請先設定 OpenAI API Key' };
+  }
+
+  try {
+    const summary = await aiHelper.summarizeText(text, 100);
+    return { success: true, result: summary };
+  } catch (error) {
+    console.error('AI Summarize Error:', error);
+    return { success: false, error: error.message };
+  }
 });
 
 app.whenReady().then(() => {

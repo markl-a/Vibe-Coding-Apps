@@ -10,6 +10,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveScreenshot: (dataUrl) => ipcRenderer.invoke('save-screenshot', dataUrl),
   copyToClipboard: (dataUrl) => ipcRenderer.invoke('copy-to-clipboard', dataUrl),
 
+  // AI 功能
+  recognizeText: (imageBase64) => ipcRenderer.invoke('ai-recognize-text', imageBase64),
+  describeImage: (imageBase64) => ipcRenderer.invoke('ai-describe-image', imageBase64),
+  translateText: (text, targetLang) => ipcRenderer.invoke('ai-translate-text', text, targetLang),
+
   // 設定管理
   getConfig: (key, defaultValue) => ipcRenderer.invoke('get-config', key, defaultValue),
   setConfig: (key, value) => ipcRenderer.invoke('set-config', key, value),

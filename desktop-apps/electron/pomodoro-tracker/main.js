@@ -1,8 +1,20 @@
 const { app, BrowserWindow, ipcMain, Tray, Menu, Notification } = require('electron');
 const path = require('path');
 const Store = require('electron-store');
+const AIHelper = require('../shared/ai-helper');
 
 const store = new Store();
+
+// 初始化 AI Helper
+let aiHelper = null;
+try {
+  const apiKey = store.get('openai_api_key') || process.env.OPENAI_API_KEY;
+  if (apiKey) {
+    aiHelper = new AIHelper(apiKey);
+  }
+} catch (error) {
+  console.log('AI Helper 未初始化:', error.message);
+}
 let mainWindow;
 let tray = null;
 
@@ -134,6 +146,36 @@ ipcMain.handle('get-tasks', async () => {
 ipcMain.handle('save-tasks', async (event, tasks) => {
   store.set('tasks', tasks);
   return { success: true };
+});
+
+// AI 功能處理器
+
+ipcMain.handle('ai-analyze-priority', async (event, tasks) => {
+  if (!aiHelper) {
+    return { success: false, error: '請先設定 OpenAI API Key' };
+  }
+
+  try {
+    const analysis = await aiHelper.analyzePriority(tasks);
+    return { success: true, result: analysis };
+  } catch (error) {
+    console.error('AI Priority Error:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('ai-suggest-tasks', async (event, context) => {
+  if (!aiHelper) {
+    return { success: false, error: '請先設定 OpenAI API Key' };
+  }
+
+  try {
+    const suggestions = await aiHelper.suggestTasks(context);
+    return { success: true, result: suggestions };
+  } catch (error) {
+    console.error('AI Suggest Error:', error);
+    return { success: false, error: error.message };
+  }
 });
 
 app.whenReady().then(() => {
