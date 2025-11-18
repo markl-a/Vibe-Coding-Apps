@@ -4,6 +4,7 @@ struct ContentView: View {
     @State private var viewModel = TodoViewModel()
     @State private var showingAddSheet = false
     @State private var selectedTodo: Todo?
+    @State private var showingAIInsights = false
 
     var body: some View {
         NavigationStack {
@@ -43,6 +44,15 @@ struct ContentView: View {
             .navigationBarTitleDisplayMode(.large)
             .searchable(text: $viewModel.searchText, prompt: "搜尋待辦事項")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        showingAIInsights = true
+                    } label: {
+                        Label("AI 助手", systemImage: "sparkles")
+                            .symbolRenderingMode(.multicolor)
+                    }
+                }
+
                 ToolbarItem(placement: .primaryAction) {
                     Button {
                         showingAddSheet = true
@@ -72,6 +82,9 @@ struct ContentView: View {
                 EditTodoView(todo: todo) { updatedTodo in
                     viewModel.updateTodo(updatedTodo)
                 }
+            }
+            .sheet(isPresented: $showingAIInsights) {
+                AIInsightsView(viewModel: viewModel)
             }
         }
     }
