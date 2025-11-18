@@ -7,6 +7,9 @@ import MDXContent from '@/components/blog/MDXContent';
 import TableOfContents from '@/components/blog/TableOfContents';
 import ReadingProgress from '@/components/blog/ReadingProgress';
 import RelatedPosts from '@/components/blog/RelatedPosts';
+import Comments from '@/components/blog/Comments';
+import Newsletter from '@/components/blog/Newsletter';
+import PageViews from '@/components/analytics/PageViews';
 import type { Metadata } from 'next';
 
 interface BlogPostPageProps {
@@ -86,6 +89,7 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
                 <Clock className="w-4 h-4" />
                 <span>{post.readingTime}</span>
               </div>
+              <PageViews slug={params.slug} title={post.title} />
               <div className="text-gray-600 dark:text-gray-400">
                 By {post.author}
               </div>
@@ -125,6 +129,10 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
           </div>
 
           <RelatedPosts currentPost={postMeta} allPosts={allPosts.map(({ content, ...meta }) => meta)} />
+
+          <Newsletter />
+
+          <Comments postSlug={params.slug} />
         </div>
       </article>
     </>
