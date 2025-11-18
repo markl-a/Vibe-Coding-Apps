@@ -5,8 +5,7 @@ module.exports = {
   mode: process.env.NODE_ENV || 'development',
   entry: {
     'background/service-worker': './src/background/service-worker.ts',
-    'content/twitter-enhancer': './src/content/twitter-enhancer.ts',
-    'popup/popup': './src/popup/popup.ts'
+    'content/twitter-enhancer': './src/content/twitter-enhancer.ts'
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
