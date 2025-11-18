@@ -3,12 +3,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import ThemeToggle from './ThemeToggle';
-import { Code2 } from 'lucide-react';
+import { Code2, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navigation = [
   { name: 'Home', href: '/' },
   { name: 'Blog', href: '/blog' },
+  { name: 'AI Tools', href: '/ai-tools', icon: Sparkles },
   { name: 'About', href: '/about' },
 ];
 
@@ -25,20 +26,24 @@ export default function Header() {
               <span className="text-gray-900 dark:text-gray-100">DevBlog</span>
             </Link>
             <div className="hidden md:flex gap-6">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={cn(
-                    'text-sm font-medium transition-colors hover:text-primary-600 dark:hover:text-primary-400',
-                    pathname === item.href
-                      ? 'text-primary-600 dark:text-primary-400'
-                      : 'text-gray-600 dark:text-gray-400'
-                  )}
-                >
-                  {item.name}
-                </Link>
-              ))}
+              {navigation.map((item) => {
+                const Icon = 'icon' in item ? item.icon : null;
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={cn(
+                      'text-sm font-medium transition-colors hover:text-primary-600 dark:hover:text-primary-400 flex items-center gap-1',
+                      pathname === item.href
+                        ? 'text-primary-600 dark:text-primary-400'
+                        : 'text-gray-600 dark:text-gray-400'
+                    )}
+                  >
+                    {Icon && <Icon className="w-4 h-4" />}
+                    {item.name}
+                  </Link>
+                );
+              })}
             </div>
           </div>
           <ThemeToggle />
