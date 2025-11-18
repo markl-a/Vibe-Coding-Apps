@@ -1,0 +1,35 @@
+{
+  "hosts": [
+    {
+      "hostname": "example.com",
+      "port": 443,
+      "timeout": 10
+    },
+    {
+      "hostname": "api.example.com",
+      "port": 443,
+      "timeout": 10
+    },
+    {
+      "hostname": "secure.example.com",
+      "port": 8443,
+      "timeout": 10
+    }
+  ],
+  "alert_days": 30,
+  "notifications": {
+    "slack": {
+      "webhook_url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+    },
+    "discord": {
+      "webhook_url": "https://discord.com/api/webhooks/YOUR/WEBHOOK"
+    },
+    "email": {
+      "smtp_server": "smtp.gmail.com",
+      "smtp_port": 587,
+      "username": "your-email@example.com",
+      "password": "your-app-password",
+      "from_email": "your-email@example.com"
+    }
+  }
+}

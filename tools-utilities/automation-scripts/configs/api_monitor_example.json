@@ -1,0 +1,46 @@
+{
+  "endpoints": [
+    {
+      "url": "https://api.example.com/health",
+      "method": "GET",
+      "expected_status": 200,
+      "timeout": 10
+    },
+    {
+      "url": "https://api.example.com/v1/status",
+      "method": "GET",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY",
+        "Content-Type": "application/json"
+      },
+      "expected_status": 200,
+      "expected_response": {
+        "status": "healthy"
+      }
+    },
+    {
+      "url": "https://api.example.com/v1/data",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "data": {
+        "query": "test"
+      },
+      "expected_status": 200,
+      "timeout": 30
+    }
+  ],
+  "notifications": {
+    "slack": {
+      "webhook_url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+    },
+    "email": {
+      "smtp_server": "smtp.gmail.com",
+      "smtp_port": 587,
+      "username": "your-email@example.com",
+      "password": "your-app-password",
+      "from_email": "your-email@example.com"
+    }
+  }
+}

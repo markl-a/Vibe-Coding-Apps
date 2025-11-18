@@ -188,14 +188,25 @@ python system_health_check.py --output json
 - **shutil** - 高階檔案操作
 - **subprocess** - 執行系統命令
 - **schedule** - 任務排程
-- **configparser** - 配置檔案處理
+- **psutil** - 系統資訊
+- **requests** - HTTP 請求
 
-### 輔助工具
+### AI 與輔助工具
+- **tqdm** - 進度條顯示
+- **rich** - CLI 美化
+- **cryptography** - 加密和 SSL
+- **PIL / Pillow** - 圖片處理
+- **OpenAI API** - AI 輔助功能
+
+### 數據處理
 - **argparse** - 命令列參數解析
 - **logging** - 日誌記錄
 - **json / yaml** - 資料格式處理
+- **pymongo / pymysql / psycopg2** - 數據庫支援
+
+### 通知系統
 - **smtplib** - 郵件通知
-- **psutil** - 系統資訊
+- **requests** - Webhook / Slack / Discord
 
 ## 🚀 快速開始
 
@@ -254,24 +265,47 @@ Register-ScheduledTask -TaskName "DailyBackup" -Action $action -Trigger $trigger
 automation-scripts/
 ├── README.md                       # 本文件
 ├── requirements.txt                # Python 依賴
-├── batch_rename.py                 # 批次重新命名
-├── auto_backup.py                  # 自動備份
-├── cleanup_old_files.py            # 清理舊檔案
-├── env_setup.sh                    # 環境設定
-├── log_rotator.py                  # 日誌輪替
-├── system_health_check.py          # 系統健康檢查
-├── configs/                        # 配置檔案
-│   ├── backup_config.yaml
-│   ├── cleanup_config.yaml
-│   └── health_check_config.yaml
+├── utils.py                        # 🆕 通用工具模組
+│
+├── 檔案管理腳本/
+│   ├── batch_rename.py             # 批次重新命名
+│   ├── auto_backup.py              # 自動備份
+│   ├── cleanup_old_files.py        # 清理舊檔案
+│   └── media_organizer.py          # 🆕 媒體整理器
+│
+├── 系統維護腳本/
+│   ├── system_health_check.py      # 系統健康檢查
+│   ├── log_rotator.py              # 日誌輪替
+│   ├── docker_cleanup.py           # Docker 清理
+│   └── git_auto_sync.py            # Git 同步
+│
+├── 監控工具/
+│   ├── api_monitor.py              # 🆕 API 監控
+│   ├── ssl_cert_monitor.py         # 🆕 SSL 證書監控
+│   └── database_backup.py          # 🆕 資料庫備份
+│
+├── configs/                        # 配置檔案示例
+│   ├── api_monitor_example.json
+│   ├── database_backup_example.json
+│   ├── ssl_cert_monitor_example.json
+│   └── git_sync_example.json
+│
 ├── tests/                          # 測試檔案
 │   ├── test_batch_rename.py
 │   ├── test_auto_backup.py
-│   └── test_cleanup.py
-└── examples/                       # 範例腳本
-    ├── custom_backup.sh
-    ├── weekly_maintenance.sh
-    └── deploy_automation.py
+│   ├── test_api_monitor.py
+│   └── test_utils.py
+│
+└── examples/                       # 使用範例
+    ├── system_health_check_example.sh
+    ├── log_rotator_example.sh
+    ├── git_auto_sync_example.sh
+    ├── docker_cleanup_example.sh
+    ├── cleanup_old_files_example.sh
+    ├── batch_rename_example.sh
+    ├── auto_backup_example.sh
+    ├── QUICK_START.md
+    └── README.md
 ```
 
 ## 🤖 AI 開發工作流程
@@ -382,32 +416,150 @@ pytest -v tests/
 
 ## 📊 腳本狀態
 
-| 腳本 | 狀態 | 語言 | 測試 |
-|------|------|------|------|
-| batch_rename.py | ✅ 完成 | Python | ✅ |
-| auto_backup.py | ✅ 完成 | Python | ✅ |
-| cleanup_old_files.py | ✅ 完成 | Python | ✅ |
-| env_setup.sh | ✅ 完成 | Bash | ✅ |
-| log_rotator.py | ✅ 完成 | Python | ✅ |
-| system_health_check.py | ✅ 完成 | Python | ✅ |
+| 腳本 | 狀態 | 語言 | AI 輔助 | 測試 |
+|------|------|------|---------|------|
+| batch_rename.py | ✅ 完成 | Python | 🤖 | ⏳ |
+| auto_backup.py | ✅ 完成 | Python | 🤖 | ⏳ |
+| cleanup_old_files.py | ✅ 完成 | Python | 🤖 | ⏳ |
+| docker_cleanup.py | ✅ 完成 | Python | 🤖 | ⏳ |
+| git_auto_sync.py | ✅ 完成 | Python | 🤖 | ⏳ |
+| log_rotator.py | ✅ 完成 | Python | 🤖 | ⏳ |
+| system_health_check.py | ✅ 完成 | Python | 🤖 | ⏳ |
+| **api_monitor.py** | ✅ **新增** | Python | 🤖 | ⏳ |
+| **database_backup.py** | ✅ **新增** | Python | 🤖 | ⏳ |
+| **ssl_cert_monitor.py** | ✅ **新增** | Python | 🤖 | ⏳ |
+| **media_organizer.py** | ✅ **新增** | Python | 🤖 | ⏳ |
+| **utils.py** | ✅ **新增** | Python | 🤖 | ⏳ |
+
+### 7. **api_monitor.py** - API 健康監控
+API 端點監控工具，支援健康檢查和告警。
+
+**功能特色：**
+- HTTP/HTTPS API 監控
+- 響應時間追蹤
+- 狀態碼檢查
+- JSON 響應驗證
+- 支援多端點監控
+- 告警通知（Slack/Email）
+
+**使用範例：**
+```bash
+# 監控單個 API
+python api_monitor.py --url https://api.example.com/health
+
+# 使用配置文件監控多個 API
+python api_monitor.py --config configs/api_monitor_example.json
+
+# 持續監控（每5分鐘）
+python api_monitor.py --config api_monitor.json --interval 300 --notify
+```
+
+### 8. **database_backup.py** - 資料庫備份工具
+支援多種資料庫的自動備份工具。
+
+**功能特色：**
+- 支援 MySQL/MariaDB
+- 支援 PostgreSQL
+- 支援 MongoDB
+- 支援 SQLite
+- 自動壓縮
+- 備份輪替
+- 配置文件支援
+
+**使用範例：**
+```bash
+# 備份 MySQL 資料庫
+python database_backup.py --type mysql --host localhost --user root --password secret --database mydb
+
+# 備份 PostgreSQL
+python database_backup.py --type postgresql --host localhost --user postgres --database mydb
+
+# 使用配置文件
+python database_backup.py --config configs/database_backup_example.json
+```
+
+### 9. **ssl_cert_monitor.py** - SSL 證書監控
+監控 SSL/TLS 證書過期狀態並發送告警。
+
+**功能特色：**
+- SSL 證書過期檢查
+- 證書信息提取
+- 多域名批量監控
+- 過期告警（7天、30天）
+- 證書鏈驗證
+- 支援自定義端口
+
+**使用範例：**
+```bash
+# 檢查單個網站
+python ssl_cert_monitor.py --host example.com
+
+# 檢查多個網站
+python ssl_cert_monitor.py --config configs/ssl_cert_monitor_example.json
+
+# 設定告警並發送通知
+python ssl_cert_monitor.py --config ssl_config.json --alert-days 30 --notify
+```
+
+### 10. **media_organizer.py** - 媒體檔案智能整理
+使用 AI 輔助的媒體檔案自動分類和整理工具。
+
+**功能特色：**
+- 按日期自動分類
+- 按類型分類（圖片/影片/音訊）
+- EXIF 數據提取
+- 重複檔案檢測
+- 智能重命名
+- 批量處理
+
+**使用範例：**
+```bash
+# 按日期整理照片
+python media_organizer.py /source/photos /organized/photos --by date
+
+# 按類型整理並移除重複
+python media_organizer.py /source /target --by type --remove-duplicates
+
+# 預覽整理結果
+python media_organizer.py /source /target --dry-run
+```
+
+### 11. **utils.py** - 通用工具模組
+提供所有腳本共用的工具函數。
+
+**功能特色：**
+- 進度條顯示（tqdm）
+- 通知管理（Email/Slack/Discord/Webhook）
+- AI 輔助工具（OpenAI 整合）
+- 配置管理（JSON/YAML）
+- 檔案大小格式化
+- 時間格式化
+
+**AI 功能：**
+- 生成 Git 提交訊息
+- 分析系統健康數據
+- 建議檔案整理方案
 
 ## 🔜 未來計劃
 
-### 即將推出的腳本
+### 即將推出的功能
 
-- **database_backup.py** - 資料庫自動備份
-- **docker_cleanup.py** - Docker 容器清理
-- **ssl_cert_monitor.py** - SSL 憑證監控
-- **git_auto_sync.py** - Git 倉庫自動同步
-- **media_organizer.py** - 媒體檔案自動整理
+- [ ] Web 管理介面
+- [ ] 雲端備份支援（AWS S3, Google Drive, Azure）
+- [ ] 更多 AI 輔助功能
+- [ ] 性能監控儀表板
+- [ ] 容器化部署（Docker）
+- [ ] Kubernetes 資源監控
+- [ ] 日誌聚合分析
 
 ### 改進計劃
 
-- [ ] 新增 GUI 介面（使用 PyQt）
-- [ ] 雲端備份支援（AWS S3, Google Drive）
-- [ ] Webhook 通知支援
-- [ ] 更多配置選項
-- [ ] 性能監控儀表板
+- [x] ✅ AI 輔助功能整合
+- [x] ✅ 通知系統（Email/Webhook）
+- [x] ✅ 進度條顯示
+- [ ] 單元測試覆蓋率 > 80%
+- [ ] 性能優化
+- [ ] 多語言支援
 
 ## 🤝 貢獻
 
