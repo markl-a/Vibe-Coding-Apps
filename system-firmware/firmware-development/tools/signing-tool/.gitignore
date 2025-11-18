@@ -1,0 +1,65 @@
+# Firmware Signing Tool - Git Ignore
+# 韌體簽名工具 - Git 忽略文件
+
+# Private keys and certificates
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+
+# Firmware files
+*.bin
+*.hex
+*.elf
+*.fw
+
+# Reports and logs
+*.json
+*.log
+
+# Temporary directories
+temp/
+temp_*/
+.test_temp/
+examples/temp/
+examples/temp_*/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
