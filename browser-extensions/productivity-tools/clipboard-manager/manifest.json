@@ -7,7 +7,11 @@
     "storage",
     "clipboardRead",
     "clipboardWrite",
-    "contextMenus"
+    "contextMenus",
+    "notifications"
+  ],
+  "host_permissions": [
+    "https://api.openai.com/*"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -16,6 +20,7 @@
   "background": {
     "service_worker": "src/background.js"
   },
+  "options_page": "options.html",
   "commands": {
     "_execute_action": {
       "suggested_key": {

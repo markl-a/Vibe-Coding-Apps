@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clipboard Manager Pro - 設定</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    .section h2 {
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .form-hint {
+      font-size: 12px;
+      color: #888;
+      margin-top: 6px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #666;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .feature-card {
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+
+    .feature-card h3 {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .status.info {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+
+    .divider {
+      height: 1px;
+      background: #e0e0e0;
+      margin: 30px 0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>⚙️ Clipboard Manager Pro 設定</h1>
+      <p>配置 AI 功能以增強您的剪貼簿體驗</p>
+    </div>
+
+    <div class="content">
+      <!-- AI 設定 -->
+      <div class="section">
+        <h2>🤖 AI 功能設定</h2>
+
+        <div class="form-group">
+          <label class="form-label" for="apiKey">OpenAI API Key</label>
+          <input
+            type="password"
+            id="apiKey"
+            class="form-input"
+            placeholder="sk-..."
+          >
+          <div class="form-hint">
+            輸入您的 OpenAI API Key 以啟用 AI 翻譯、摘要和文字優化功能。
+            <a href="https://platform.openai.com/api-keys" target="_blank">取得 API Key</a>
+          </div>
+        </div>
+
+        <div id="apiStatus"></div>
+
+        <div class="actions">
+          <button class="btn btn-secondary" id="testApiBtn">測試連接</button>
+          <button class="btn btn-primary" id="saveApiBtn">儲存設定</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- AI 功能說明 -->
+      <div class="section">
+        <h2>✨ AI 功能</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>🌐 智能翻譯</h3>
+            <p>自動檢測語言並翻譯內容，支援中英互譯</p>
+          </div>
+          <div class="feature-card">
+            <h3>📝 AI 摘要</h3>
+            <p>將長文本自動生成簡潔的摘要</p>
+          </div>
+          <div class="feature-card">
+            <h3>✨ 文字優化</h3>
+            <p>修正語法、拼寫錯誤並改善文字格式</p>
+          </div>
+          <div class="feature-card">
+            <h3>🏷️ 智能標籤</h3>
+            <p>自動為內容生成相關標籤和分類</p>
+          </div>
+          <div class="feature-card">
+            <h3>⚠️ 敏感資訊檢測</h3>
+            <p>自動檢測並警告可能的敏感資訊</p>
+          </div>
+          <div class="feature-card">
+            <h3>🔍 相似內容搜尋</h3>
+            <p>找出歷史記錄中的相似內容</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- 隱私說明 -->
+      <div class="section">
+        <h2>🔒 隱私與安全</h2>
+        <div class="feature-card">
+          <h3>資料處理</h3>
+          <p>
+            • 所有資料優先儲存在本地<br>
+            • AI 功能需要將內容發送至 OpenAI API<br>
+            • API Key 僅儲存在本地，不會上傳<br>
+            • 敏感資訊檢測完全在本地執行<br>
+            • 您可以隨時停用 AI 功能
+          </p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- 使用統計 -->
+      <div class="section">
+        <h2>📊 使用統計</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>總項目數</h3>
+            <p id="totalItems">載入中...</p>
+          </div>
+          <div class="feature-card">
+            <h3>已釘選項目</h3>
+            <p id="pinnedItems">載入中...</p>
+          </div>
+          <div class="feature-card">
+            <h3>今日新增</h3>
+            <p id="todayItems">載入中...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
