@@ -1,0 +1,36 @@
+node_modules
+.env
+coverage
+coverage.json
+typechain
+typechain-types
+
+# Hardhat files
+cache
+artifacts
+
+# Gas reports
+gas-report.txt
+
+# Deployment files
+deployments/*.json
+!deployments/.gitkeep
+
+# Merkle tree data
+merkle-data.json
+sample-proofs.json
+whitelist.json
+
+# Metadata
+metadata/
+!metadata/.gitkeep
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
