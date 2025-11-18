@@ -17,6 +17,48 @@
       }
     }
   </script>
+  <style>
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+      50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
+    }
+    .animate-slide-in {
+      animation: slideInUp 0.6s ease-out;
+    }
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+    .animate-pulse-glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    .chat-bubble {
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease-out;
+    }
+    .scroll-reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
 </head>
 <body class="bg-gray-50">
   <!-- Header -->
@@ -342,6 +384,76 @@
     </div>
   </section>
 
+  <!-- AI Chat Assistant Button -->
+  <button id="chatButton" class="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 flex items-center justify-center z-50 animate-pulse-glow">
+    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+    </svg>
+  </button>
+
+  <!-- AI Chat Window -->
+  <div id="chatWindow" class="fixed bottom-24 right-6 w-96 h-[500px] bg-white rounded-2xl shadow-2xl z-50 hidden flex-col overflow-hidden">
+    <!-- Chat Header -->
+    <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+          <span class="text-2xl">🤖</span>
+        </div>
+        <div>
+          <h3 class="font-semibold">AI 助手</h3>
+          <p class="text-xs text-white/80">隨時為您服務</p>
+        </div>
+      </div>
+      <button id="closeChatButton" class="text-white/80 hover:text-white transition">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Chat Messages -->
+    <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
+      <div class="chat-bubble bg-white p-3 rounded-lg shadow-sm">
+        <p class="text-sm text-gray-700">👋 您好！我是 AI 助手，有什麼可以幫助您的嗎？</p>
+        <div class="mt-2 flex flex-wrap gap-2">
+          <button class="quick-reply text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full hover:bg-blue-200 transition">App 有哪些功能？</button>
+          <button class="quick-reply text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full hover:bg-purple-200 transition">支援哪些設備？</button>
+          <button class="quick-reply text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full hover:bg-green-200 transition">如何下載？</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Input -->
+    <div class="p-4 bg-white border-t border-gray-200">
+      <div class="flex gap-2">
+        <input
+          type="text"
+          id="chatInput"
+          placeholder="輸入您的問題..."
+          class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+        >
+        <button id="sendButton" class="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Device Detection Banner -->
+  <div id="deviceBanner" class="hidden fixed top-20 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-full shadow-lg z-40 animate-slide-in">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">📱</span>
+      <span id="deviceMessage" class="font-semibold"></span>
+      <button id="dismissBanner" class="ml-4 text-white/80 hover:text-white">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer class="bg-gray-900 text-gray-300 py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -379,5 +491,216 @@
       </div>
     </div>
   </footer>
+
+  <script>
+    // AI Chat Assistant
+    const chatButton = document.getElementById('chatButton');
+    const chatWindow = document.getElementById('chatWindow');
+    const closeChatButton = document.getElementById('closeChatButton');
+    const chatInput = document.getElementById('chatInput');
+    const sendButton = document.getElementById('sendButton');
+    const chatMessages = document.getElementById('chatMessages');
+    const quickReplyButtons = document.querySelectorAll('.quick-reply');
+
+    // AI Response Database
+    const aiResponses = {
+      'app 有哪些功能？': '我們的 App 提供以下強大功能：\n⚡ 超快速度 - 優化的效能，啟動速度提升 300%\n🔒 安全可靠 - 端到端加密保護\n☁️ 雲端同步 - 跨設備無縫同步\n🎨 精美設計 - 直觀易用的介面\n🌙 深色模式 - 夜間使用更舒適\n📊 數據分析 - 深入洞察您的使用習慣',
+      '支援哪些設備？': '我們的 App 支援：\n📱 iOS 14+ (iPhone, iPad)\n🤖 Android 8+ (手機和平板)\n完全響應式設計，在任何螢幕尺寸上都能完美運作！',
+      '如何下載？': '下載非常簡單！\n1️⃣ iOS 用戶：點擊「App Store」按鈕\n2️⃣ Android 用戶：點擊「Google Play」按鈕\n3️⃣ 安裝後即可立即使用，無需註冊！\n完全免費，無廣告，無內購！',
+      '價格': '我們的 App 完全免費！無廣告，無內購，所有功能都可以免費使用。我們相信好的工具應該讓每個人都能享用。',
+      '安全': '安全是我們的首要任務：\n🔐 端到端加密\n🛡️ 符合 GDPR 規範\n🔒 本地數據儲存選項\n✅ 定期安全審計\n您的隱私和數據安全由我們全力保護！',
+      '更新': '我們持續改進 App：\n✨ 每月定期更新\n🐛 快速修復問題\n💡 根據用戶反饋添加新功能\n最新版本是 v3.0，剛剛發布！'
+    };
+
+    // Toggle chat window
+    chatButton.addEventListener('click', () => {
+      chatWindow.classList.toggle('hidden');
+      chatWindow.classList.toggle('flex');
+      if (!chatWindow.classList.contains('hidden')) {
+        chatInput.focus();
+      }
+    });
+
+    closeChatButton.addEventListener('click', () => {
+      chatWindow.classList.add('hidden');
+      chatWindow.classList.remove('flex');
+    });
+
+    // Send message function
+    function sendMessage(message) {
+      if (!message.trim()) return;
+
+      // Add user message
+      const userBubble = document.createElement('div');
+      userBubble.className = 'chat-bubble bg-blue-500 text-white p-3 rounded-lg shadow-sm ml-auto';
+      userBubble.innerHTML = `<p class="text-sm">${message}</p>`;
+      chatMessages.appendChild(userBubble);
+
+      // Scroll to bottom
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // Show typing indicator
+      const typingIndicator = document.createElement('div');
+      typingIndicator.className = 'chat-bubble bg-white p-3 rounded-lg shadow-sm';
+      typingIndicator.innerHTML = '<p class="text-sm text-gray-500">AI 正在輸入...</p>';
+      chatMessages.appendChild(typingIndicator);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // Simulate AI response delay
+      setTimeout(() => {
+        chatMessages.removeChild(typingIndicator);
+
+        // Find matching response
+        let response = '我理解您的問題。關於「' + message + '」，';
+        let found = false;
+
+        for (let key in aiResponses) {
+          if (message.toLowerCase().includes(key.toLowerCase()) ||
+              key.toLowerCase().includes(message.toLowerCase())) {
+            response = aiResponses[key];
+            found = true;
+            break;
+          }
+        }
+
+        if (!found) {
+          response += '請您詳細說明，或者選擇下方的快速選項：\n• App 有哪些功能？\n• 支援哪些設備？\n• 如何下載？';
+        }
+
+        // Add AI response
+        const aiBubble = document.createElement('div');
+        aiBubble.className = 'chat-bubble bg-white p-3 rounded-lg shadow-sm';
+        aiBubble.innerHTML = `<p class="text-sm text-gray-700 whitespace-pre-line">${response}</p>`;
+        chatMessages.appendChild(aiBubble);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }, 1000);
+
+      chatInput.value = '';
+    }
+
+    // Send button click
+    sendButton.addEventListener('click', () => {
+      sendMessage(chatInput.value);
+    });
+
+    // Enter key to send
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendMessage(chatInput.value);
+      }
+    });
+
+    // Quick reply buttons
+    quickReplyButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        sendMessage(button.textContent);
+      });
+    });
+
+    // Device Detection
+    const deviceBanner = document.getElementById('deviceBanner');
+    const deviceMessage = document.getElementById('deviceMessage');
+    const dismissBanner = document.getElementById('dismissBanner');
+
+    function detectDevice() {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isIOS = /iphone|ipad|ipod/.test(userAgent);
+      const isAndroid = /android/.test(userAgent);
+
+      if (isIOS) {
+        deviceMessage.textContent = '檢測到您使用 iOS 設備！立即前往 App Store 下載';
+        deviceBanner.classList.remove('hidden');
+        setTimeout(() => {
+          document.querySelector('a[href*="apps.apple.com"]')?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }, 2000);
+      } else if (isAndroid) {
+        deviceMessage.textContent = '檢測到您使用 Android 設備！立即前往 Google Play 下載';
+        deviceBanner.classList.remove('hidden');
+        setTimeout(() => {
+          document.querySelector('a[href*="play.google.com"]')?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }, 2000);
+      }
+    }
+
+    dismissBanner.addEventListener('click', () => {
+      deviceBanner.classList.add('hidden');
+    });
+
+    // Run device detection on load
+    setTimeout(detectDevice, 1500);
+
+    // Scroll reveal animation
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+        }
+      });
+    }, observerOptions);
+
+    // Add scroll-reveal class to sections
+    document.addEventListener('DOMContentLoaded', () => {
+      const sections = document.querySelectorAll('section');
+      sections.forEach((section, index) => {
+        if (index > 0) { // Skip first section (hero)
+          section.classList.add('scroll-reveal');
+          observer.observe(section);
+        }
+      });
+
+      // Add animation to feature cards
+      const featureCards = document.querySelectorAll('#features > div > div > div');
+      featureCards.forEach((card, index) => {
+        card.classList.add('scroll-reveal');
+        card.style.transitionDelay = `${index * 0.1}s`;
+        observer.observe(card);
+      });
+    });
+
+    // Smooth scroll for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Analytics tracking (placeholder - replace with your analytics)
+    function trackEvent(eventName, eventData) {
+      console.log('Event tracked:', eventName, eventData);
+      // Example: gtag('event', eventName, eventData);
+      // Example: plausible(eventName, { props: eventData });
+    }
+
+    // Track download button clicks
+    document.querySelectorAll('a[href*="apps.apple.com"], a[href*="play.google.com"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        const platform = link.href.includes('apple') ? 'ios' : 'android';
+        trackEvent('download_click', { platform: platform });
+      });
+    });
+
+    // Track chat interactions
+    chatButton.addEventListener('click', () => {
+      trackEvent('chat_opened');
+    });
+  </script>
 </body>
 </html>
