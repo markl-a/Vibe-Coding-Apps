@@ -43,13 +43,273 @@ let powerUps;
 let lastShotTime = 0;
 let shootDelay = 300;
 
+// AI 輔助變數
+let aiAssistEnabled = false;
+let aiAssistText;
+let aiDifficultyLevel = 1; // 1: 簡單, 2: 中等, 3: 困難
+let aiSuggestions = [];
+let aiTargetIndicator;
+
+// 音效系統變數
+let soundEnabled = true;
+let audioContext;
+let sounds = {};
+
 const game = new Phaser.Game(config);
 
+// ============== 音效系統 ==============
+// 創建 Web Audio API 音效
+function initAudioSystem() {
+    if (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined') {
+        audioContext = new (AudioContext || webkitAudioContext)();
+    }
+}
+
+// 播放射擊音效
+function playShootSound() {
+    if (!soundEnabled || !audioContext) return;
+
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.1);
+
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.1);
+}
+
+// 播放爆炸音效
+function playExplosionSound() {
+    if (!soundEnabled || !audioContext) return;
+
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    const filter = audioContext.createBiquadFilter();
+
+    oscillator.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.type = 'sawtooth';
+    oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.3);
+
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(2000, audioContext.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.3);
+
+    gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.3);
+}
+
+// 播放道具拾取音效
+function playPowerUpSound() {
+    if (!soundEnabled || !audioContext) return;
+
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+    oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.2);
+
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime + 0.3);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.3);
+}
+
+// 播放受傷音效
+function playHitSound() {
+    if (!soundEnabled || !audioContext) return;
+
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.type = 'square';
+    oscillator.frequency.setValueAtTime(100, audioContext.currentTime);
+
+    gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.2);
+}
+
+// ============== AI 輔助系統 ==============
+// AI 自動瞄準輔助
+function aiAimAssist(scene) {
+    if (!aiAssistEnabled || !player) return null;
+
+    const activeEnemies = enemies.getChildren().filter(e => e.active);
+    if (activeEnemies.length === 0) return null;
+
+    // 找到最近的敵人
+    let nearestEnemy = null;
+    let minDistance = Infinity;
+
+    activeEnemies.forEach(enemy => {
+        const distance = Phaser.Math.Distance.Between(player.x, player.y, enemy.x, enemy.y);
+        if (distance < minDistance) {
+            minDistance = distance;
+            nearestEnemy = enemy;
+        }
+    });
+
+    return nearestEnemy;
+}
+
+// AI 難度動態調整
+function aiAdjustDifficulty() {
+    // 根據玩家表現調整難度
+    if (score > 500 && aiDifficultyLevel < 3) {
+        aiDifficultyLevel = 3;
+    } else if (score > 200 && aiDifficultyLevel < 2) {
+        aiDifficultyLevel = 2;
+    }
+
+    // 調整敵人速度和射擊頻率
+    enemySpeed = 100 + (aiDifficultyLevel * 20);
+}
+
+// AI 生成遊戲建議
+function aiGenerateSuggestions(scene) {
+    aiSuggestions = [];
+
+    // 檢查危險的敵人子彈
+    const dangerousBullets = enemyBullets.getChildren().filter(bullet => {
+        return bullet.active &&
+               Math.abs(bullet.x - player.x) < 50 &&
+               bullet.y > player.y - 100;
+    });
+
+    if (dangerousBullets.length > 0) {
+        aiSuggestions.push('⚠️ 小心敵人子彈！');
+    }
+
+    // 檢查是否有道具
+    const nearbyPowerUps = powerUps.getChildren().filter(powerUp => {
+        return powerUp.active &&
+               Phaser.Math.Distance.Between(player.x, player.y, powerUp.x, powerUp.y) < 100;
+    });
+
+    if (nearbyPowerUps.length > 0) {
+        aiSuggestions.push('⭐ 附近有道具！');
+    }
+
+    // 檢查敵人數量
+    const activeEnemies = enemies.countActive();
+    if (activeEnemies > 10) {
+        aiSuggestions.push('🎯 專注消滅敵人！');
+    }
+}
+
+// AI 智能關卡生成
+function aiGenerateWave(scene) {
+    const patterns = [
+        'grid',      // 網格陣型
+        'vformation', // V字型
+        'circle',    // 圓形
+        'wave'       // 波浪形
+    ];
+
+    const pattern = Phaser.Utils.Array.GetRandom(patterns);
+    const enemyCount = 10 + (aiDifficultyLevel * 5);
+
+    switch(pattern) {
+        case 'grid':
+            createGridWave(scene, enemyCount);
+            break;
+        case 'vformation':
+            createVFormationWave(scene, enemyCount);
+            break;
+        case 'circle':
+            createCircleWave(scene, enemyCount);
+            break;
+        case 'wave':
+            createWavePattern(scene, enemyCount);
+            break;
+    }
+}
+
+function createGridWave(scene, count) {
+    const rows = 3;
+    const cols = 6;
+    const spacing = 60;
+    const startX = (config.width - (cols - 1) * spacing) / 2;
+
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            const x = startX + col * spacing;
+            const y = 50 + row * 50;
+            createEnemy(scene, x, y);
+        }
+    }
+}
+
+function createVFormationWave(scene, count) {
+    const centerX = config.width / 2;
+    const rows = 5;
+
+    for (let i = 0; i < rows; i++) {
+        const spacing = 40 + (i * 20);
+        createEnemy(scene, centerX - spacing, 50 + i * 40);
+        createEnemy(scene, centerX + spacing, 50 + i * 40);
+    }
+    createEnemy(scene, centerX, 50);
+}
+
+function createCircleWave(scene, count) {
+    const centerX = config.width / 2;
+    const centerY = 150;
+    const radius = 80;
+
+    for (let i = 0; i < count; i++) {
+        const angle = (i / count) * Math.PI * 2;
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+        createEnemy(scene, x, y);
+    }
+}
+
+function createWavePattern(scene, count) {
+    const cols = Math.min(count, 10);
+    const spacing = config.width / (cols + 1);
+
+    for (let i = 0; i < cols; i++) {
+        const x = spacing * (i + 1);
+        const y = 50 + Math.sin(i * 0.5) * 30;
+        createEnemy(scene, x, y);
+    }
+}
+
+// ============== 遊戲核心函數 ==============
 function preload() {
     // 程序化生成所有圖形
 }
 
 function create() {
+    // 初始化音效系統
+    initAudioSystem();
+
     // 讀取最高分
     highScore = localStorage.getItem('spaceShooterHighScore') || 0;
 
@@ -110,6 +370,15 @@ function create() {
         strokeThickness: 3
     }).setOrigin(1, 0);
 
+    // AI 輔助文字
+    aiAssistText = this.add.text(config.width / 2, config.height - 30, '', {
+        fontSize: '16px',
+        fill: '#ffff00',
+        fontStyle: 'bold',
+        stroke: '#000',
+        strokeThickness: 2
+    }).setOrigin(0.5);
+
     // 標題文字
     titleText = this.add.text(config.width / 2, 250, '太空射擊', {
         fontSize: '64px',
@@ -128,12 +397,13 @@ function create() {
         repeat: -1
     });
 
-    startText = this.add.text(config.width / 2, 400, '按 ENTER 開始', {
-        fontSize: '32px',
+    startText = this.add.text(config.width / 2, 400, '按 ENTER 開始\n按 A 切換 AI 輔助', {
+        fontSize: '28px',
         fill: '#ffffff',
         fontStyle: 'bold',
         stroke: '#000',
-        strokeThickness: 4
+        strokeThickness: 4,
+        align: 'center'
     }).setOrigin(0.5);
 
     this.tweens.add({
@@ -155,6 +425,18 @@ function create() {
         if (gameStarted && !gameOver) {
             shoot(this);
         }
+    });
+
+    // AI 輔助切換
+    this.input.keyboard.on('keydown-A', () => {
+        aiAssistEnabled = !aiAssistEnabled;
+        const message = aiAssistEnabled ? 'AI 輔助已開啟' : 'AI 輔助已關閉';
+        aiAssistText.setText(message);
+        this.time.delayedCall(2000, () => {
+            if (!gameStarted) {
+                aiAssistText.setText('');
+            }
+        });
     });
 
     // WASD 控制
@@ -287,37 +569,21 @@ function startGame(scene) {
     titleText.setVisible(false);
     startText.setVisible(false);
 
-    // 創建第一波敵人
-    createEnemyWave(scene);
+    // 使用 AI 生成第一波敵人
+    aiGenerateWave(scene);
 
     // 定時生成敵人
     scene.time.addEvent({
-        delay: 3000,
+        delay: 4000,
         callback: () => {
             if (!gameOver && gameStarted) {
-                createEnemyWave(scene);
+                aiGenerateWave(scene);
+                waveNumber++;
             }
         },
         callbackScope: scene,
         loop: true
     });
-}
-
-function createEnemyWave(scene) {
-    const rows = 3;
-    const cols = 6;
-    const spacing = 60;
-    const startX = (config.width - (cols - 1) * spacing) / 2;
-
-    for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < cols; col++) {
-            const x = startX + col * spacing;
-            const y = 50 + row * 50;
-            createEnemy(scene, x, y);
-        }
-    }
-
-    waveNumber++;
 }
 
 function shoot(scene) {
@@ -338,6 +604,9 @@ function shoot(scene) {
         bullet.setVisible(true);
         bullet.setVelocityY(-400);
         bullet.body.enable = true;
+
+        // 播放射擊音效
+        playShootSound();
     }
 }
 
@@ -371,21 +640,29 @@ function hitEnemy(bullet, enemy) {
         highScoreText.setText(`最高分: ${highScore}`);
     }
 
+    // 播放爆炸音效
+    playExplosionSound();
+
     // 隨機掉落道具
-    if (Math.random() < 0.1) {
+    if (Math.random() < 0.15) {
         createPowerUp(this, enemy.x, enemy.y);
     }
+
+    // AI 動態難度調整
+    aiAdjustDifficulty();
 }
 
 function hitPlayer(player, enemy) {
     createExplosion(this, player.x, player.y);
     enemy.destroy();
+    playHitSound();
     loseLife(this);
 }
 
 function hitPlayerWithBullet(player, bullet) {
     bullet.destroy();
     createExplosion(this, player.x, player.y);
+    playHitSound();
     loseLife(this);
 }
 
@@ -414,12 +691,30 @@ function collectPowerUp(player, powerUp) {
     // 增加分數
     score += 50;
     scoreText.setText(`分數: ${score}`);
+
+    // 播放道具音效
+    playPowerUpSound();
 }
 
 function createExplosion(scene, x, y) {
-    // 簡單的爆炸效果
-    const explosion = scene.add.circle(x, y, 5, 0xff6600);
+    // 粒子爆炸效果
+    for (let i = 0; i < 8; i++) {
+        const particle = scene.add.circle(x, y, 3, 0xff6600);
+        const angle = (i / 8) * Math.PI * 2;
+        const speed = 100;
 
+        scene.tweens.add({
+            targets: particle,
+            x: x + Math.cos(angle) * 30,
+            y: y + Math.sin(angle) * 30,
+            alpha: 0,
+            duration: 500,
+            onComplete: () => particle.destroy()
+        });
+    }
+
+    // 中心爆炸
+    const explosion = scene.add.circle(x, y, 5, 0xff6600);
     scene.tweens.add({
         targets: explosion,
         radius: 30,
@@ -484,6 +779,8 @@ function resetGame() {
     gameStarted = false;
     level = 1;
     waveNumber = 1;
+    aiDifficultyLevel = 1;
+    enemySpeed = 100;
 }
 
 function update(time, delta) {
@@ -496,6 +793,31 @@ function update(time, delta) {
         player.setVelocityX(300);
     } else {
         player.setVelocityX(0);
+    }
+
+    // AI 輔助：顯示最近的敵人
+    if (aiAssistEnabled) {
+        const target = aiAimAssist(this);
+        if (target) {
+            // 繪製目標指示器
+            if (!aiTargetIndicator) {
+                aiTargetIndicator = this.add.circle(0, 0, 20, 0xff0000, 0);
+                aiTargetIndicator.setStrokeStyle(2, 0xff0000);
+            }
+            aiTargetIndicator.setPosition(target.x, target.y);
+            aiTargetIndicator.setAlpha(Math.sin(time * 0.005) * 0.5 + 0.5);
+        }
+
+        // 生成 AI 建議
+        aiGenerateSuggestions(this);
+        if (aiSuggestions.length > 0) {
+            aiAssistText.setText(aiSuggestions[0]);
+        } else {
+            aiAssistText.setText('');
+        }
+    } else if (aiTargetIndicator) {
+        aiTargetIndicator.setAlpha(0);
+        aiAssistText.setText('');
     }
 
     // 清理離開螢幕的子彈
@@ -518,9 +840,10 @@ function update(time, delta) {
         }
     });
 
-    // 敵人射擊
+    // 敵人射擊（根據難度調整頻率）
     enemyShootTimer += delta;
-    if (enemyShootTimer > 1500) {
+    const shootInterval = 2000 - (aiDifficultyLevel * 300);
+    if (enemyShootTimer > shootInterval) {
         enemyShootTimer = 0;
         const activeEnemies = enemies.getChildren().filter(e => e.active);
         if (activeEnemies.length > 0) {
@@ -540,8 +863,7 @@ function update(time, delta) {
 
     // 檢查是否所有敵人都被消滅
     if (gameStarted && enemies.countActive() === 0 && enemyBullets.countActive() === 0) {
-        // 可以在這裡增加關卡難度
-        enemySpeed += 10;
+        // 增加關卡難度
         level++;
     }
 }
