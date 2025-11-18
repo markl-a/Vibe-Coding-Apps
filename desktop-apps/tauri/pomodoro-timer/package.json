@@ -1,9 +1,9 @@
 {
-  "name": "color-picker",
+  "name": "pomodoro-timer",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.1.0",
   "type": "module",
-  "description": "智能配色方案生成器 - 使用 Tauri + React 構建",
+  "description": "AI 驅動的番茄工作法計時器",
   "author": "Vibe Coding Apps",
   "license": "MIT",
   "scripts": {
@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^2.0.0",
-    "@tauri-apps/plugin-clipboard-manager": "^2.0.0",
+    "@tauri-apps/plugin-notification": "^2.0.0",
+    "@tauri-apps/plugin-global-shortcut": "^2.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

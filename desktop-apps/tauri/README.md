@@ -4,6 +4,27 @@
 
 使用 Tauri 框架和 AI 輔助開發工具打造輕量、安全、高效能的現代化桌面應用程式。
 
+## 🆕 最新更新 (2025-11)
+
+### 已完成的改進
+✅ **Color Picker** - 升級到 React + TypeScript，添加 AI 智能配色功能
+- 現代化響應式 UI 設計
+- 10+ 種 AI 主題配色方案（日落、海洋、森林等）
+- 改進的歷史記錄管理
+- 更好的用戶體驗和動畫效果
+
+✅ **新增項目**: Pomodoro Timer（進行中）
+- AI 驅動的番茄工作法計時器
+- 智能休息建議和專注力分析
+- 任務管理和統計追蹤
+
+### 計劃中的改進
+🔲 Quick Notes - 添加 AI 筆記摘要功能
+🔲 System Monitor - 添加歷史圖表和趨勢分析
+🔲 File Encryptor - UI 優化和批次處理
+🔲 新項目：Clipboard Manager（剪貼板管理器）
+🔲 新項目：Screenshot Tool with OCR（截圖 + 文字識別）
+
 ## 📋 專案簡介
 
 Tauri 是一個使用 Rust 建立的跨平台桌面應用框架，結合 Web 前端技術，提供比 Electron 更小的應用體積和更低的資源消耗。
