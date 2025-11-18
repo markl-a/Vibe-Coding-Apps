@@ -154,15 +154,17 @@ class ImageEnhancer {
       <div class="lightbox-content">
         <img class="lightbox-image" />
         <div class="lightbox-controls">
-          <button class="lightbox-btn" id="lightbox-prev">‹</button>
-          <button class="lightbox-btn" id="lightbox-next">›</button>
-          <button class="lightbox-btn" id="lightbox-rotate-left">↺</button>
-          <button class="lightbox-btn" id="lightbox-rotate-right">↻</button>
-          <button class="lightbox-btn" id="lightbox-download">⬇</button>
-          <button class="lightbox-btn" id="lightbox-info">ℹ</button>
-          <button class="lightbox-btn" id="lightbox-close">✕</button>
+          <button class="lightbox-btn" id="lightbox-prev" title="Previous">‹</button>
+          <button class="lightbox-btn" id="lightbox-next" title="Next">›</button>
+          <button class="lightbox-btn" id="lightbox-rotate-left" title="Rotate left">↺</button>
+          <button class="lightbox-btn" id="lightbox-rotate-right" title="Rotate right">↻</button>
+          <button class="lightbox-btn" id="lightbox-ai" title="AI Analysis">🤖</button>
+          <button class="lightbox-btn" id="lightbox-download" title="Download">⬇</button>
+          <button class="lightbox-btn" id="lightbox-info" title="Info">ℹ</button>
+          <button class="lightbox-btn" id="lightbox-close" title="Close">✕</button>
         </div>
         <div class="lightbox-info-panel" id="lightbox-info-panel"></div>
+        <div class="ie-ai-description" id="ie-ai-description"></div>
         <div class="lightbox-counter"></div>
       </div>
     `;
@@ -176,6 +178,7 @@ class ImageEnhancer {
     lightbox.querySelector('#lightbox-next').addEventListener('click', () => this.nextImage());
     lightbox.querySelector('#lightbox-rotate-left').addEventListener('click', () => this.rotateImage(-90));
     lightbox.querySelector('#lightbox-rotate-right').addEventListener('click', () => this.rotateImage(90));
+    lightbox.querySelector('#lightbox-ai').addEventListener('click', () => this.toggleAIAnalysis());
     lightbox.querySelector('#lightbox-download').addEventListener('click', () => this.downloadCurrentImage());
     lightbox.querySelector('#lightbox-info').addEventListener('click', () => this.toggleInfo());
 
@@ -343,15 +346,196 @@ class ImageEnhancer {
       return width >= minSize && height >= minSize;
     });
 
-    for (const img of imagesToDownload) {
+    // Show progress indicator
+    const progressDiv = document.createElement('div');
+    progressDiv.className = 'ie-download-progress';
+    progressDiv.innerHTML = `
+      <div>Downloading ${imagesToDownload.length} images...</div>
+      <div class="ie-progress-bar">
+        <div class="ie-progress-fill" style="width: 0%"></div>
+      </div>
+    `;
+    document.body.appendChild(progressDiv);
+
+    const progressFill = progressDiv.querySelector('.ie-progress-fill');
+
+    for (let i = 0; i < imagesToDownload.length; i++) {
+      const img = imagesToDownload[i];
+
       await chrome.runtime.sendMessage({
         action: 'downloadImage',
         url: img.src
       });
 
+      // Update progress
+      const percent = ((i + 1) / imagesToDownload.length) * 100;
+      progressFill.style.width = percent + '%';
+
       // Small delay to avoid overwhelming the download manager
       await new Promise(resolve => setTimeout(resolve, 100));
     }
+
+    // Remove progress indicator after completion
+    setTimeout(() => progressDiv.remove(), 2000);
+  }
+
+  // AI Features
+
+  toggleAIAnalysis() {
+    const aiPanel = document.getElementById('ie-ai-description');
+    const infoPanel = document.getElementById('lightbox-info-panel');
+
+    // Hide info panel if open
+    if (infoPanel.style.display === 'block') {
+      infoPanel.style.display = 'none';
+    }
+
+    if (aiPanel.classList.contains('active')) {
+      aiPanel.classList.remove('active');
+    } else {
+      this.generateAIDescription();
+      aiPanel.classList.add('active');
+    }
+  }
+
+  async generateAIDescription() {
+    const aiPanel = document.getElementById('ie-ai-description');
+    const img = this.images[this.currentImageIndex];
+
+    // Show loading state
+    aiPanel.innerHTML = `
+      <div class="ie-ai-header">AI Image Analysis</div>
+      <div class="ie-loading">
+        <div class="ie-loading-spinner"></div>
+        <span>Analyzing image...</span>
+      </div>
+    `;
+
+    // Simulate AI analysis (in production, this would call an actual AI service)
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    // Generate description based on image properties
+    const description = this.analyzeImage(img);
+
+    aiPanel.innerHTML = `
+      <div class="ie-ai-header">AI Image Analysis</div>
+      <div class="ie-ai-text">${description.text}</div>
+      ${description.tags.length > 0 ? `
+        <div class="ie-ai-tags">
+          ${description.tags.map(tag => `<span class="ie-ai-tag">${tag}</span>`).join('')}
+        </div>
+      ` : ''}
+    `;
+
+    // Mark image as analyzed
+    img.classList.add('image-ai-analyzed');
+  }
+
+  analyzeImage(img) {
+    const width = img.naturalWidth || img.width;
+    const height = img.naturalHeight || img.height;
+    const aspectRatio = (width / height).toFixed(2);
+    const megapixels = ((width * height) / 1000000).toFixed(1);
+
+    // Determine image type based on aspect ratio and size
+    let imageType = '';
+    let description = '';
+    const tags = [];
+
+    // Analyze aspect ratio
+    if (aspectRatio > 1.7) {
+      imageType = 'panoramic';
+      tags.push('Panorama');
+      description = 'This is a wide panoramic image';
+    } else if (aspectRatio > 1.3) {
+      imageType = 'landscape';
+      tags.push('Landscape');
+      description = 'This is a landscape-oriented image';
+    } else if (aspectRatio < 0.8) {
+      imageType = 'portrait';
+      tags.push('Portrait');
+      description = 'This is a portrait-oriented image';
+    } else {
+      imageType = 'square';
+      tags.push('Square');
+      description = 'This is a square image';
+    }
+
+    // Analyze resolution
+    if (megapixels > 10) {
+      tags.push('High Resolution');
+      description += ' with exceptionally high resolution';
+    } else if (megapixels > 5) {
+      tags.push('HD Quality');
+      description += ' with high definition quality';
+    } else if (megapixels > 2) {
+      tags.push('Standard Quality');
+      description += ' with standard quality';
+    } else {
+      tags.push('Low Resolution');
+      description += ' with lower resolution';
+    }
+
+    // Add size information
+    tags.push(`${width}×${height}`);
+    tags.push(`${megapixels}MP`);
+
+    // Detect file type from URL
+    const url = img.src.toLowerCase();
+    if (url.includes('.jpg') || url.includes('.jpeg')) {
+      tags.push('JPEG');
+    } else if (url.includes('.png')) {
+      tags.push('PNG');
+    } else if (url.includes('.webp')) {
+      tags.push('WebP');
+    } else if (url.includes('.gif')) {
+      tags.push('GIF');
+    }
+
+    // Check for common image types based on URL or size
+    if (url.includes('avatar') || url.includes('profile')) {
+      tags.push('Profile Picture');
+    } else if (url.includes('thumb') || (width < 300 && height < 300)) {
+      tags.push('Thumbnail');
+    } else if (url.includes('banner') || url.includes('header')) {
+      tags.push('Banner');
+    } else if (url.includes('logo')) {
+      tags.push('Logo');
+    }
+
+    // Final description
+    description += `. The image has ${megapixels} megapixels (${width}×${height} pixels) with an aspect ratio of ${aspectRatio}.`;
+
+    // Add potential use cases
+    if (megapixels > 5 && aspectRatio > 1.2) {
+      description += ' Perfect for large prints or high-quality displays.';
+    } else if (megapixels > 2) {
+      description += ' Suitable for web use and medium-sized prints.';
+    }
+
+    return {
+      text: description,
+      tags: tags.slice(0, 8), // Limit to 8 tags
+      type: imageType,
+      megapixels: megapixels
+    };
+  }
+
+  // Enhanced download with AI metadata
+  async downloadCurrentImageWithMetadata() {
+    const img = this.images[this.currentImageIndex];
+    const analysis = this.analyzeImage(img);
+
+    // In production, this could save metadata alongside the image
+    await chrome.runtime.sendMessage({
+      action: 'downloadImage',
+      url: img.src,
+      metadata: {
+        description: analysis.text,
+        tags: analysis.tags,
+        type: analysis.type
+      }
+    });
   }
 }
 

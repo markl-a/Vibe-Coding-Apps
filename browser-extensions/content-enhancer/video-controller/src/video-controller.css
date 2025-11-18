@@ -66,3 +66,249 @@
 .vc-speed.changed {
   animation: pulse 0.3s ease;
 }
+
+/* AI Subtitle Panel */
+.vc-subtitle-panel {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 800px;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 12px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.vc-subtitle-panel.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.vc-subtitle-text {
+  font-size: 18px;
+  line-height: 1.6;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.vc-subtitle-translation {
+  font-size: 14px;
+  color: #a0a0a0;
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* AI Summary Panel */
+.vc-summary-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 350px;
+  max-height: 600px;
+  background: rgba(20, 20, 20, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  z-index: 10000;
+  overflow: hidden;
+  transform: translateX(400px);
+  transition: transform 0.3s ease;
+}
+
+.vc-summary-panel.active {
+  transform: translateX(0);
+}
+
+.vc-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(40, 40, 40, 0.8);
+}
+
+.vc-summary-title {
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vc-summary-close {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.vc-summary-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.vc-summary-content {
+  padding: 16px;
+  max-height: 500px;
+  overflow-y: auto;
+  color: #e0e0e0;
+  line-height: 1.6;
+}
+
+.vc-summary-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.vc-summary-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.vc-summary-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.vc-summary-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.vc-summary-section {
+  margin-bottom: 16px;
+}
+
+.vc-summary-section h4 {
+  color: #4da6ff;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.vc-summary-section p {
+  font-size: 13px;
+  color: #c0c0c0;
+  margin: 4px 0;
+}
+
+.vc-summary-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.vc-summary-section li {
+  font-size: 13px;
+  color: #c0c0c0;
+  padding: 4px 0 4px 16px;
+  position: relative;
+}
+
+.vc-summary-section li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #4da6ff;
+}
+
+.vc-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.vc-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #4da6ff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Timestamp Markers */
+.vc-timestamp-markers {
+  position: absolute;
+  bottom: 60px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  z-index: 9998;
+}
+
+.vc-timestamp-marker {
+  background: rgba(77, 166, 255, 0.9);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(10px);
+}
+
+.vc-timestamp-marker:hover {
+  background: rgba(77, 166, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(77, 166, 255, 0.4);
+}
+
+/* AI Analysis Badge */
+.vc-ai-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.vc-ai-badge:before {
+  content: "✨";
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .vc-summary-panel {
+    width: calc(100% - 40px);
+    right: 20px;
+    max-height: 400px;
+  }
+
+  .vc-subtitle-panel {
+    max-width: calc(100% - 40px);
+    bottom: 60px;
+  }
+}

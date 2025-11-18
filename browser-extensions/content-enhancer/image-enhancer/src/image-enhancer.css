@@ -146,6 +146,228 @@
   }
 }
 
+/* AI Description Panel */
+.ie-ai-description {
+  position: absolute;
+  bottom: 100px;
+  left: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 15px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  max-width: 600px;
+  margin: 0 auto;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.ie-ai-description.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.ie-ai-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ie-ai-header:before {
+  content: "✨";
+  font-size: 20px;
+}
+
+.ie-ai-text {
+  font-size: 14px;
+  line-height: 1.6;
+  opacity: 0.95;
+}
+
+.ie-ai-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ie-ai-tag {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  backdrop-filter: blur(10px);
+}
+
+/* AI Analysis Badge on Images */
+.image-ai-analyzed {
+  position: relative;
+}
+
+.image-ai-analyzed:after {
+  content: "AI ✓";
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+  z-index: 10;
+}
+
+/* Image Comparison Slider */
+.ie-comparison-slider {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 800px;
+  background: rgba(20, 20, 20, 0.95);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  display: none;
+}
+
+.ie-comparison-slider.active {
+  display: block;
+}
+
+.ie-comparison-images {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.ie-comparison-image {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.ie-comparison-label {
+  color: white;
+  font-size: 12px;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+/* Filter Controls */
+.ie-filter-controls {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 15px;
+  border-radius: 12px;
+  color: white;
+  display: none;
+  max-width: 250px;
+}
+
+.ie-filter-controls.active {
+  display: block;
+}
+
+.ie-filter-group {
+  margin-bottom: 12px;
+}
+
+.ie-filter-group label {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 5px;
+  opacity: 0.8;
+}
+
+.ie-filter-group input[type="range"] {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  outline: none;
+}
+
+.ie-filter-group input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: #4da6ff;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.ie-filter-value {
+  float: right;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* Loading Spinner */
+.ie-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.ie-loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Bulk Download Progress */
+.ie-download-progress {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 12px;
+  min-width: 250px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  z-index: 999997;
+}
+
+.ie-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.ie-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4da6ff, #667eea);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .lightbox-controls {
@@ -172,5 +394,21 @@
     right: 10px;
     left: 10px;
     max-width: none;
+  }
+
+  .ie-ai-description {
+    bottom: 90px;
+    left: 10px;
+    right: 10px;
+    padding: 15px;
+  }
+
+  .ie-filter-controls {
+    left: 10px;
+    top: 10px;
+  }
+
+  .ie-comparison-images {
+    grid-template-columns: 1fr;
   }
 }
