@@ -130,7 +130,8 @@ class TwitterEnhancer {
       // 實作下載邏輯
       sendResponse({ success: true });
     } catch (error) {
-      sendResponse({ success: false, error: error.message });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      sendResponse({ success: false, error: errorMessage });
     }
   }
 
@@ -151,7 +152,8 @@ class TwitterEnhancer {
         }
       });
     } catch (error) {
-      sendResponse({ success: false, error: error.message });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      sendResponse({ success: false, error: errorMessage });
     }
   }
 }
