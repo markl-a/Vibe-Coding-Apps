@@ -1,0 +1,212 @@
+stages:
+  - build
+  - test
+  - performance
+  - report
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+# Build stage
+build:framework:
+  stage: build
+  image: gcc:latest
+  script:
+    - cd system-firmware/firmware-development/tests/test-framework
+    - gcc -Wall -Wextra -g -std=c11 -c test_framework.c -o test_framework.o
+    - gcc -Wall -Wextra -g -std=c11 -c test_utils.c -o test_utils.o
+    - gcc -Wall -Wextra -g -std=c11 -c mock.c -o mock.o
+  artifacts:
+    paths:
+      - system-firmware/firmware-development/tests/test-framework/*.o
+    expire_in: 1 hour
+
+build:unit-tests:
+  stage: build
+  image: gcc:latest
+  dependencies:
+    - build:framework
+  script:
+    - cd system-firmware/firmware-development/tests/unit-tests
+    - make clean
+    - make all
+  artifacts:
+    paths:
+      - system-firmware/firmware-development/tests/unit-tests/test_*
+    expire_in: 1 hour
+
+# Test stage
+test:unit:
+  stage: test
+  image: gcc:latest
+  dependencies:
+    - build:unit-tests
+  script:
+    - cd system-firmware/firmware-development/tests/unit-tests
+    - chmod +x test_all.sh
+    - ./test_all.sh
+  artifacts:
+    reports:
+      junit: system-firmware/firmware-development/tests/unit-tests/test_results.xml
+    when: always
+
+test:integration:
+  stage: test
+  image: gcc:latest
+  dependencies:
+    - build:framework
+  script:
+    - cd system-firmware/firmware-development/tests/integration-tests
+    - chmod +x run_integration_tests.sh
+    - ./run_integration_tests.sh
+  artifacts:
+    when: always
+    expire_in: 1 week
+
+test:hardware:
+  stage: test
+  image: gcc:latest
+  dependencies:
+    - build:framework
+  parallel:
+    matrix:
+      - PLATFORM: [stm32, esp32, nrf52]
+  script:
+    - cd system-firmware/firmware-development/tests/hardware-tests
+    - gcc -Wall -Wextra -g -std=c11 -I../test-framework
+        test_${PLATFORM}.c
+        ../test-framework/test_framework.c
+        ../test-framework/test_utils.c
+        ../test-framework/mock.c
+        -o test_${PLATFORM} -lm
+    - ./test_${PLATFORM}
+  artifacts:
+    when: always
+    expire_in: 1 week
+
+# Performance stage
+performance:benchmarks:
+  stage: performance
+  image: gcc:latest
+  dependencies:
+    - build:framework
+  script:
+    - cd system-firmware/firmware-development/tests/performance-tests
+    - gcc -Wall -Wextra -O2 -std=c11 -I../test-framework
+        benchmark_crypto.c
+        ../test-framework/test_framework.c
+        ../test-framework/test_utils.c
+        ../test-framework/mock.c
+        -o benchmark_crypto -lm
+    - gcc -Wall -Wextra -O2 -std=c11 -I../test-framework
+        benchmark_flash.c
+        ../test-framework/test_framework.c
+        ../test-framework/test_utils.c
+        ../test-framework/mock.c
+        -o benchmark_flash -lm
+    - gcc -Wall -Wextra -O2 -std=c11 -I../test-framework
+        benchmark_ota.c
+        ../test-framework/test_framework.c
+        ../test-framework/test_utils.c
+        ../test-framework/mock.c
+        -o benchmark_ota -lm
+    - ./benchmark_crypto
+    - ./benchmark_flash
+    - ./benchmark_ota
+  artifacts:
+    paths:
+      - system-firmware/firmware-development/tests/performance-tests/benchmark_*
+    expire_in: 1 week
+
+performance:report:
+  stage: performance
+  image: python:3.9
+  dependencies:
+    - performance:benchmarks
+  script:
+    - cd system-firmware/firmware-development/tests/performance-tests
+    - chmod +x generate_report.py
+    - python3 generate_report.py
+  artifacts:
+    paths:
+      - system-firmware/firmware-development/tests/performance-tests/performance_report.*
+    expire_in: 1 month
+
+# Report stage
+report:test-results:
+  stage: report
+  image: python:3.9
+  dependencies:
+    - test:unit
+    - test:integration
+    - test:hardware
+  script:
+    - cd system-firmware/firmware-development/tests
+    - chmod +x test_report.py
+    - python3 test_report.py
+  artifacts:
+    paths:
+      - system-firmware/firmware-development/tests/test_report.*
+    expire_in: 1 month
+
+report:code-coverage:
+  stage: report
+  image: gcc:latest
+  script:
+    - apt-get update && apt-get install -y gcovr
+    - cd system-firmware/firmware-development/tests/unit-tests
+    - gcc -Wall -Wextra -g -std=c11 --coverage -I../test-framework
+        test_secure_boot.c
+        ../test-framework/test_framework.c
+        ../test-framework/test_utils.c
+        ../test-framework/mock.c
+        -o test_secure_boot -lm
+    - ./test_secure_boot
+    - gcovr -r . --html --html-details -o coverage.html
+    - gcovr -r . --xml -o coverage.xml
+  coverage: '/lines: \d+\.\d+%/'
+  artifacts:
+    paths:
+      - system-firmware/firmware-development/tests/unit-tests/coverage.*
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: system-firmware/firmware-development/tests/unit-tests/coverage.xml
+    expire_in: 1 month
+
+# Static analysis
+static-analysis:
+  stage: test
+  image: gcc:latest
+  script:
+    - apt-get update && apt-get install -y cppcheck
+    - cd system-firmware/firmware-development
+    - cppcheck --enable=all --suppress=missingIncludeSystem
+        --inline-suppr --xml --xml-version=2
+        -I tests/test-framework
+        tests/unit-tests/*.c
+        tests/integration-tests/*.c
+        tests/performance-tests/*.c
+        tests/hardware-tests/*.c
+        2> cppcheck-report.xml
+  artifacts:
+    paths:
+      - system-firmware/firmware-development/cppcheck-report.xml
+    expire_in: 1 week
+
+# Nightly comprehensive tests
+nightly:full-suite:
+  stage: test
+  image: gcc:latest
+  only:
+    - schedules
+  script:
+    - cd system-firmware/firmware-development/tests
+    - chmod +x run_all_tests.sh
+    - ./run_all_tests.sh
+  artifacts:
+    when: always
+    paths:
+      - system-firmware/firmware-development/tests/test_report.*
+      - system-firmware/firmware-development/tests/performance-tests/performance_report.*
+    expire_in: 1 month

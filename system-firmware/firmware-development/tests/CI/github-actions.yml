@@ -1,0 +1,226 @@
+name: Firmware Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run Test Suite
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        gcc-version: [9, 10, 11]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup GCC ${{ matrix.gcc-version }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc-${{ matrix.gcc-version }} g++-${{ matrix.gcc-version }}
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${{ matrix.gcc-version }} 100
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-${{ matrix.gcc-version }} 100
+
+    - name: Verify GCC version
+      run: gcc --version
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get install -y make python3 python3-pip
+        pip3 install pytest
+
+    - name: Run all tests
+      run: |
+        cd system-firmware/firmware-development/tests
+        chmod +x run_all_tests.sh
+        ./run_all_tests.sh
+
+    - name: Generate test report
+      if: always()
+      run: |
+        cd system-firmware/firmware-development/tests
+        chmod +x test_report.py
+        python3 test_report.py
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results-gcc-${{ matrix.gcc-version }}
+        path: |
+          system-firmware/firmware-development/tests/test_report.html
+          system-firmware/firmware-development/tests/test_report.json
+          system-firmware/firmware-development/tests/test_report.md
+
+    - name: Upload performance report
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: performance-report-gcc-${{ matrix.gcc-version }}
+        path: |
+          system-firmware/firmware-development/tests/performance-tests/performance_report.html
+          system-firmware/firmware-development/tests/performance-tests/performance_report.json
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc make
+
+    - name: Build and run unit tests
+      run: |
+        cd system-firmware/firmware-development/tests/unit-tests
+        make clean
+        make all
+        chmod +x test_all.sh
+        ./test_all.sh
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc make
+
+    - name: Build and run integration tests
+      run: |
+        cd system-firmware/firmware-development/tests/integration-tests
+        chmod +x run_integration_tests.sh
+        ./run_integration_tests.sh
+
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc make python3
+
+    - name: Build and run performance tests
+      run: |
+        cd system-firmware/firmware-development/tests/performance-tests
+        gcc -Wall -Wextra -O2 -std=c11 -I../test-framework \
+          benchmark_crypto.c \
+          ../test-framework/test_framework.c \
+          ../test-framework/test_utils.c \
+          ../test-framework/mock.c \
+          -o benchmark_crypto -lm
+        ./benchmark_crypto
+
+    - name: Generate performance report
+      if: always()
+      run: |
+        cd system-firmware/firmware-development/tests/performance-tests
+        chmod +x generate_report.py
+        python3 generate_report.py
+
+  hardware-tests:
+    name: Hardware Tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        platform: [stm32, esp32, nrf52]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc make
+
+    - name: Build and run ${{ matrix.platform }} tests
+      run: |
+        cd system-firmware/firmware-development/tests/hardware-tests
+        gcc -Wall -Wextra -g -std=c11 -I../test-framework \
+          test_${{ matrix.platform }}.c \
+          ../test-framework/test_framework.c \
+          ../test-framework/test_utils.c \
+          ../test-framework/mock.c \
+          -o test_${{ matrix.platform }} -lm
+        ./test_${{ matrix.platform }}
+
+  code-coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc make gcovr lcov
+
+    - name: Build with coverage
+      run: |
+        cd system-firmware/firmware-development/tests/unit-tests
+        gcc -Wall -Wextra -g -std=c11 --coverage -I../test-framework \
+          test_secure_boot.c \
+          ../test-framework/test_framework.c \
+          ../test-framework/test_utils.c \
+          ../test-framework/mock.c \
+          -o test_secure_boot -lm
+        ./test_secure_boot
+
+    - name: Generate coverage report
+      run: |
+        cd system-firmware/firmware-development/tests/unit-tests
+        gcovr -r . --html --html-details -o coverage.html
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: system-firmware/firmware-development/tests/unit-tests/coverage*.html
+
+  static-analysis:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install cppcheck
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cppcheck
+
+    - name: Run cppcheck
+      run: |
+        cd system-firmware/firmware-development
+        cppcheck --enable=all --suppress=missingIncludeSystem \
+          --inline-suppr --error-exitcode=1 \
+          -I tests/test-framework \
+          tests/unit-tests/*.c \
+          tests/integration-tests/*.c \
+          tests/performance-tests/*.c \
+          tests/hardware-tests/*.c
