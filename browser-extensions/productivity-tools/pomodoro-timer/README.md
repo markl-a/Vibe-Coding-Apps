@@ -4,6 +4,7 @@
 
 ## ✨ Features
 
+### Core Features
 - **Classic Pomodoro Timer**: 25-minute work sessions with 5-minute breaks
 - **Customizable Intervals**: Adjust work, short break, and long break durations
 - **Visual & Audio Notifications**: Get notified when sessions complete
@@ -11,6 +12,17 @@
 - **Dark/Light Theme**: Beautiful UI that adapts to your preference
 - **Keyboard Shortcuts**: Quick access with keyboard commands
 - **Persistent State**: Resume your session even after closing the popup
+
+### 🤖 AI-Powered Insights (New!)
+- **📊 Productivity Analysis**: Track patterns and trends in your work habits
+- **💡 Personalized Recommendations**: Get AI-driven suggestions to optimize your focus time
+- **🔥 Streak Tracking**: Monitor your consistency and build productive habits
+- **⏰ Peak Performance Detection**: Discover your most productive times of day
+- **📈 Completion Rate Analysis**: Understand and improve your task completion
+- **☕ Smart Break Suggestions**: Receive context-aware activity suggestions for breaks
+- **📅 Weekly Pattern Analysis**: Identify your most productive days
+- **📊 AI-Generated Reports**: Get detailed productivity reports with actionable insights
+- **🎯 Optimal Duration Prediction**: AI suggests ideal focus session lengths based on your performance
 
 ## 🚀 Quick Start
 
@@ -64,6 +76,46 @@ Track your productivity:
 - Total focus time
 - Daily/Weekly/Monthly stats
 - Productivity trends
+
+## 🤖 AI Insights Tab
+
+Access powerful AI-driven productivity insights:
+
+### Productivity Analysis
+The AI analyzes your work patterns and provides:
+- **Success Insights**: Celebrate your streaks and achievements
+- **Warning Alerts**: Identify productivity drops early
+- **Performance Tips**: Get suggestions for your peak productivity times
+- **Completion Metrics**: Track and improve your task completion rates
+
+### Personalized Recommendations
+Receive tailored advice based on your unique work patterns:
+- Focus time optimization
+- Break frequency suggestions
+- Optimal scheduling recommendations
+- Session duration adjustments
+
+### Smart Break Activities
+During breaks, get context-aware suggestions like:
+- **Short Breaks** (5 min): Quick stretches, hydration, eye rest
+- **Long Breaks** (15 min): Walks, healthy snacks, meditation, planning
+
+### AI-Generated Reports
+Click "生成報告" to get a comprehensive productivity report including:
+- Total performance metrics
+- Current streaks
+- Peak productivity times
+- Actionable recommendations
+- Copy-to-clipboard functionality
+
+### How It Works
+1. Complete pomodoro sessions to build your data history
+2. Switch to the "🤖 AI 洞察" tab
+3. View real-time insights and recommendations
+4. Generate detailed reports as needed
+5. Apply suggestions to improve productivity
+
+**No API Key Required** - All AI analysis runs locally using intelligent algorithms!
 
 ## 🛠️ Tech Stack
 

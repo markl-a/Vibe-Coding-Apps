@@ -106,10 +106,21 @@ async function handleSessionComplete(sessionType: string) {
     // For now, we'll use the notification sound
   }
 
-  // Update stats
+  // Update stats and session history
   if (sessionType === 'work') {
     const today = new Date().toISOString().split('T')[0];
-    const statsResult = await chrome.storage.local.get(['pomodoroStats']);
+    const now = new Date();
+    const hour = now.getHours();
+
+    // Determine time of day
+    let timeOfDay: 'morning' | 'afternoon' | 'evening' | 'night';
+    if (hour >= 6 && hour < 12) timeOfDay = 'morning';
+    else if (hour >= 12 && hour < 18) timeOfDay = 'afternoon';
+    else if (hour >= 18 && hour < 22) timeOfDay = 'evening';
+    else timeOfDay = 'night';
+
+    // Update stats
+    const statsResult = await chrome.storage.local.get(['pomodoroStats', 'sessionHistory']);
     const stats = statsResult.pomodoroStats || {
       totalPomodoros: 0,
       totalFocusTime: 0,
@@ -122,7 +133,37 @@ async function handleSessionComplete(sessionType: string) {
     stats.totalFocusTime += settings.workDuration;
     stats.dailyPomodoros[today] = (stats.dailyPomodoros[today] || 0) + 1;
 
-    await chrome.storage.local.set({ pomodoroStats: stats });
+    // Update session history for AI analysis
+    const sessionHistory = statsResult.sessionHistory || [];
+
+    // Find or create today's session record
+    let todaySession = sessionHistory.find((s: any) => s.date === today);
+    if (!todaySession) {
+      todaySession = {
+        date: today,
+        pomodoros: 0,
+        focusTime: 0,
+        completionRate: 1.0,
+        timeOfDay: timeOfDay,
+        dayOfWeek: now.getDay()
+      };
+      sessionHistory.push(todaySession);
+    }
+
+    todaySession.pomodoros += 1;
+    todaySession.focusTime += settings.workDuration;
+    // Assume completion if session ended naturally
+    todaySession.completionRate = (todaySession.completionRate + 1.0) / 2;
+
+    // Keep only last 30 days of history
+    if (sessionHistory.length > 30) {
+      sessionHistory.shift();
+    }
+
+    await chrome.storage.local.set({
+      pomodoroStats: stats,
+      sessionHistory: sessionHistory
+    });
   }
 
   // Determine next session
