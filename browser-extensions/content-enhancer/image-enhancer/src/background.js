@@ -5,6 +5,7 @@ const defaultSettings = {
   hoverZoom: true,
   zoomLevel: 2,
   showInfo: true,
+  aiAnalysis: true, // Enable AI analysis
   filters: {
     brightness: 100,
     contrast: 100,
