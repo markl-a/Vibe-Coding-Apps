@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown 預覽器 - Markdown Previewer</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Highlight.js for code syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1>📝 Markdown 預覽器</h1>
+                <p class="subtitle">即時預覽、語法高亮、一鍵導出</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn-icon" id="toggle-mode-btn" title="切換檢視模式">
+                    <span id="mode-icon">⊞</span>
+                </button>
+                <button class="btn-icon" id="toggle-theme-btn" title="切換主題">
+                    🌙
+                </button>
+            </div>
+        </header>
+
+        <div class="toolbar">
+            <div class="toolbar-group">
+                <button class="toolbar-btn" onclick="mdPreviewer.insertMarkdown('# ', '')" title="標題 1">H1</button>
+                <button class="toolbar-btn" onclick="mdPreviewer.insertMarkdown('## ', '')" title="標題 2">H2</button>
+                <button class="toolbar-btn" onclick="mdPreviewer.insertMarkdown('### ', '')" title="標題 3">H3</button>
+            </div>
+            <div class="toolbar-separator"></div>
+            <div class="toolbar-group">
+                <button class="toolbar-btn" onclick="mdPreviewer.insertMarkdown('**', '**')" title="粗體">
+                    <strong>B</strong>
+                </button>
+                <button class="toolbar-btn" onclick="mdPreviewer.insertMarkdown('*', '*')" title="斜體">
+                    <em>I</em>
+                </button>
+                <button class="toolbar-btn" onclick="mdPreviewer.insertMarkdown('~~', '~~')" title="刪除線">
+                    <s>S</s>
+                </button>
+                <button class="toolbar-btn" onclick="mdPreviewer.insertMarkdown('`', '`')" title="行內程式碼">
+                    &lt;/&gt;
+                </button>
+            </div>
+            <div class="toolbar-separator"></div>
+            <div class="toolbar-group">
+                <button class="toolbar-btn" onclick="mdPreviewer.insertMarkdown('- ', '')" title="無序列表">• 列表</button>
+                <button class="toolbar-btn" onclick="mdPreviewer.insertMarkdown('1. ', '')" title="有序列表">1. 列表</button>
+                <button class="toolbar-btn" onclick="mdPreviewer.insertMarkdown('- [ ] ', '')" title="待辦事項">☑ 待辦</button>
+            </div>
+            <div class="toolbar-separator"></div>
+            <div class="toolbar-group">
+                <button class="toolbar-btn" onclick="mdPreviewer.insertMarkdown('[', '](url)')" title="連結">🔗 連結</button>
+                <button class="toolbar-btn" onclick="mdPreviewer.insertMarkdown('![alt](', ')')" title="圖片">🖼️ 圖片</button>
+                <button class="toolbar-btn" onclick="mdPreviewer.insertMarkdown('> ', '')" title="引用">❝ 引用</button>
+                <button class="toolbar-btn" onclick="mdPreviewer.insertMarkdown('\n```\n', '\n```\n')" title="程式碼區塊">📋 程式碼</button>
+                <button class="toolbar-btn" onclick="mdPreviewer.insertMarkdown('---\n', '')" title="分隔線">─ 分隔線</button>
+            </div>
+            <div class="toolbar-separator"></div>
+            <div class="toolbar-group">
+                <button class="toolbar-btn" onclick="mdPreviewer.insertTable()" title="插入表格">📊 表格</button>
+            </div>
+        </div>
+
+        <div class="main-content" id="main-content">
+            <div class="editor-panel" id="editor-panel">
+                <div class="panel-header">
+                    <h2>✏️ 編輯器</h2>
+                    <div class="panel-actions">
+                        <span class="word-count" id="word-count">0 字</span>
+                        <button class="btn-sm" onclick="mdPreviewer.clearEditor()">清除</button>
+                        <button class="btn-sm" onclick="mdPreviewer.loadExample()">範例</button>
+                    </div>
+                </div>
+                <textarea
+                    id="markdown-input"
+                    placeholder="在此輸入 Markdown 文字...&#10;&#10;試試看：&#10;# 大標題&#10;## 小標題&#10;**粗體** 和 *斜體*&#10;- 列表項目&#10;[連結](https://example.com)&#10;&#10;```javascript&#10;console.log('程式碼區塊');&#10;```"
+                ></textarea>
+            </div>
+
+            <div class="preview-panel" id="preview-panel">
+                <div class="panel-header">
+                    <h2>👁️ 預覽</h2>
+                    <div class="panel-actions">
+                        <button class="btn-sm" onclick="mdPreviewer.copyHTML()">📋 複製 HTML</button>
+                        <button class="btn-sm" onclick="mdPreviewer.exportMarkdown()">⬇️ 下載 MD</button>
+                        <button class="btn-sm" onclick="mdPreviewer.exportHTML()">⬇️ 下載 HTML</button>
+                    </div>
+                </div>
+                <div id="markdown-preview" class="markdown-content">
+                    <div class="empty-state">
+                        <p>📝 在左側編輯器輸入 Markdown，這裡會即時顯示預覽</p>
+                        <p>或點擊「範例」按鈕查看 Markdown 語法示範</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-panel">
+            <div class="panel-header">
+                <h2>💡 快速參考</h2>
+                <button class="btn-collapse" id="toggle-reference-btn">▼</button>
+            </div>
+            <div class="reference-content" id="reference-content">
+                <div class="reference-grid">
+                    <div class="reference-card">
+                        <h3>標題</h3>
+                        <code># H1 標題</code>
+                        <code>## H2 標題</code>
+                        <code>### H3 標題</code>
+                    </div>
+                    <div class="reference-card">
+                        <h3>文字樣式</h3>
+                        <code>**粗體文字**</code>
+                        <code>*斜體文字*</code>
+                        <code>~~刪除線~~</code>
+                        <code>`行內程式碼`</code>
+                    </div>
+                    <div class="reference-card">
+                        <h3>列表</h3>
+                        <code>- 無序列表</code>
+                        <code>1. 有序列表</code>
+                        <code>- [ ] 待辦事項</code>
+                        <code>- [x] 已完成</code>
+                    </div>
+                    <div class="reference-card">
+                        <h3>連結與圖片</h3>
+                        <code>[連結文字](URL)</code>
+                        <code>![圖片說明](URL)</code>
+                    </div>
+                    <div class="reference-card">
+                        <h3>引用與程式碼</h3>
+                        <code>&gt; 引用文字</code>
+                        <code>```language</code>
+                        <code>程式碼區塊</code>
+                        <code>```</code>
+                    </div>
+                    <div class="reference-card">
+                        <h3>表格</h3>
+                        <code>| 標題1 | 標題2 |</code>
+                        <code>|-------|-------|</code>
+                        <code>| 內容1 | 內容2 |</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

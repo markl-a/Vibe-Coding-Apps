@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>時間戳轉換器 - Timestamp Converter</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>⏰ 時間戳轉換器</h1>
+            <p class="subtitle">Unix Timestamp ⇄ 日期時間轉換工具</p>
+        </header>
+
+        <!-- Current Time Section -->
+        <section class="section current-time-section">
+            <div class="card">
+                <h2 class="section-title">🕐 當前時間</h2>
+                <div class="current-time-display">
+                    <div class="time-info">
+                        <span class="label">當前時間戳 (秒):</span>
+                        <div class="value-display" id="current-timestamp-sec">-</div>
+                    </div>
+                    <div class="time-info">
+                        <span class="label">當前時間戳 (毫秒):</span>
+                        <div class="value-display" id="current-timestamp-ms">-</div>
+                    </div>
+                    <div class="time-info">
+                        <span class="label">本地時間:</span>
+                        <div class="value-display" id="current-local-time">-</div>
+                    </div>
+                    <div class="time-info">
+                        <span class="label">UTC時間:</span>
+                        <div class="value-display" id="current-utc-time">-</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timestamp to Date Section -->
+        <section class="section">
+            <div class="card">
+                <h2 class="section-title">📅 時間戳 → 日期</h2>
+                <div class="converter-group">
+                    <div class="input-group">
+                        <label for="timestamp-input">時間戳</label>
+                        <div class="input-with-buttons">
+                            <input
+                                type="number"
+                                id="timestamp-input"
+                                placeholder="輸入時間戳 (秒或毫秒)"
+                                class="input-field"
+                            >
+                            <button class="btn btn-secondary" onclick="timestampConverter.useCurrentTimestamp()">使用當前</button>
+                            <button class="btn btn-secondary" onclick="timestampConverter.pasteInput('timestamp')">貼上</button>
+                        </div>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="timestamp-unit" value="seconds" checked>
+                                秒 (10位)
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="timestamp-unit" value="milliseconds">
+                                毫秒 (13位)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="result-group">
+                        <div class="result-item">
+                            <span class="result-label">本地時間:</span>
+                            <div class="result-value" id="timestamp-to-local">-</div>
+                            <button class="btn-copy" onclick="timestampConverter.copyResult('timestamp-to-local')">📋</button>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">UTC時間:</span>
+                            <div class="result-value" id="timestamp-to-utc">-</div>
+                            <button class="btn-copy" onclick="timestampConverter.copyResult('timestamp-to-utc')">📋</button>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">ISO 8601:</span>
+                            <div class="result-value" id="timestamp-to-iso">-</div>
+                            <button class="btn-copy" onclick="timestampConverter.copyResult('timestamp-to-iso')">📋</button>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">相對時間:</span>
+                            <div class="result-value" id="timestamp-to-relative">-</div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="timestampConverter.convertTimestamp()">轉換</button>
+                        <button class="btn btn-secondary" onclick="timestampConverter.clearTimestamp()">清除</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Date to Timestamp Section -->
+        <section class="section">
+            <div class="card">
+                <h2 class="section-title">🔢 日期 → 時間戳</h2>
+                <div class="converter-group">
+                    <div class="input-group">
+                        <label for="date-input">選擇日期時間</label>
+                        <input
+                            type="datetime-local"
+                            id="date-input"
+                            class="input-field"
+                        >
+                        <button class="btn btn-secondary" onclick="timestampConverter.useCurrentDate()">使用當前時間</button>
+                    </div>
+
+                    <div class="result-group">
+                        <div class="result-item">
+                            <span class="result-label">時間戳 (秒):</span>
+                            <div class="result-value" id="date-to-timestamp-sec">-</div>
+                            <button class="btn-copy" onclick="timestampConverter.copyResult('date-to-timestamp-sec')">📋</button>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">時間戳 (毫秒):</span>
+                            <div class="result-value" id="date-to-timestamp-ms">-</div>
+                            <button class="btn-copy" onclick="timestampConverter.copyResult('date-to-timestamp-ms')">📋</button>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">ISO 8601:</span>
+                            <div class="result-value" id="date-to-iso">-</div>
+                            <button class="btn-copy" onclick="timestampConverter.copyResult('date-to-iso')">📋</button>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="timestampConverter.convertDate()">轉換</button>
+                        <button class="btn btn-secondary" onclick="timestampConverter.clearDate()">清除</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Time Calculator Section -->
+        <section class="section">
+            <div class="card">
+                <h2 class="section-title">🧮 時間計算器</h2>
+                <div class="calculator-group">
+                    <div class="input-group">
+                        <label for="calc-timestamp">基準時間戳 (秒)</label>
+                        <input
+                            type="number"
+                            id="calc-timestamp"
+                            placeholder="輸入時間戳"
+                            class="input-field"
+                        >
+                        <button class="btn btn-secondary" onclick="timestampConverter.useCurrentForCalc()">使用當前</button>
+                    </div>
+
+                    <div class="calc-operations">
+                        <div class="calc-row">
+                            <label>增加/減少:</label>
+                            <input type="number" id="calc-value" value="0" class="input-field calc-input">
+                            <select id="calc-unit" class="select-field">
+                                <option value="seconds">秒</option>
+                                <option value="minutes">分鐘</option>
+                                <option value="hours">小時</option>
+                                <option value="days" selected>天</option>
+                                <option value="weeks">週</option>
+                                <option value="months">月</option>
+                                <option value="years">年</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="timestampConverter.calculateTime(true)">➕ 增加</button>
+                        <button class="btn btn-primary" onclick="timestampConverter.calculateTime(false)">➖ 減少</button>
+                    </div>
+
+                    <div class="result-group">
+                        <div class="result-item">
+                            <span class="result-label">計算結果:</span>
+                            <div class="result-value" id="calc-result">-</div>
+                            <button class="btn-copy" onclick="timestampConverter.copyResult('calc-result')">📋</button>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">時間戳:</span>
+                            <div class="result-value" id="calc-timestamp-result">-</div>
+                            <button class="btn-copy" onclick="timestampConverter.copyResult('calc-timestamp-result')">📋</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Presets Section -->
+        <section class="section">
+            <div class="card">
+                <h2 class="section-title">⚡ 快速預設</h2>
+                <div class="presets-grid">
+                    <button class="preset-btn" onclick="timestampConverter.usePreset('now')">
+                        <span class="preset-icon">🕐</span>
+                        <span class="preset-label">現在</span>
+                    </button>
+                    <button class="preset-btn" onclick="timestampConverter.usePreset('today-start')">
+                        <span class="preset-icon">🌅</span>
+                        <span class="preset-label">今天開始</span>
+                    </button>
+                    <button class="preset-btn" onclick="timestampConverter.usePreset('today-end')">
+                        <span class="preset-icon">🌆</span>
+                        <span class="preset-label">今天結束</span>
+                    </button>
+                    <button class="preset-btn" onclick="timestampConverter.usePreset('yesterday')">
+                        <span class="preset-icon">📅</span>
+                        <span class="preset-label">昨天</span>
+                    </button>
+                    <button class="preset-btn" onclick="timestampConverter.usePreset('tomorrow')">
+                        <span class="preset-icon">📆</span>
+                        <span class="preset-label">明天</span>
+                    </button>
+                    <button class="preset-btn" onclick="timestampConverter.usePreset('week-ago')">
+                        <span class="preset-icon">📋</span>
+                        <span class="preset-label">一週前</span>
+                    </button>
+                    <button class="preset-btn" onclick="timestampConverter.usePreset('month-ago')">
+                        <span class="preset-icon">📊</span>
+                        <span class="preset-label">一個月前</span>
+                    </button>
+                    <button class="preset-btn" onclick="timestampConverter.usePreset('year-ago')">
+                        <span class="preset-icon">📈</span>
+                        <span class="preset-label">一年前</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -2,6 +2,7 @@
 class RegexTester {
     constructor() {
         this.currentRegex = null;
+        this.aiPatterns = this.loadAIPatterns();
         this.init();
     }
 
@@ -11,6 +12,16 @@ class RegexTester {
     }
 
     setupEventListeners() {
+        // AI Generator
+        document.getElementById('ai-generate-btn').addEventListener('click', () => this.generateRegexWithAI());
+        document.getElementById('ai-clear-btn').addEventListener('click', () => this.clearAIInput());
+        document.getElementById('ai-use-result-btn')?.addEventListener('click', () => this.useAIResult());
+        document.getElementById('ai-description').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                this.generateRegexWithAI();
+            }
+        });
+
         // Regex input
         document.getElementById('regex-input').addEventListener('input', () => this.testRegex());
         document.getElementById('flags-input').addEventListener('input', () => {
@@ -323,6 +334,293 @@ class RegexTester {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    // AI-Powered Regex Generation
+    loadAIPatterns() {
+        return {
+            // Email patterns
+            'email': {
+                keywords: ['email', 'e-mail', '電子郵件', '信箱', 'mail'],
+                regex: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$',
+                explanation: '匹配標準電子郵件格式，支援字母、數字、點號和連字號',
+                examples: ['test@example.com', 'user.name@domain.co.uk', 'john_doe@company.com.tw'],
+                flags: ''
+            },
+            // Phone number patterns
+            'phone-tw': {
+                keywords: ['手機', '電話', 'phone', 'mobile', '行動電話', '09', '台灣手機'],
+                regex: '^09\\d{8}$',
+                explanation: '匹配台灣手機號碼格式 (09開頭，共10碼)',
+                examples: ['0912345678', '0987654321', '0900123456'],
+                flags: ''
+            },
+            'phone-general': {
+                keywords: ['電話號碼', 'telephone', '市話'],
+                regex: '^\\d{2,4}-\\d{6,8}$',
+                explanation: '匹配一般電話號碼格式 (含區碼)',
+                examples: ['02-12345678', '037-123456', '04-23456789'],
+                flags: ''
+            },
+            // URL patterns
+            'url': {
+                keywords: ['url', '網址', 'link', 'website', 'http', 'https'],
+                regex: '^https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b',
+                explanation: '匹配HTTP/HTTPS網址',
+                examples: ['https://example.com', 'http://www.google.com', 'https://github.com/user/repo'],
+                flags: ''
+            },
+            // Password patterns
+            'password-strong': {
+                keywords: ['密碼', 'password', '強密碼', 'strong password', '安全密碼'],
+                regex: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$',
+                explanation: '強密碼：至少8字元，包含大小寫字母、數字和特殊符號',
+                examples: ['Passw0rd!', 'MyP@ssw0rd', 'Secure#123'],
+                flags: ''
+            },
+            'password-medium': {
+                keywords: ['一般密碼', '中等密碼'],
+                regex: '^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$',
+                explanation: '中等密碼：至少8字元，包含字母和數字',
+                examples: ['Password123', 'mypass456', 'Test1234'],
+                flags: ''
+            },
+            // Date patterns
+            'date-ymd': {
+                keywords: ['日期', 'date', 'yyyy-mm-dd', 'year-month-day'],
+                regex: '^(\\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$',
+                explanation: '日期格式 YYYY-MM-DD',
+                examples: ['2024-01-15', '2023-12-31', '2025-06-30'],
+                flags: ''
+            },
+            'date-dmy': {
+                keywords: ['dd/mm/yyyy', 'day-month-year'],
+                regex: '^(0[1-9]|[12]\\d|3[01])\\/(0[1-9]|1[0-2])\\/(\\d{4})$',
+                explanation: '日期格式 DD/MM/YYYY',
+                examples: ['15/01/2024', '31/12/2023', '30/06/2025'],
+                flags: ''
+            },
+            // ID patterns
+            'id-card-tw': {
+                keywords: ['身分證', '身份證', 'id card', '台灣身分證', 'taiwan id'],
+                regex: '^[A-Z][12]\\d{8}$',
+                explanation: '台灣身分證字號格式',
+                examples: ['A123456789', 'B234567890', 'Z198765432'],
+                flags: ''
+            },
+            // Color patterns
+            'hex-color': {
+                keywords: ['顏色', 'color', 'hex', '十六進位顏色', '#'],
+                regex: '^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$',
+                explanation: '十六進位顏色代碼 (含或不含#)',
+                examples: ['#FFFFFF', 'FF0000', '#abc', 'def'],
+                flags: 'i'
+            },
+            // Number patterns
+            'integer': {
+                keywords: ['整數', 'integer', 'number', '數字'],
+                regex: '^-?\\d+$',
+                explanation: '整數 (含正負號)',
+                examples: ['123', '-456', '0', '9999'],
+                flags: ''
+            },
+            'decimal': {
+                keywords: ['小數', 'decimal', 'float', '浮點數'],
+                regex: '^-?\\d+(\\.\\d+)?$',
+                explanation: '小數 (含正負號)',
+                examples: ['123.45', '-67.89', '0.1', '999'],
+                flags: ''
+            },
+            // IP Address
+            'ipv4': {
+                keywords: ['ip', 'ip address', 'ipv4', 'ip位址'],
+                regex: '^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)$',
+                explanation: 'IPv4 位址',
+                examples: ['192.168.1.1', '10.0.0.1', '172.16.0.1', '8.8.8.8'],
+                flags: ''
+            },
+            // Credit Card
+            'credit-card': {
+                keywords: ['信用卡', 'credit card', '卡號'],
+                regex: '^\\d{4}[\\s-]?\\d{4}[\\s-]?\\d{4}[\\s-]?\\d{4}$',
+                explanation: '信用卡號碼 (16碼，可含空格或連字號)',
+                examples: ['1234 5678 9012 3456', '1234-5678-9012-3456', '1234567890123456'],
+                flags: ''
+            },
+            // Username
+            'username': {
+                keywords: ['使用者名稱', 'username', '帳號', 'account'],
+                regex: '^[a-zA-Z0-9_]{3,16}$',
+                explanation: '使用者名稱 (3-16字元，僅限英數字和底線)',
+                examples: ['john_doe', 'user123', 'admin', 'test_user_01'],
+                flags: ''
+            },
+            // Chinese characters
+            'chinese': {
+                keywords: ['中文', 'chinese', '漢字', '中文字'],
+                regex: '[\\u4e00-\\u9fa5]+',
+                explanation: '中文字元',
+                examples: ['你好', '世界', '測試', '正則表達式'],
+                flags: 'g'
+            },
+            // English letters
+            'english': {
+                keywords: ['英文', 'english', 'alphabet', '字母'],
+                regex: '[a-zA-Z]+',
+                explanation: '英文字母',
+                examples: ['Hello', 'World', 'Test', 'ABC'],
+                flags: 'g'
+            },
+            // Hashtag
+            'hashtag': {
+                keywords: ['標籤', 'hashtag', '#tag'],
+                regex: '#[a-zA-Z0-9_]+',
+                explanation: '社群媒體標籤 (#開頭)',
+                examples: ['#javascript', '#coding', '#webdev', '#AI'],
+                flags: 'g'
+            }
+        };
+    }
+
+    async generateRegexWithAI() {
+        const description = document.getElementById('ai-description').value.trim();
+
+        if (!description) {
+            alert('請輸入要生成的正則表達式描述');
+            return;
+        }
+
+        const loadingDiv = document.getElementById('ai-loading');
+        const resultDiv = document.getElementById('ai-result');
+
+        // Show loading
+        loadingDiv.style.display = 'flex';
+        resultDiv.style.display = 'none';
+
+        try {
+            // Simulate AI processing time
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Match user description with patterns
+            const result = this.matchDescriptionToPattern(description);
+
+            if (result) {
+                this.displayAIResult(result);
+            } else {
+                this.displayAIFallback(description);
+            }
+        } catch (error) {
+            alert('生成失敗: ' + error.message);
+        } finally {
+            loadingDiv.style.display = 'none';
+        }
+    }
+
+    matchDescriptionToPattern(description) {
+        const descLower = description.toLowerCase();
+
+        // Find best matching pattern
+        for (const [key, pattern] of Object.entries(this.aiPatterns)) {
+            for (const keyword of pattern.keywords) {
+                if (descLower.includes(keyword.toLowerCase())) {
+                    return pattern;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    displayAIResult(pattern) {
+        const resultDiv = document.getElementById('ai-result');
+        const regexElement = document.getElementById('ai-generated-regex');
+        const explanationElement = document.getElementById('ai-generated-explanation');
+        const examplesElement = document.getElementById('ai-generated-examples');
+
+        regexElement.textContent = pattern.regex;
+        explanationElement.textContent = pattern.explanation;
+
+        examplesElement.innerHTML = pattern.examples.map(example => `
+            <div class="example-item">
+                <code>${this.escapeHtml(example)}</code>
+            </div>
+        `).join('');
+
+        resultDiv.style.display = 'block';
+        this.currentAIPattern = pattern;
+    }
+
+    displayAIFallback(description) {
+        const resultDiv = document.getElementById('ai-result');
+        const regexElement = document.getElementById('ai-generated-regex');
+        const explanationElement = document.getElementById('ai-generated-explanation');
+        const examplesElement = document.getElementById('ai-generated-examples');
+
+        // Generate a basic fallback based on common patterns
+        let fallbackRegex = '.*';
+        let fallbackExplanation = '抱歉，無法從描述中識別出匹配的模式。以下是一些建議：\n\n';
+
+        if (description.includes('數字') || description.includes('number')) {
+            fallbackRegex = '\\d+';
+            fallbackExplanation = '匹配一個或多個數字';
+        } else if (description.includes('字母') || description.includes('letter')) {
+            fallbackRegex = '[a-zA-Z]+';
+            fallbackExplanation = '匹配一個或多個英文字母';
+        } else if (description.includes('空格') || description.includes('space')) {
+            fallbackRegex = '\\s+';
+            fallbackExplanation = '匹配一個或多個空白字元';
+        } else {
+            fallbackExplanation += '• 嘗試使用更具體的關鍵詞，如："email"、"電話"、"日期" 等\n';
+            fallbackExplanation += '• 或者從「常用模式」中選擇相似的模式作為起點\n';
+            fallbackExplanation += '• 您也可以參考下方的「快速參考」來手動構建正則表達式';
+        }
+
+        regexElement.textContent = fallbackRegex;
+        explanationElement.textContent = fallbackExplanation;
+        examplesElement.innerHTML = '<p style="color: var(--text-secondary)">請參考上方建議，或從常用模式中選擇</p>';
+
+        resultDiv.style.display = 'block';
+        this.currentAIPattern = {
+            regex: fallbackRegex,
+            explanation: fallbackExplanation,
+            examples: [],
+            flags: ''
+        };
+    }
+
+    useAIResult() {
+        if (!this.currentAIPattern) return;
+
+        document.getElementById('regex-input').value = this.currentAIPattern.regex;
+        document.getElementById('flags-input').value = this.currentAIPattern.flags || '';
+
+        // Update flag checkboxes
+        ['g', 'i', 'm', 's', 'u'].forEach(flag => {
+            const checkbox = document.getElementById(`flag-${flag}`);
+            checkbox.checked = this.currentAIPattern.flags.includes(flag);
+        });
+
+        // Update test input with examples
+        if (this.currentAIPattern.examples && this.currentAIPattern.examples.length > 0) {
+            document.getElementById('test-input').value = this.currentAIPattern.examples.join('\n');
+        }
+
+        // Test the regex
+        this.testRegex();
+
+        // Scroll to regex section
+        document.querySelector('.regex-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Show success message
+        setTimeout(() => {
+            alert('✅ 已將 AI 生成的正則表達式填入，並自動載入測試範例！');
+        }, 300);
+    }
+
+    clearAIInput() {
+        document.getElementById('ai-description').value = '';
+        document.getElementById('ai-result').style.display = 'none';
+        this.currentAIPattern = null;
     }
 }
 
