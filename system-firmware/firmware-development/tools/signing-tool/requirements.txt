@@ -1,0 +1,6 @@
+# Firmware Signing Tool Requirements
+# 韌體簽名工具依賴
+
+# Cryptography library for RSA signing and verification
+# 用於 RSA 簽名和驗證的加密庫
+cryptography>=41.0.0

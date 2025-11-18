@@ -1,0 +1,62 @@
+# Firmware Builder Configuration Example
+# ========================================
+
+# 項目基本信息
+project_name: "my_firmware"
+version: "1.0.0"
+
+# 平台選擇: stm32, esp32, nrf52
+platform: "stm32"
+
+# 構建類型: debug, release, production
+build_type: "release"
+
+# 路徑配置
+source_dir: "./src"
+output_dir: "./output"
+
+# 輸出格式: elf, bin, hex
+formats:
+  - elf
+  - bin
+  - hex
+
+# 優化級別: O0, O1, O2, O3, Os, Og
+optimization_level: "O2"
+
+# 安全功能
+enable_signing: true
+enable_encryption: false
+
+# 包含路徑
+include_paths:
+  - "./include"
+  - "./drivers/include"
+  - "./middleware/include"
+
+# 預處理器定義
+defines:
+  USE_HAL_DRIVER: ""
+  STM32F407xx: ""
+  DEBUG_LEVEL: "2"
+
+# 自定義編譯標誌
+custom_flags:
+  - "-ffunction-sections"
+  - "-fdata-sections"
+  - "-fstack-usage"
+
+# 鏈接腳本
+linker_script: "./STM32F407VGTx_FLASH.ld"
+
+# 記憶體限制（用於檢查）
+memory_limits:
+  flash_max: 1048576  # 1MB
+  ram_max: 131072     # 128KB
+
+# CI/CD 配置
+ci:
+  generate_report: true
+  fail_on_warnings: false
+  max_flash_usage_percent: 90
+  max_ram_usage_percent: 80
