@@ -47,6 +47,46 @@ Serverless (無伺服器) 是一種雲端運算模式，開發者只需專注於
 
 ## 📁 專案列表
 
+### 🤖 AI 助手服務 (NEW!)
+**最強大的 AI 驅動無伺服器函數集合**
+
+使用 OpenAI、Anthropic Claude、AWS AI 服務構建的智能函數
+
+**9 個 AI 功能**:
+- 🗣️ AI 聊天助手 (GPT-4, Claude)
+- ✍️ 文本生成 (多種模板)
+- 👁️ 圖片識別 (AWS Rekognition, Vision AI)
+- 💭 情感分析 (多語言支援)
+- 📝 文本摘要 (智能摘要生成)
+- 🌐 翻譯服務 (16+ 語言)
+- 💻 代碼解釋 (分析、重構、測試生成)
+- 🎤 語音轉文字 (Whisper API)
+- 🛡️ 內容審核 (智能過濾)
+
+[查看詳情 →](./ai-assistant-service/)
+
+### ☁️ Google Cloud Functions (NEW!)
+**完整的 GCP 無伺服器解決方案**
+
+涵蓋 HTTP、事件觸發、定時任務的全面示例
+
+**HTTP 函數**:
+- Hello World (多語言)
+- Users API (完整 CRUD)
+- Image Optimizer (圖片處理)
+- Email Sender (SendGrid)
+
+**事件觸發**:
+- Cloud Storage (自動處理上傳)
+- Pub/Sub (訊息隊列)
+- Firestore (數據庫觸發)
+
+**定時任務**:
+- 每日清理、報告生成
+- 健康檢查、數據備份
+
+[查看詳情 →](./google-cloud-functions/)
+
 ### 1️⃣ AWS Lambda Functions
 完整的 AWS Lambda 函數集合，使用 Serverless Framework 部署
 

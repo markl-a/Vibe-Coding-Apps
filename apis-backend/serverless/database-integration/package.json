@@ -1,0 +1,32 @@
+{
+  "name": "database-integration-examples",
+  "version": "1.0.0",
+  "description": "Serverless database integration examples",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "serverless deploy",
+    "test": "jest"
+  },
+  "keywords": [
+    "serverless",
+    "database",
+    "dynamodb",
+    "mongodb",
+    "redis",
+    "postgresql"
+  ],
+  "author": "Vibe Coding Apps",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.550.0",
+    "@aws-sdk/lib-dynamodb": "^3.550.0",
+    "mongodb": "^6.3.0",
+    "pg": "^8.11.3",
+    "redis": "^4.6.13",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "serverless": "^3.38.0"
+  }
+}

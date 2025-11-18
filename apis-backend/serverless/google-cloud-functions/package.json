@@ -1,0 +1,45 @@
+{
+  "name": "google-cloud-functions-examples",
+  "version": "1.0.0",
+  "description": "Google Cloud Functions examples with AI integration",
+  "main": "index.js",
+  "scripts": {
+    "dev:hello": "functions-framework --target=helloWorld --port=8080",
+    "dev:users": "functions-framework --target=usersAPI --port=8080",
+    "dev:image": "functions-framework --target=imageOptimizer --port=8080",
+    "dev:email": "functions-framework --target=emailSender --port=8080",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint .",
+    "format": "prettier --write \"**/*.js\""
+  },
+  "keywords": [
+    "google-cloud",
+    "cloud-functions",
+    "serverless",
+    "gcp",
+    "firebase"
+  ],
+  "author": "Vibe Coding Apps",
+  "license": "MIT",
+  "dependencies": {
+    "@google-cloud/firestore": "^7.1.0",
+    "@google-cloud/functions-framework": "^3.3.0",
+    "@google-cloud/pubsub": "^4.1.0",
+    "@google-cloud/storage": "^7.7.0",
+    "@sendgrid/mail": "^8.1.0",
+    "axios": "^1.6.7",
+    "sharp": "^0.33.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0",
+    "prettier": "^3.2.5",
+    "supertest": "^6.3.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
