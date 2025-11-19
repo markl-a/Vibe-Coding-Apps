@@ -201,16 +201,35 @@ vibe-ai review src/components/Form.tsx
 vibe-ai health ./my-project
 ```
 
+### 創建新項目
+
+```bash
+# 使用腳手架工具快速創建新項目
+npx create-vibe-app my-app
+
+# 或使用 pnpm
+pnpm create vibe-app my-app
+
+# 交互式創建
+npx create-vibe-app
+```
+
 ## 📦 核心包
 
 ### [@vibe/shared-utils](./packages/shared-utils)
 共享工具函數庫，提供字符串、數組、對象、日期、驗證、異步等常用工具。
+
+### [@vibe/ui-components](./packages/ui-components)
+React UI 組件庫，提供精美、可訪問的 UI 組件（Button, Input, Card, Modal, Toast 等）。
 
 ### [@vibe/ai-assistant](./packages/ai-assistant)
 統一的 AI 開發助手平台，提供代碼分析、優化、生成和審查功能。
 
 ### [@vibe/devops-dashboard](./packages/devops-dashboard)
 DevOps 中心化控制台，監控構建、測試、部署和安全狀態。
+
+### [create-vibe-app](./packages/create-vibe-app)
+項目腳手架工具，快速創建新的 Vibe 應用，內置最佳實踐。
 
 ## 🔧 開發指南
 
