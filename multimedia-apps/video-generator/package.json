@@ -25,7 +25,7 @@
     "canvas": "^2.11.2",
     "fluent-ffmpeg": "^2.1.2",
     "gifencoder": "^2.0.1",
-    "node-datachannel": "^0.6.0"
+    "node-datachannel": "^0.30.0"
   },
   "devDependencies": {
     "electron-builder": "^24.6.4"
