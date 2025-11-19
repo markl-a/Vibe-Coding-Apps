@@ -1,0 +1,42 @@
+{
+  "name": "@vibe/devops-dashboard",
+  "version": "1.0.0",
+  "description": "Centralized DevOps Dashboard for Vibe-Coding-Apps",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --ext ts,tsx",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "clean": "rm -rf .next dist"
+  },
+  "keywords": [
+    "devops",
+    "dashboard",
+    "monitoring",
+    "ci-cd"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@vibe/shared-utils": "workspace:*",
+    "next": "^14.0.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recharts": "^2.10.3",
+    "axios": "^1.6.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.55.0",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.3.6",
+    "typescript": "^5.3.3",
+    "vitest": "^1.0.4"
+  }
+}

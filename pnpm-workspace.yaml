@@ -1,0 +1,56 @@
+packages:
+  # AI/ML Projects
+  - 'ai-ml-projects/*'
+  - 'ai-ml-projects/chatbots/*'
+  - 'ai-ml-projects/data-analysis/*'
+  - 'ai-ml-projects/image-processing/*'
+  - 'ai-ml-projects/nlp/*'
+
+  # APIs & Backend
+  - 'apis-backend/*'
+  - 'apis-backend/rest-apis/*'
+  - 'apis-backend/graphql-apis/*'
+  - 'apis-backend/microservices/*'
+
+  # Blockchain Apps
+  - 'blockchain-apps/*'
+
+  # Browser Extensions
+  - 'browser-extensions/*'
+
+  # Desktop Apps
+  - 'desktop-apps/*'
+
+  # Enterprise Apps
+  - 'enterprise-apps/*'
+  - 'enterprise-apps/erp-systems/*'
+  - 'enterprise-apps/crm-systems/*'
+  - 'enterprise-apps/hr-management/*'
+  - 'enterprise-apps/project-management/*'
+  - 'enterprise-apps/finance-accounting/*'
+  - 'enterprise-apps/supply-chain/*'
+  - 'enterprise-apps/business-intelligence/*'
+  - 'enterprise-apps/collaboration-tools/*'
+
+  # Games
+  - 'games/*'
+
+  # Mobile Apps
+  - 'mobile-apps/*'
+
+  # Multimedia Apps
+  - 'multimedia-apps/*'
+
+  # System Firmware
+  - 'system-firmware/*'
+
+  # Tools & Utilities
+  - 'tools-utilities/*'
+  - 'tools-utilities/dev-tools/*'
+  - 'tools-utilities/automation-scripts/*'
+
+  # Web Apps
+  - 'web-apps/*'
+
+  # Shared Packages
+  - 'packages/*'

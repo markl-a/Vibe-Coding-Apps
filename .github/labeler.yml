@@ -1,0 +1,50 @@
+# Label configuration for PR Labeler
+
+documentation:
+  - '**/*.md'
+  - 'docs/**/*'
+
+dependencies:
+  - 'package.json'
+  - 'pnpm-lock.yaml'
+  - '**/package.json'
+  - 'requirements.txt'
+  - '**/requirements.txt'
+
+infrastructure:
+  - '.github/**/*'
+  - 'docker-compose.yml'
+  - 'Dockerfile'
+  - '**/Dockerfile'
+  - 'turbo.json'
+  - '.eslintrc.*'
+  - '.prettierrc'
+
+tests:
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+  - '**/*.test.js'
+  - '**/*.spec.ts'
+  - '**/*.spec.tsx'
+  - 'tests/**/*'
+  - '**/tests/**/*'
+
+ui:
+  - 'packages/ui-components/**/*'
+
+tooling:
+  - 'packages/ai-assistant/**/*'
+  - 'packages/create-vibe-app/**/*'
+  - 'tools-utilities/**/*'
+
+web:
+  - 'web-apps/**/*'
+
+api:
+  - 'apis-backend/**/*'
+
+mobile:
+  - 'mobile-apps/**/*'
+
+firmware:
+  - 'system-firmware/**/*'

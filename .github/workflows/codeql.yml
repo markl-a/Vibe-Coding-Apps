@@ -1,0 +1,85 @@
+name: "CodeQL Security Scan"
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run at 02:00 UTC every day
+    - cron: '0 2 * * *'
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['javascript', 'python', 'cpp']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+          queries: +security-and-quality
+
+      # For JavaScript/TypeScript
+      - name: Setup Node.js
+        if: matrix.language == 'javascript'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        if: matrix.language == 'javascript'
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install JavaScript dependencies
+        if: matrix.language == 'javascript'
+        run: pnpm install --frozen-lockfile
+
+      # For Python
+      - name: Setup Python
+        if: matrix.language == 'python'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        if: matrix.language == 'python'
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      # For C/C++ (firmware)
+      - name: Setup ARM GCC
+        if: matrix.language == 'cpp'
+        uses: carlosperate/arm-none-eabi-gcc-action@v1
+        with:
+          release: '10.3-2021.10'
+
+      - name: Build C/C++ projects
+        if: matrix.language == 'cpp'
+        run: |
+          cd system-firmware/firmware-development
+          if [ -f "Makefile" ]; then
+            make clean
+            make all || true
+          fi
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:${{ matrix.language }}"
