@@ -1,7 +1,7 @@
 # Multi-stage Dockerfile for Vibe-Coding-Apps
 
 # Base image with pnpm
-FROM node:20-alpine AS base
+FROM node:25-alpine AS base
 RUN npm install -g pnpm@8
 WORKDIR /app
 
@@ -24,7 +24,7 @@ COPY packages/*/package.json ./packages/
 RUN pnpm install --frozen-lockfile --prod
 
 # Runner stage for web apps
-FROM node:20-alpine AS runner
+FROM node:25-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
