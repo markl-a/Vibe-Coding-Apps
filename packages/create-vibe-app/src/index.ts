@@ -7,54 +7,21 @@ import chalk from 'chalk';
 import fs from 'fs-extra';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import validateNpmPackageName from 'validate-npm-package-name';
+import {
+  type ProjectConfig,
+  templates,
+  features,
+  validateProjectName,
+  copyTemplate,
+  createPackageJson,
+  initGit,
+  installDependencies,
+} from './utils.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const program = new Command();
-
-interface ProjectConfig {
-  name: string;
-  template: string;
-  framework?: string;
-  features: string[];
-  packageManager: 'npm' | 'pnpm' | 'yarn';
-}
-
-const templates = {
-  'web-app': {
-    name: 'Web Application',
-    frameworks: ['react', 'vue', 'next', 'nuxt', 'svelte'],
-  },
-  'api': {
-    name: 'API / Backend',
-    frameworks: ['express', 'fastify', 'nestjs', 'fastapi', 'flask'],
-  },
-  'mobile': {
-    name: 'Mobile App',
-    frameworks: ['react-native', 'expo', 'flutter'],
-  },
-  'desktop': {
-    name: 'Desktop App',
-    frameworks: ['electron', 'tauri'],
-  },
-  'fullstack': {
-    name: 'Full Stack Application',
-    frameworks: ['nextjs-fullstack', 't3-stack', 'remix'],
-  },
-};
-
-const features = [
-  { name: 'TypeScript', value: 'typescript' },
-  { name: 'ESLint', value: 'eslint' },
-  { name: 'Prettier', value: 'prettier' },
-  { name: 'Husky (Git Hooks)', value: 'husky' },
-  { name: 'Testing (Vitest/Jest)', value: 'testing' },
-  { name: 'Docker', value: 'docker' },
-  { name: 'CI/CD (GitHub Actions)', value: 'cicd' },
-  { name: 'Tailwind CSS', value: 'tailwind' },
-];
 
 program
   .name('create-vibe-app')
@@ -86,16 +53,7 @@ async function getProjectConfig(
       message: 'Project name:',
       default: projectName || 'my-vibe-app',
       when: !projectName,
-      validate: (input: string) => {
-        const validation = validateNpmPackageName(input);
-        if (validation.validForNewPackages) {
-          return true;
-        }
-        return (
-          validation.errors?.join(', ') ||
-          'Invalid package name'
-        );
-      },
+      validate: validateProjectName,
     },
     {
       type: 'list',
@@ -213,152 +171,6 @@ async function createProject(config: ProjectConfig, options: any) {
     spinner.fail('Failed to create project');
     throw error;
   }
-}
-
-async function copyTemplate(config: ProjectConfig, projectPath: string) {
-  // Create basic structure
-  const dirs = [
-    'src',
-    'public',
-    'tests',
-    '.github/workflows',
-    'docs',
-  ];
-
-  for (const dir of dirs) {
-    await fs.ensureDir(path.join(projectPath, dir));
-  }
-
-  // Create basic files
-  await createBasicFiles(config, projectPath);
-}
-
-async function createBasicFiles(config: ProjectConfig, projectPath: string) {
-  // README.md
-  const readme = `# ${config.name}
-
-Generated with create-vibe-app
-
-## Getting Started
-
-\`\`\`bash
-${config.packageManager} install
-${config.packageManager} dev
-\`\`\`
-
-## Available Scripts
-
-- \`dev\` - Start development server
-- \`build\` - Build for production
-- \`test\` - Run tests
-- \`lint\` - Lint code
-- \`format\` - Format code
-
-## Documentation
-
-See [docs](./docs) for more information.
-`;
-
-  await fs.writeFile(path.join(projectPath, 'README.md'), readme);
-
-  // .gitignore
-  const gitignore = `node_modules
-dist
-build
-.next
-out
-.env*.local
-.DS_Store
-*.log
-coverage
-.turbo
-`;
-
-  await fs.writeFile(path.join(projectPath, '.gitignore'), gitignore);
-
-  // Create src/index file
-  const ext = config.features.includes('typescript') ? 'ts' : 'js';
-  const indexContent = `console.log('Hello from ${config.name}!');
-`;
-
-  await fs.writeFile(
-    path.join(projectPath, `src/index.${ext}`),
-    indexContent
-  );
-}
-
-async function createPackageJson(config: ProjectConfig, projectPath: string) {
-  const packageJson = {
-    name: config.name,
-    version: '0.1.0',
-    private: true,
-    scripts: {
-      dev: 'echo "Add dev script for your framework"',
-      build: 'echo "Add build script for your framework"',
-      test: config.features.includes('testing') ? 'vitest' : 'echo "No tests"',
-      lint: config.features.includes('eslint') ? 'eslint .' : 'echo "No linter"',
-      format: config.features.includes('prettier')
-        ? 'prettier --write .'
-        : 'echo "No formatter"',
-    },
-    dependencies: {},
-    devDependencies: {},
-  };
-
-  if (config.features.includes('typescript')) {
-    packageJson.devDependencies = {
-      ...packageJson.devDependencies,
-      typescript: '^5.3.3',
-      '@types/node': '^20.10.0',
-    };
-  }
-
-  if (config.features.includes('eslint')) {
-    packageJson.devDependencies = {
-      ...packageJson.devDependencies,
-      eslint: '^8.55.0',
-    };
-  }
-
-  if (config.features.includes('prettier')) {
-    packageJson.devDependencies = {
-      ...packageJson.devDependencies,
-      prettier: '^3.1.1',
-    };
-  }
-
-  if (config.features.includes('testing')) {
-    packageJson.devDependencies = {
-      ...packageJson.devDependencies,
-      vitest: '^1.0.4',
-    };
-  }
-
-  await fs.writeJSON(path.join(projectPath, 'package.json'), packageJson, {
-    spaces: 2,
-  });
-}
-
-async function initGit(projectPath: string) {
-  const { execSync } = await import('child_process');
-  execSync('git init', { cwd: projectPath, stdio: 'ignore' });
-  execSync('git add .', { cwd: projectPath, stdio: 'ignore' });
-  execSync('git commit -m "Initial commit from create-vibe-app"', {
-    cwd: projectPath,
-    stdio: 'ignore',
-  });
-}
-
-async function installDependencies(config: ProjectConfig, projectPath: string) {
-  const { execSync } = await import('child_process');
-  const cmd =
-    config.packageManager === 'npm'
-      ? 'npm install'
-      : config.packageManager === 'yarn'
-      ? 'yarn'
-      : 'pnpm install';
-
-  execSync(cmd, { cwd: projectPath, stdio: 'inherit' });
 }
 
 program.parse();
