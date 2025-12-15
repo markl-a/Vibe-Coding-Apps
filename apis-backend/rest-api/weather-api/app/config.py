@@ -4,9 +4,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
+    # Environment
+    ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
+
     # Flask
-    SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key')
-    DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    if not SECRET_KEY and ENVIRONMENT == 'production':
+        raise ValueError("SECRET_KEY environment variable is required in production")
+    SECRET_KEY = SECRET_KEY or 'dev-only-secret-key-change-in-production'
+
+    DEBUG = os.getenv('DEBUG', 'false').lower() == 'true'
     HOST = os.getenv('HOST', '0.0.0.0')
     PORT = int(os.getenv('PORT', 5000))
 

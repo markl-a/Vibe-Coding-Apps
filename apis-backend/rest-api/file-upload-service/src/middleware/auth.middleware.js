@@ -1,5 +1,14 @@
 const jwt = require('jsonwebtoken');
 
+const ENVIRONMENT = process.env.NODE_ENV || 'development';
+
+// Security: Require JWT_SECRET in production
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET && ENVIRONMENT === 'production') {
+  throw new Error('JWT_SECRET environment variable is required in production');
+}
+const jwtSecret = JWT_SECRET || 'dev-only-secret-change-in-production';
+
 /**
  * 驗證 JWT token
  */
@@ -23,7 +32,7 @@ exports.authenticate = async (req, res, next) => {
 
     try {
       // 驗證 token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret');
+      const decoded = jwt.verify(token, jwtSecret);
 
       // 將用戶信息添加到請求對象
       req.user = {
@@ -87,7 +96,7 @@ exports.optionalAuth = async (req, res, next) => {
 
     if (token) {
       try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret');
+        const decoded = jwt.verify(token, jwtSecret);
         req.user = {
           id: decoded.id,
           email: decoded.email,
