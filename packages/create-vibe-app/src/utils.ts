@@ -45,6 +45,15 @@ export const features = [
   { name: 'Tailwind CSS', value: 'tailwind' },
 ];
 
+interface PackageJson {
+  name: string;
+  version: string;
+  private: boolean;
+  scripts: Record<string, string>;
+  dependencies: Record<string, string>;
+  devDependencies: Record<string, string>;
+}
+
 export function validateProjectName(name: string): boolean | string {
   const validation = validateNpmPackageName(name);
   if (validation.validForNewPackages) {
@@ -126,7 +135,7 @@ coverage
 }
 
 export async function createPackageJson(config: ProjectConfig, projectPath: string): Promise<void> {
-  const packageJson: any = {
+  const packageJson: PackageJson = {
     name: config.name,
     version: '0.1.0',
     private: true,

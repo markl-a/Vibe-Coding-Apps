@@ -372,7 +372,10 @@ function getCorsHeaders() {
 }
 
 function verifyApiKey(apiKey) {
-  const validApiKey = process.env.API_KEY || 'demo-api-key';
+  const validApiKey = process.env.API_KEY;
+  if (!validApiKey) {
+    throw new Error('API_KEY environment variable is required');
+  }
   return apiKey === validApiKey;
 }
 

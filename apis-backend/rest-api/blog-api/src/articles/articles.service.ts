@@ -16,21 +16,38 @@ export class ArticlesService {
   }
 
   async findAll(page = 1, limit = 10): Promise<{ data: Article[]; total: number }> {
-    const [data, total] = await this.articlesRepository.findAndCount({
-      where: { status: ArticleStatus.PUBLISHED },
-      relations: ['author', 'categories', 'tags'],
-      order: { publishedAt: 'DESC' },
-      skip: (page - 1) * limit,
-      take: limit,
-    });
+    // Ensure limit doesn't exceed maximum
+    const maxLimit = 100;
+    const safeLimit = Math.min(limit, maxLimit);
+    const offset = (page - 1) * safeLimit;
+
+    const queryBuilder = this.articlesRepository
+      .createQueryBuilder('article')
+      .leftJoinAndSelect('article.author', 'author')
+      .leftJoinAndSelect('article.categories', 'categories')
+      .leftJoinAndSelect('article.tags', 'tags')
+      .where('article.status = :status', { status: ArticleStatus.PUBLISHED })
+      .orderBy('article.publishedAt', 'DESC')
+      .skip(offset)
+      .take(safeLimit);
+
+    const [data, total] = await queryBuilder.getManyAndCount();
     return { data, total };
   }
 
   async findOne(id: string): Promise<Article> {
-    const article = await this.articlesRepository.findOne({
-      where: { id },
-      relations: ['author', 'categories', 'tags', 'comments'],
-    });
+    const article = await this.articlesRepository
+      .createQueryBuilder('article')
+      .leftJoinAndSelect('article.author', 'author')
+      .leftJoinAndSelect('article.categories', 'categories')
+      .leftJoinAndSelect('article.tags', 'tags')
+      .leftJoinAndSelect('article.comments', 'comments', 'comments.isApproved = :isApproved', { isApproved: true })
+      .leftJoinAndSelect('comments.user', 'commentUser')
+      .where('article.id = :id', { id })
+      .orderBy('comments.createdAt', 'DESC')
+      .limit(50) // Limit comments to 50
+      .getOne();
+
     if (!article) {
       throw new NotFoundException(`Article with ID ${id} not found`);
     }
@@ -38,10 +55,18 @@ export class ArticlesService {
   }
 
   async findBySlug(slug: string): Promise<Article> {
-    const article = await this.articlesRepository.findOne({
-      where: { slug },
-      relations: ['author', 'categories', 'tags', 'comments'],
-    });
+    const article = await this.articlesRepository
+      .createQueryBuilder('article')
+      .leftJoinAndSelect('article.author', 'author')
+      .leftJoinAndSelect('article.categories', 'categories')
+      .leftJoinAndSelect('article.tags', 'tags')
+      .leftJoinAndSelect('article.comments', 'comments', 'comments.isApproved = :isApproved', { isApproved: true })
+      .leftJoinAndSelect('comments.user', 'commentUser')
+      .where('article.slug = :slug', { slug })
+      .orderBy('comments.createdAt', 'DESC')
+      .limit(50) // Limit comments to 50
+      .getOne();
+
     if (!article) {
       throw new NotFoundException(`Article with slug ${slug} not found`);
     }

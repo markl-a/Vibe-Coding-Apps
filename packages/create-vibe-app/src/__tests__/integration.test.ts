@@ -10,6 +10,8 @@ import {
 
 vi.mock('fs-extra');
 
+type WriteFileCall = [path: string, content: string];
+
 describe('Integration: Full project creation flow', () => {
   const projectPath = '/test/path/test-app';
 
@@ -77,9 +79,9 @@ describe('Integration: Full project creation flow', () => {
     await createPackageJson(config, projectPath);
 
     // Verify index.ts was created
-    const indexCall = (fs.writeFile as any).mock.calls.find((call: any) =>
+    const indexCall = (fs.writeFile as any).mock.calls.find((call: WriteFileCall) =>
       call[0].endsWith('index.ts')
-    );
+    ) as WriteFileCall | undefined;
     expect(indexCall).toBeDefined();
 
     // Verify only TypeScript dependencies
@@ -104,9 +106,9 @@ describe('Integration: Full project creation flow', () => {
 
       await createBasicFiles(config, projectPath);
 
-      const readmeCall = (fs.writeFile as any).mock.calls.find((call: any) =>
+      const readmeCall = (fs.writeFile as any).mock.calls.find((call: WriteFileCall) =>
         call[0].endsWith('README.md')
-      );
+      ) as WriteFileCall | undefined;
 
       expect(readmeCall[1]).toContain(`${packageManager} install`);
       expect(readmeCall[1]).toContain(`${packageManager} dev`);
@@ -238,9 +240,9 @@ describe('Integration: Edge cases and error scenarios', () => {
       const projectPath = '/test/path/test-app';
       await createBasicFiles(config, projectPath);
 
-      const indexCall = (fs.writeFile as any).mock.calls.find((call: any) =>
+      const indexCall = (fs.writeFile as any).mock.calls.find((call: WriteFileCall) =>
         call[0].endsWith(`index${expectedExt}`)
-      );
+      ) as WriteFileCall | undefined;
       expect(indexCall).toBeDefined();
     }
   });

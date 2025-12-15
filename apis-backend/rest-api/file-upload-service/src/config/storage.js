@@ -27,12 +27,23 @@ const gcsClient = process.env.GCS_KEY_FILE
   : null;
 
 // MinIO Configuration
+// MinIO client configuration with secure credentials
+const minioAccessKey = process.env.MINIO_ACCESS_KEY;
+const minioSecretKey = process.env.MINIO_SECRET_KEY;
+
+// Only throw error if MinIO provider is selected
+if (process.env.STORAGE_PROVIDER === 'minio') {
+  if (!minioAccessKey || !minioSecretKey) {
+    throw new Error('MINIO_ACCESS_KEY and MINIO_SECRET_KEY environment variables are required when using MinIO storage');
+  }
+}
+
 const minioClient = new Minio.Client({
   endPoint: process.env.MINIO_ENDPOINT || 'localhost',
   port: parseInt(process.env.MINIO_PORT) || 9000,
   useSSL: process.env.MINIO_USE_SSL === 'true',
-  accessKey: process.env.MINIO_ACCESS_KEY || 'minioadmin',
-  secretKey: process.env.MINIO_SECRET_KEY || 'minioadmin'
+  accessKey: minioAccessKey || 'minioadmin',
+  secretKey: minioSecretKey || 'minioadmin'
 });
 
 // Storage configuration

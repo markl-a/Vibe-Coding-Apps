@@ -5,7 +5,7 @@
 
 import { CodeAnalyzer } from './analyzer';
 import { CodeOptimizer } from './optimizer';
-import { CodeGenerator } from './generator';
+import { CodeGenerator, type GenerationOptions } from './generator';
 import { CodeReviewer } from './reviewer';
 
 export class AIAssistant {
@@ -38,7 +38,7 @@ export class AIAssistant {
   /**
    * Generate code from specification
    */
-  async generate(spec: string, options: any) {
+  async generate(spec: string, options: GenerationOptions) {
     return this.generator.generateFromSpec(spec, options);
   }
 

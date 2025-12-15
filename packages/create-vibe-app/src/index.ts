@@ -21,6 +21,21 @@ import {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+interface CLIOptions {
+  template?: string;
+  framework?: string;
+  skipGit?: boolean;
+  skipInstall?: boolean;
+}
+
+interface InquirerAnswers {
+  name?: string;
+  template?: string;
+  framework?: string;
+  features: string[];
+  packageManager: 'npm' | 'pnpm' | 'yarn';
+}
+
 const program = new Command();
 
 program
@@ -44,7 +59,7 @@ program
 
 async function getProjectConfig(
   projectName?: string,
-  options?: any
+  options?: CLIOptions
 ): Promise<ProjectConfig> {
   const answers = await inquirer.prompt([
     {
@@ -69,11 +84,11 @@ async function getProjectConfig(
       type: 'list',
       name: 'framework',
       message: 'Select a framework:',
-      choices: (answers: any) => {
+      choices: (answers: InquirerAnswers) => {
         const template = answers.template || options?.template;
         return templates[template as keyof typeof templates]?.frameworks || [];
       },
-      when: (answers: any) => {
+      when: (answers: InquirerAnswers) => {
         const template = answers.template || options?.template;
         return !options?.framework && template && templates[template as keyof typeof templates]?.frameworks;
       },
@@ -103,7 +118,7 @@ async function getProjectConfig(
   };
 }
 
-async function createProject(config: ProjectConfig, options: any) {
+async function createProject(config: ProjectConfig, options: CLIOptions) {
   const spinner = ora();
   const projectPath = path.join(process.cwd(), config.name);
 

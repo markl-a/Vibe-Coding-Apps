@@ -5,6 +5,8 @@ import { copyTemplate, createBasicFiles, type ProjectConfig } from '../utils';
 
 vi.mock('fs-extra');
 
+type WriteFileCall = [path: string, content: string];
+
 describe('copyTemplate', () => {
   const mockConfig: ProjectConfig = {
     name: 'test-app',
@@ -57,9 +59,9 @@ describe('createBasicFiles', () => {
 
     await createBasicFiles(config, projectPath);
 
-    const readmeCall = (fs.writeFile as any).mock.calls.find((call: any) =>
+    const readmeCall = (fs.writeFile as any).mock.calls.find((call: WriteFileCall) =>
       call[0].endsWith('README.md')
-    );
+    ) as WriteFileCall | undefined;
     expect(readmeCall).toBeDefined();
     expect(readmeCall[1]).toContain('# my-test-app');
     expect(readmeCall[1]).toContain('Generated with create-vibe-app');
@@ -76,9 +78,9 @@ describe('createBasicFiles', () => {
 
     await createBasicFiles(config, projectPath);
 
-    const readmeCall = (fs.writeFile as any).mock.calls.find((call: any) =>
+    const readmeCall = (fs.writeFile as any).mock.calls.find((call: WriteFileCall) =>
       call[0].endsWith('README.md')
-    );
+    ) as WriteFileCall | undefined;
     expect(readmeCall[1]).toContain('pnpm install');
     expect(readmeCall[1]).toContain('pnpm dev');
   });
@@ -93,9 +95,9 @@ describe('createBasicFiles', () => {
 
     await createBasicFiles(config, projectPath);
 
-    const gitignoreCall = (fs.writeFile as any).mock.calls.find((call: any) =>
+    const gitignoreCall = (fs.writeFile as any).mock.calls.find((call: WriteFileCall) =>
       call[0].endsWith('.gitignore')
-    );
+    ) as WriteFileCall | undefined;
     expect(gitignoreCall).toBeDefined();
     expect(gitignoreCall[1]).toContain('node_modules');
     expect(gitignoreCall[1]).toContain('dist');
@@ -113,9 +115,9 @@ describe('createBasicFiles', () => {
 
     await createBasicFiles(config, projectPath);
 
-    const indexCall = (fs.writeFile as any).mock.calls.find((call: any) =>
+    const indexCall = (fs.writeFile as any).mock.calls.find((call: WriteFileCall) =>
       call[0].endsWith('index.ts')
-    );
+    ) as WriteFileCall | undefined;
     expect(indexCall).toBeDefined();
     expect(indexCall[1]).toContain("console.log('Hello from test-app!');");
   });
@@ -130,9 +132,9 @@ describe('createBasicFiles', () => {
 
     await createBasicFiles(config, projectPath);
 
-    const indexCall = (fs.writeFile as any).mock.calls.find((call: any) =>
+    const indexCall = (fs.writeFile as any).mock.calls.find((call: WriteFileCall) =>
       call[0].endsWith('index.js')
-    );
+    ) as WriteFileCall | undefined;
     expect(indexCall).toBeDefined();
   });
 
@@ -159,9 +161,9 @@ describe('createBasicFiles', () => {
 
     await createBasicFiles(config, projectPath);
 
-    const readmeCall = (fs.writeFile as any).mock.calls.find((call: any) =>
+    const readmeCall = (fs.writeFile as any).mock.calls.find((call: WriteFileCall) =>
       call[0].endsWith('README.md')
-    );
+    ) as WriteFileCall | undefined;
     expect(readmeCall[1]).toContain('# @scope/my-app');
   });
 });

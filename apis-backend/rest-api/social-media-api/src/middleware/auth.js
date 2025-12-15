@@ -13,7 +13,11 @@ exports.authenticate = async (req, res, next) => {
     const token = authHeader.substring(7);
 
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw new Error('JWT_SECRET environment variable is required');
+    }
+    const decoded = jwt.verify(token, jwtSecret);
 
     // Get user from token
     const user = await User.findById(decoded.id).select('-password');
@@ -48,7 +52,11 @@ exports.optionalAuth = async (req, res, next) => {
 
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.substring(7);
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+      const jwtSecret = process.env.JWT_SECRET;
+      if (!jwtSecret) {
+        throw new Error('JWT_SECRET environment variable is required');
+      }
+      const decoded = jwt.verify(token, jwtSecret);
       const user = await User.findById(decoded.id).select('-password');
 
       if (user && user.isActive) {

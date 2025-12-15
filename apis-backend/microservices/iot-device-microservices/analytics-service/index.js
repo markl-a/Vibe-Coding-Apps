@@ -2,13 +2,20 @@ const express = require('express');
 const { createClient } = require('redis');
 const axios = require('axios');
 const cors = require('cors');
+const helmet = require('helmet');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5003;
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 
-app.use(cors());
+app.use(helmet());
+app.use(cors({
+  origin: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 const redisClient = createClient({ url: REDIS_URL });
