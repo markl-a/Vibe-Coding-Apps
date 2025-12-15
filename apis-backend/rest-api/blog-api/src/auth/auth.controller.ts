@@ -1,6 +1,9 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
+import { AuthResponse } from './interfaces/auth-response.interface';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -9,13 +12,13 @@ export class AuthController {
 
   @Post('login')
   @ApiOperation({ summary: '用戶登入' })
-  async login(@Body() loginDto: { username: string; password: string }) {
+  async login(@Body() loginDto: LoginDto): Promise<AuthResponse> {
     return this.authService.login(loginDto.username, loginDto.password);
   }
 
   @Post('register')
   @ApiOperation({ summary: '用戶註冊' })
-  async register(@Body() registerDto: any) {
+  async register(@Body() registerDto: RegisterDto): Promise<AuthResponse> {
     return this.authService.register(registerDto);
   }
 }

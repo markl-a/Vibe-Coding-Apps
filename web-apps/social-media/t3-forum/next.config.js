@@ -10,6 +10,12 @@ const nextConfig = {
       },
     ],
   },
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'chart.js', 'framer-motion'],
+  },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
 }
 
 module.exports = nextConfig

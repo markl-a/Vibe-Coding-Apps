@@ -12,17 +12,17 @@ async function main() {
     // Add more owner addresses
   ];
   const REQUIRED_APPROVALS = 2;
-  const DAILY_LIMIT = ethers.utils.parseEther("1"); // 1 ETH
+  const DAILY_LIMIT = ethers.parseEther("1"); // 1 ETH
 
   console.log("Configuration:");
   console.log("Owners:", OWNERS);
   console.log("Required Approvals:", REQUIRED_APPROVALS);
-  console.log("Daily Limit:", ethers.utils.formatEther(DAILY_LIMIT), "ETH\n");
+  console.log("Daily Limit:", ethers.formatEther(DAILY_LIMIT), "ETH\n");
 
   const MultiSig = await hre.ethers.getContractFactory("MultiSigWallet");
   const wallet = await MultiSig.deploy(OWNERS, REQUIRED_APPROVALS, DAILY_LIMIT);
 
-  await wallet.deployed();
+  await wallet.waitForDeployment();
 
   console.log("✅ MultiSigWallet deployed to:", wallet.address);
 

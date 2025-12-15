@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -19,7 +20,8 @@ ChartJS.register(
 )
 
 const BarChartComponent = () => {
-  const data = {
+  // Memoize data object to prevent unnecessary re-renders
+  const data = useMemo(() => ({
     labels: ['一月', '二月', '三月', '四月', '五月', '六月'],
     datasets: [
       {
@@ -35,9 +37,10 @@ const BarChartComponent = () => {
         borderRadius: 6,
       },
     ],
-  }
+  }), [])
 
-  const options = {
+  // Memoize options object to prevent unnecessary re-renders
+  const options = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: true,
     plugins: {
@@ -62,7 +65,7 @@ const BarChartComponent = () => {
         },
       },
     },
-  }
+  }), [])
 
   return <Bar data={data} options={options} height={80} />
 }

@@ -51,7 +51,12 @@ export const postRouter = createTRPCRouter({
 
   // 取得單一文章（公開）
   getById: publicProcedure
-    .input(z.object({ id: z.string() }))
+    .input(
+      z.object({
+        id: z.string(),
+        commentsLimit: z.number().min(1).max(100).default(20),
+      })
+    )
     .query(async ({ ctx, input }) => {
       const post = await ctx.db.post.findUnique({
         where: { id: input.id },
@@ -67,6 +72,7 @@ export const postRouter = createTRPCRouter({
           category: true,
           tags: true,
           comments: {
+            take: input.commentsLimit, // Limit comments to prevent N+1
             include: {
               author: {
                 select: {

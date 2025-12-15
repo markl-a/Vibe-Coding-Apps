@@ -6,15 +6,15 @@ describe("MyToken", function () {
   let token;
   let owner, addr1, addr2, addr3;
 
-  const INITIAL_SUPPLY = ethers.utils.parseEther("100000000"); // 100 million
-  const MAX_SUPPLY = ethers.utils.parseEther("1000000000"); // 1 billion
+  const INITIAL_SUPPLY = ethers.parseEther("100000000"); // 100 million
+  const MAX_SUPPLY = ethers.parseEther("1000000000"); // 1 billion
 
   beforeEach(async function () {
     [owner, addr1, addr2, addr3] = await ethers.getSigners();
 
     const Token = await ethers.getContractFactory("MyToken");
     token = await Token.deploy();
-    await token.deployed();
+    await token.waitForDeployment();
   });
 
   describe("Deployment", function () {
@@ -43,7 +43,7 @@ describe("MyToken", function () {
 
   describe("Transfers", function () {
     it("Should transfer tokens between accounts", async function () {
-      const amount = ethers.utils.parseEther("100");
+      const amount = ethers.parseEther("100");
 
       await token.transfer(addr1.address, amount);
       expect(await token.balanceOf(addr1.address)).to.equal(amount);
@@ -65,8 +65,8 @@ describe("MyToken", function () {
 
     it("Should update balances after transfers", async function () {
       const initialOwnerBalance = await token.balanceOf(owner.address);
-      const amount1 = ethers.utils.parseEther("100");
-      const amount2 = ethers.utils.parseEther("50");
+      const amount1 = ethers.parseEther("100");
+      const amount2 = ethers.parseEther("50");
 
       await token.transfer(addr1.address, amount1);
       await token.transfer(addr2.address, amount2);
@@ -81,7 +81,7 @@ describe("MyToken", function () {
 
   describe("Minting", function () {
     it("Should mint tokens by owner", async function () {
-      const amount = ethers.utils.parseEther("1000");
+      const amount = ethers.parseEther("1000");
       await expect(token.mint(addr1.address, amount))
         .to.emit(token, "TokensMinted")
         .withArgs(addr1.address, amount);
@@ -90,7 +90,7 @@ describe("MyToken", function () {
     });
 
     it("Should fail if non-owner tries to mint", async function () {
-      const amount = ethers.utils.parseEther("1000");
+      const amount = ethers.parseEther("1000");
       await expect(
         token.connect(addr1).mint(addr2.address, amount)
       ).to.be.revertedWith("Ownable: caller is not the owner");
@@ -116,7 +116,7 @@ describe("MyToken", function () {
 
   describe("Burning", function () {
     it("Should burn tokens", async function () {
-      const burnAmount = ethers.utils.parseEther("1000");
+      const burnAmount = ethers.parseEther("1000");
       const initialBalance = await token.balanceOf(owner.address);
       const initialSupply = await token.totalSupply();
 
@@ -131,7 +131,7 @@ describe("MyToken", function () {
     });
 
     it("Should allow burning from approved address", async function () {
-      const amount = ethers.utils.parseEther("1000");
+      const amount = ethers.parseEther("1000");
       await token.transfer(addr1.address, amount);
       await token.connect(addr1).approve(addr2.address, amount);
 
@@ -165,7 +165,7 @@ describe("MyToken", function () {
     });
 
     it("Should allow transfers when unpaused", async function () {
-      const amount = ethers.utils.parseEther("100");
+      const amount = ethers.parseEther("100");
 
       await token.pause();
       await token.unpause();
@@ -189,7 +189,7 @@ describe("MyToken", function () {
     });
 
     it("Should record balance at snapshot", async function () {
-      const amount = ethers.utils.parseEther("1000");
+      const amount = ethers.parseEther("1000");
       await token.transfer(addr1.address, amount);
 
       await token.snapshot();
@@ -201,7 +201,7 @@ describe("MyToken", function () {
     });
 
     it("Should handle multiple snapshots", async function () {
-      const amount = ethers.utils.parseEther("1000");
+      const amount = ethers.parseEther("1000");
 
       await token.transfer(addr1.address, amount);
       await token.snapshot(); // Snapshot 1
@@ -223,7 +223,7 @@ describe("MyToken", function () {
 
   describe("Voting", function () {
     it("Should delegate votes", async function () {
-      const amount = ethers.utils.parseEther("1000");
+      const amount = ethers.parseEther("1000");
       await token.transfer(addr1.address, amount);
 
       await token.connect(addr1).delegate(addr2.address);
@@ -238,7 +238,7 @@ describe("MyToken", function () {
     });
 
     it("Should update votes after delegation", async function () {
-      const amount = ethers.utils.parseEther("1000");
+      const amount = ethers.parseEther("1000");
 
       await token.delegate(owner.address);
       const initialVotes = await token.getVotes(owner.address);
@@ -252,7 +252,7 @@ describe("MyToken", function () {
     });
 
     it("Should get past votes at checkpoint", async function () {
-      const amount = ethers.utils.parseEther("1000");
+      const amount = ethers.parseEther("1000");
 
       await token.delegate(owner.address);
       await ethers.provider.send("evm_mine");
@@ -281,14 +281,14 @@ describe("MyToken", function () {
 
   describe("Approval", function () {
     it("Should approve tokens for transfer", async function () {
-      const amount = ethers.utils.parseEther("100");
+      const amount = ethers.parseEther("100");
 
       await token.approve(addr1.address, amount);
       expect(await token.allowance(owner.address, addr1.address)).to.equal(amount);
     });
 
     it("Should transfer from approved address", async function () {
-      const amount = ethers.utils.parseEther("100");
+      const amount = ethers.parseEther("100");
 
       await token.approve(addr1.address, amount);
       await token.connect(addr1).transferFrom(owner.address, addr2.address, amount);
@@ -297,8 +297,8 @@ describe("MyToken", function () {
     });
 
     it("Should decrease allowance after transferFrom", async function () {
-      const amount = ethers.utils.parseEther("100");
-      const transferAmount = ethers.utils.parseEther("50");
+      const amount = ethers.parseEther("100");
+      const transferAmount = ethers.parseEther("50");
 
       await token.approve(addr1.address, amount);
       await token.connect(addr1).transferFrom(owner.address, addr2.address, transferAmount);
@@ -311,7 +311,7 @@ describe("MyToken", function () {
 
   describe("Complex scenarios", function () {
     it("Should handle pause during snapshot", async function () {
-      const amount = ethers.utils.parseEther("1000");
+      const amount = ethers.parseEther("1000");
 
       await token.transfer(addr1.address, amount);
       await token.snapshot();
@@ -329,7 +329,7 @@ describe("MyToken", function () {
     });
 
     it("Should handle voting with snapshots", async function () {
-      const amount = ethers.utils.parseEther("1000");
+      const amount = ethers.parseEther("1000");
 
       await token.transfer(addr1.address, amount);
       await token.connect(addr1).delegate(addr1.address);

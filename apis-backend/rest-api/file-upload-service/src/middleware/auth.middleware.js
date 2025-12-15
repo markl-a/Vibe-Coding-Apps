@@ -2,12 +2,19 @@ const jwt = require('jsonwebtoken');
 
 const ENVIRONMENT = process.env.NODE_ENV || 'development';
 
-// Security: Require JWT_SECRET in production
+// Security: Always require JWT_SECRET to be explicitly set
 const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET && ENVIRONMENT === 'production') {
-  throw new Error('JWT_SECRET environment variable is required in production');
+if (!JWT_SECRET) {
+  if (ENVIRONMENT === 'production') {
+    throw new Error('JWT_SECRET environment variable is required in production');
+  }
+  console.warn('WARNING: JWT_SECRET not set. This is insecure and should only be used in local development.');
+  console.warn('Please set JWT_SECRET environment variable immediately.');
 }
-const jwtSecret = JWT_SECRET || 'dev-only-secret-change-in-production';
+
+const jwtSecret = JWT_SECRET || (() => {
+  throw new Error('JWT_SECRET must be set via environment variables. No default values allowed.');
+})();
 
 /**
  * 驗證 JWT token

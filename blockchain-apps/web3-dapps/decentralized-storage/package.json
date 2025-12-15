@@ -25,7 +25,7 @@
     "web3.storage": "^4.5.5",
     "lit-js-sdk": "^6.0.5",
     "@ceramicnetwork/http-client": "^3.0.0",
-    "ethers": "^6.11.1",
+    "ethers": "^6.11.0",
     "zustand": "^4.5.0",
     "react-hot-toast": "^2.4.1",
     "framer-motion": "^11.0.5",

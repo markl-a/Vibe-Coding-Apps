@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
+const { doubleCsrf } = require('csrf-csrf');
 require('dotenv').config();
 
 const routes = require('./routes');
@@ -18,11 +20,47 @@ app.use(cors({
   origin: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token']
 }));
 app.use(express.json({ limit: process.env.MAX_FILE_SIZE || '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
+app.use(cookieParser());
+
+// CSRF Protection Configuration
+const csrfSecret = process.env.CSRF_SECRET || 'your-csrf-secret-change-in-production';
+const { generateToken, doubleCsrfProtection } = doubleCsrf({
+  getSecret: () => csrfSecret,
+  cookieName: '__Host-psifi.x-csrf-token',
+  cookieOptions: {
+    sameSite: 'strict',
+    path: '/',
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true
+  },
+  size: 64,
+  ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
+  getTokenFromRequest: (req) => req.headers['x-csrf-token']
+});
+
+// CSRF Token endpoint - must be before routes that need protection
+app.get('/api/csrf-token', (req, res) => {
+  const token = generateToken(req, res);
+  res.json({
+    success: true,
+    token
+  });
+});
+
+// Apply CSRF protection to all API routes (except token generation)
+app.use('/api', (req, res, next) => {
+  // Skip CSRF for token endpoint and health check
+  if (req.path === '/csrf-token' || req.path === '/health') {
+    return next();
+  }
+  // Apply CSRF protection
+  doubleCsrfProtection(req, res, next);
+});
 
 // MongoDB Connection
 mongoose.connect(MONGODB_URI)

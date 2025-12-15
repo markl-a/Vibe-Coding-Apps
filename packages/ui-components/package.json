@@ -2,6 +2,7 @@
   "name": "@vibe/ui-components",
   "version": "1.0.0",
   "description": "Shared React UI component library for Vibe-Coding-Apps",
+  "sideEffects": false,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
