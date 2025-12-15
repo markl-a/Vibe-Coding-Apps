@@ -30,7 +30,7 @@ async function main() {
   const NFT = await hre.ethers.getContractFactory("MyNFT");
   const nft = await NFT.deploy(NAME, SYMBOL, BASE_URI, NOT_REVEALED_URI);
 
-  await nft.deployed();
+  await nft.waitForDeployment();
 
   console.log("✅ MyNFT deployed to:", nft.address);
   console.log("");
@@ -45,8 +45,8 @@ async function main() {
   console.log("--------------------");
   console.log("Max Supply:", maxSupply.toString());
   console.log("Max Per Wallet:", maxPerWallet.toString());
-  console.log("Whitelist Price:", ethers.utils.formatEther(whitelistPrice), "ETH");
-  console.log("Public Price:", ethers.utils.formatEther(publicPrice), "ETH");
+  console.log("Whitelist Price:", ethers.formatEther(whitelistPrice), "ETH");
+  console.log("Public Price:", ethers.formatEther(publicPrice), "ETH");
   console.log("Owner:", await nft.owner());
   console.log("");
 
@@ -58,8 +58,8 @@ async function main() {
     name: NAME,
     symbol: SYMBOL,
     maxSupply: maxSupply.toString(),
-    whitelistPrice: ethers.utils.formatEther(whitelistPrice),
-    publicPrice: ethers.utils.formatEther(publicPrice),
+    whitelistPrice: ethers.formatEther(whitelistPrice),
+    publicPrice: ethers.formatEther(publicPrice),
     timestamp: new Date().toISOString(),
   };
 

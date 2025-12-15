@@ -4,6 +4,9 @@
  */
 
 import OpenAI from 'openai';
+import { Logger } from '@vibe/shared-utils';
+
+const logger = new Logger('AIRecommendation');
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
@@ -44,7 +47,7 @@ async function getEmbedding(text: string): Promise<number[]> {
 
     return response.data[0].embedding;
   } catch (error) {
-    console.error('Embedding error:', error);
+    logger.error('Embedding error', error as Error);
     return [];
   }
 }
@@ -124,7 +127,7 @@ export async function recommendByContent(
       .slice(0, limit)
       .map((item) => item.post);
   } catch (error) {
-    console.error('Recommendation error:', error);
+    logger.error('Recommendation error', error as Error);
     // 降級：返回熱門貼文
     return allPosts.sort((a, b) => b.likes - a.likes).slice(0, limit);
   }
@@ -208,7 +211,7 @@ export async function getRecommendations(
 
     return merged.slice(0, limit);
   } catch (error) {
-    console.error('Hybrid recommendation error:', error);
+    logger.error('Hybrid recommendation error', error as Error);
     // 降級：返回最新貼文
     return allPosts.sort((a, b) => b.timestamp - a.timestamp).slice(0, limit);
   }
@@ -243,7 +246,7 @@ export async function generateRecommendationReason(
 
     return response.choices[0].message.content || '推薦給你的內容';
   } catch (error) {
-    console.error('Generate reason error:', error);
+    logger.error('Generate reason error', error as Error);
     return '基於你的興趣推薦';
   }
 }

@@ -12,6 +12,28 @@ export default defineConfig({
   server: {
     port: 3002,
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'chart-vendor': ['chart.js', 'react-chartjs-2', 'recharts'],
+          'ui-vendor': ['lucide-react', 'framer-motion'],
+          'utils-vendor': ['clsx', 'date-fns', 'lodash'],
+        },
+      },
+    },
+    target: 'esnext',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+    sourcemap: false,
+    chunkSizeWarningLimit: 1000,
+  },
   test: {
     globals: true,
     environment: 'jsdom',

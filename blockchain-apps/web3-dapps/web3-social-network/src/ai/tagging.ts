@@ -4,6 +4,9 @@
  */
 
 import OpenAI from 'openai';
+import { Logger } from '@vibe/shared-utils';
+
+const logger = new Logger('AITagging');
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
@@ -53,7 +56,7 @@ export async function generateTags(
 
     return [];
   } catch (error) {
-    console.error('Tag generation error:', error);
+    logger.error('Tag generation error', error as Error);
     return extractKeywordsFallback(content, maxTags);
   }
 }
@@ -113,7 +116,7 @@ export async function summarizeContent(
 
     return response.choices[0].message.content || content.substring(0, maxLength);
   } catch (error) {
-    console.error('Summarization error:', error);
+    logger.error('Summarization error', error as Error);
     return content.substring(0, maxLength) + '...';
   }
 }
@@ -168,7 +171,7 @@ export async function analyzeSentiment(content: string): Promise<SentimentResult
       keywords: [],
     };
   } catch (error) {
-    console.error('Sentiment analysis error:', error);
+    logger.error('Sentiment analysis error', error as Error);
     return simpleSentimentAnalysis(content);
   }
 }
@@ -257,7 +260,7 @@ export async function classifyTopic(content: string): Promise<TopicClassificatio
       confidence: 0.5,
     };
   } catch (error) {
-    console.error('Topic classification error:', error);
+    logger.error('Topic classification error', error as Error);
     return {
       primary: 'general',
       secondary: [],

@@ -14,7 +14,7 @@ async function main() {
   const Token = await hre.ethers.getContractFactory("MyToken");
   const token = await Token.deploy();
 
-  await token.deployed();
+  await token.waitForDeployment();
 
   console.log("✅ MyToken deployed to:", token.address);
   console.log("");
@@ -31,8 +31,8 @@ async function main() {
   console.log("Name:", name);
   console.log("Symbol:", symbol);
   console.log("Decimals:", decimals);
-  console.log("Initial Supply:", ethers.utils.formatEther(totalSupply), symbol);
-  console.log("Max Supply:", ethers.utils.formatEther(maxSupply), symbol);
+  console.log("Initial Supply:", ethers.formatEther(totalSupply), symbol);
+  console.log("Max Supply:", ethers.formatEther(maxSupply), symbol);
   console.log("Owner:", await token.owner());
   console.log("");
 

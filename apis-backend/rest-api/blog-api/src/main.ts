@@ -2,6 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { Logger } from '@vibe/shared-utils';
+
+const logger = new Logger('BlogAPI');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -42,8 +45,8 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  console.log(`🚀 Blog API is running on: http://localhost:${port}`);
-  console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
+  logger.info(`🚀 Blog API is running on: http://localhost:${port}`);
+  logger.info(`📚 API Documentation: http://localhost:${port}/api/docs`);
 }
 
 bootstrap();

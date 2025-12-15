@@ -2,6 +2,7 @@
   "name": "@vibe/shared-utils",
   "version": "1.0.0",
   "description": "Shared utility functions for Vibe-Coding-Apps",
+  "sideEffects": false,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

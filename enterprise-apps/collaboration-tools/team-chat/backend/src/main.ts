@@ -4,6 +4,9 @@ import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
 import * as compression from 'compression';
 import { AppModule } from './app.module';
+import { Logger } from '@vibe/shared-utils';
+
+const logger = new Logger('TeamChatBackend');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -40,8 +43,8 @@ async function bootstrap() {
   const port = configService.get('PORT') || 3001;
   await app.listen(port);
 
-  console.log(`🚀 Team Chat Backend is running on: http://localhost:${port}/api`);
-  console.log(`🔌 WebSocket server is running on: ws://localhost:${port}`);
+  logger.info(`🚀 Team Chat Backend is running on: http://localhost:${port}/api`);
+  logger.info(`🔌 WebSocket server is running on: ws://localhost:${port}`);
 }
 
 bootstrap();

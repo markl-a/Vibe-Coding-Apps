@@ -6,7 +6,9 @@ import { useWriteContract, useReadContract, useWatchContractEvent } from 'wagmi'
 import { useState, useEffect } from 'react';
 import { uploadToIPFS } from '@/utils/ipfs';
 import SocialPostABI from '@/contracts/SocialPost.json';
+import { Logger } from '@vibe/shared-utils';
 
+const logger = new Logger('usePost');
 const CONTRACT_ADDRESS = import.meta.env.VITE_SOCIAL_POST_CONTRACT as `0x${string}`;
 
 export interface Post {
@@ -42,7 +44,7 @@ export function usePost() {
 
       return hash;
     } catch (error) {
-      console.error('Create post error:', error);
+      logger.error('Create post error', error as Error);
       throw error;
     }
   };
@@ -61,7 +63,7 @@ export function usePost() {
 
       return hash;
     } catch (error) {
-      console.error('Like post error:', error);
+      logger.error('Like post error', error as Error);
       throw error;
     }
   };
@@ -80,7 +82,7 @@ export function usePost() {
 
       return hash;
     } catch (error) {
-      console.error('Unlike post error:', error);
+      logger.error('Unlike post error', error as Error);
       throw error;
     }
   };
@@ -99,7 +101,7 @@ export function usePost() {
 
       return hash;
     } catch (error) {
-      console.error('Add comment error:', error);
+      logger.error('Add comment error', error as Error);
       throw error;
     }
   };
@@ -118,7 +120,7 @@ export function usePost() {
 
       return hash;
     } catch (error) {
-      console.error('Delete post error:', error);
+      logger.error('Delete post error', error as Error);
       throw error;
     }
   };

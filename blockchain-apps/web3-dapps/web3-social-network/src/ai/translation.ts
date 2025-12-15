@@ -4,6 +4,9 @@
  */
 
 import OpenAI from 'openai';
+import { Logger } from '@vibe/shared-utils';
+
+const logger = new Logger('AITranslation');
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
@@ -59,7 +62,7 @@ export async function detectLanguage(text: string): Promise<SupportedLanguage> {
 
     return (detected as SupportedLanguage) || 'en';
   } catch (error) {
-    console.error('Language detection error:', error);
+    logger.error('Language detection error', error as Error);
     return 'en';
   }
 }
@@ -115,7 +118,7 @@ export async function translateText(
 
     return response.choices[0].message.content || text;
   } catch (error) {
-    console.error('Translation error:', error);
+    logger.error('Translation error', error as Error);
     return text;
   }
 }
@@ -282,7 +285,7 @@ export async function assessTranslationQuality(
       suggestions: [],
     };
   } catch (error) {
-    console.error('Quality assessment error:', error);
+    logger.error('Quality assessment error', error as Error);
     return {
       score: 75,
       fluency: 75,
@@ -350,7 +353,7 @@ export async function translateWithLearning(
       culturalNotes: [],
     };
   } catch (error) {
-    console.error('Translation with learning error:', error);
+    logger.error('Translation with learning error', error as Error);
     return {
       translation: await translateText(text, targetLang),
       vocabulary: [],

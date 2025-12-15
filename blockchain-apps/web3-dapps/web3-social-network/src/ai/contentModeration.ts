@@ -5,6 +5,9 @@
 
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
+import { Logger } from '@vibe/shared-utils';
+
+const logger = new Logger('AIContentModeration');
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
@@ -42,7 +45,7 @@ async function moderateWithOpenAI(content: string): Promise<any> {
 
     return moderation.results[0];
   } catch (error) {
-    console.error('OpenAI moderation error:', error);
+    logger.error('OpenAI moderation error', error as Error);
     throw error;
   }
 }
@@ -84,7 +87,7 @@ ${content}`,
 
     return { safe: true, issues: [], analysis: 'No issues detected', confidence: 50 };
   } catch (error) {
-    console.error('Claude analysis error:', error);
+    logger.error('Claude analysis error', error as Error);
     throw error;
   }
 }
@@ -147,7 +150,7 @@ export async function moderateContent(content: string): Promise<ModerationResult
       confidence: claudeResult.confidence || 85,
     };
   } catch (error) {
-    console.error('Content moderation error:', error);
+    logger.error('Content moderation error', error as Error);
     // 降級策略：如果 API 失敗，進行基本的關鍵詞檢測
     return fallbackModeration(content);
   }

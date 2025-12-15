@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { TopProduct } from '@/types';
 import { formatCurrency, formatNumber } from '@/lib/utils';
@@ -5,6 +6,68 @@ import { formatCurrency, formatNumber } from '@/lib/utils';
 interface TopProductsTableProps {
   products: TopProduct[];
 }
+
+// Memoized table row component for better performance
+interface ProductRowProps {
+  product: TopProduct;
+  index: number;
+}
+
+const ProductRow = memo(({ product, index }: ProductRowProps) => {
+  const isPositiveGrowth = product.growth >= 0;
+
+  // Memoize rank badge styles
+  const rankBadgeClass = useMemo(() => {
+    const baseClass = 'inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold';
+    const colorClass =
+      index === 0 ? 'bg-yellow-100 text-yellow-800' :
+      index === 1 ? 'bg-gray-100 text-gray-800' :
+      index === 2 ? 'bg-orange-100 text-orange-800' :
+      'bg-blue-50 text-blue-800';
+    return `${baseClass} ${colorClass}`;
+  }, [index]);
+
+  return (
+    <tr className="hover:bg-gray-50 transition-colors">
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="flex items-center">
+          <span className={rankBadgeClass}>
+            {index + 1}
+          </span>
+        </div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-sm font-medium text-gray-900">{product.name}</div>
+        <div className="text-sm text-gray-500">{product.id}</div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-primary-100 text-primary-800">
+          {product.category}
+        </span>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-900">
+        {formatNumber(product.sales)}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900">
+        {formatCurrency(product.revenue)}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+        <div className="flex items-center justify-end">
+          {isPositiveGrowth ? (
+            <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
+          ) : (
+            <TrendingDown className="w-4 h-4 text-red-500 mr-1" />
+          )}
+          <span className={`font-medium ${isPositiveGrowth ? 'text-green-600' : 'text-red-600'}`}>
+            {product.growth >= 0 ? '+' : ''}{product.growth.toFixed(1)}%
+          </span>
+        </div>
+      </td>
+    </tr>
+  );
+});
+
+ProductRow.displayName = 'ProductRow';
 
 export default function TopProductsTable({ products }: TopProductsTableProps) {
   return (
@@ -35,53 +98,9 @@ export default function TopProductsTable({ products }: TopProductsTableProps) {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {products.map((product, index) => {
-              const isPositiveGrowth = product.growth >= 0;
-              return (
-                <tr key={product.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <span className={`
-                        inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
-                        ${index === 0 ? 'bg-yellow-100 text-yellow-800' :
-                          index === 1 ? 'bg-gray-100 text-gray-800' :
-                          index === 2 ? 'bg-orange-100 text-orange-800' :
-                          'bg-blue-50 text-blue-800'}
-                      `}>
-                        {index + 1}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                    <div className="text-sm text-gray-500">{product.id}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-primary-100 text-primary-800">
-                      {product.category}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-900">
-                    {formatNumber(product.sales)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900">
-                    {formatCurrency(product.revenue)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                    <div className="flex items-center justify-end">
-                      {isPositiveGrowth ? (
-                        <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-                      ) : (
-                        <TrendingDown className="w-4 h-4 text-red-500 mr-1" />
-                      )}
-                      <span className={`font-medium ${isPositiveGrowth ? 'text-green-600' : 'text-red-600'}`}>
-                        {product.growth >= 0 ? '+' : ''}{product.growth.toFixed(1)}%
-                      </span>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+            {products.map((product, index) => (
+              <ProductRow key={product.id} product={product} index={index} />
+            ))}
           </tbody>
         </table>
       </div>

@@ -22,7 +22,9 @@
     "morgan": "^1.10.0",
     "dotenv": "^16.3.1",
     "bcrypt": "^5.1.1",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "csrf-csrf": "^3.0.0",
+    "cookie-parser": "^1.4.6"
   },
   "devDependencies": {
     "jest": "^29.6.4",

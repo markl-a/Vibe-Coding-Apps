@@ -16,8 +16,8 @@ describe("MyNFT", function () {
 
   const MAX_SUPPLY = 10000;
   const MAX_PER_WALLET = 5;
-  const WHITELIST_PRICE = ethers.utils.parseEther("0.05");
-  const PUBLIC_PRICE = ethers.utils.parseEther("0.08");
+  const WHITELIST_PRICE = ethers.parseEther("0.05");
+  const PUBLIC_PRICE = ethers.parseEther("0.08");
 
   beforeEach(async function () {
     [owner, addr1, addr2, addr3, addr4] = await ethers.getSigners();
@@ -30,7 +30,7 @@ describe("MyNFT", function () {
 
     const NFT = await ethers.getContractFactory("MyNFT");
     nft = await NFT.deploy(NAME, SYMBOL, BASE_URI, NOT_REVEALED_URI);
-    await nft.deployed();
+    await nft.waitForDeployment();
 
     // Set merkle root
     await nft.setMerkleRoot(merkleRoot);
@@ -111,7 +111,7 @@ describe("MyNFT", function () {
 
       await expect(
         nft.connect(addr1).whitelistMint(1, proof, {
-          value: ethers.utils.parseEther("0.01"),
+          value: ethers.parseEther("0.01"),
         })
       ).to.be.revertedWithCustomError(nft, "InsufficientPayment");
     });
@@ -202,7 +202,7 @@ describe("MyNFT", function () {
     it("Should fail with insufficient payment", async function () {
       await expect(
         nft.connect(addr1).publicMint(1, {
-          value: ethers.utils.parseEther("0.01"),
+          value: ethers.parseEther("0.01"),
         })
       ).to.be.revertedWithCustomError(nft, "InsufficientPayment");
     });
@@ -256,7 +256,7 @@ describe("MyNFT", function () {
     it("Should have default royalty", async function () {
       await nft.ownerMint(addr1.address, 1);
 
-      const salePrice = ethers.utils.parseEther("1");
+      const salePrice = ethers.parseEther("1");
       const [receiver, royaltyAmount] = await nft.royaltyInfo(0, salePrice);
 
       expect(receiver).to.equal(owner.address);
@@ -268,7 +268,7 @@ describe("MyNFT", function () {
 
       await nft.setTokenRoyalty(0, addr2.address, 1000); // 10%
 
-      const salePrice = ethers.utils.parseEther("1");
+      const salePrice = ethers.parseEther("1");
       const [receiver, royaltyAmount] = await nft.royaltyInfo(0, salePrice);
 
       expect(receiver).to.equal(addr2.address);
@@ -279,7 +279,7 @@ describe("MyNFT", function () {
       await nft.setDefaultRoyalty(addr2.address, 750); // 7.5%
       await nft.ownerMint(addr1.address, 1);
 
-      const salePrice = ethers.utils.parseEther("1");
+      const salePrice = ethers.parseEther("1");
       const [receiver, royaltyAmount] = await nft.royaltyInfo(0, salePrice);
 
       expect(receiver).to.equal(addr2.address);
@@ -330,7 +330,7 @@ describe("MyNFT", function () {
 
       // Minting new token with same ID should have default royalty
       await nft.ownerMint(addr1.address, 1);
-      const [receiver] = await nft.royaltyInfo(0, ethers.utils.parseEther("1"));
+      const [receiver] = await nft.royaltyInfo(0, ethers.parseEther("1"));
       expect(receiver).to.equal(owner.address); // Default royalty receiver
     });
   });
@@ -404,7 +404,7 @@ describe("MyNFT", function () {
     });
 
     it("Should update merkle root", async function () {
-      const newRoot = ethers.utils.keccak256(ethers.utils.toUtf8Bytes("new"));
+      const newRoot = ethers.keccak256(ethers.toUtf8Bytes("new"));
 
       await expect(nft.setMerkleRoot(newRoot))
         .to.emit(nft, "MerkleRootUpdated")

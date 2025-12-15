@@ -19,6 +19,9 @@ import {
   SupportedLanguage,
 } from '@/ai/translation';
 import { getRecommendations, Post, UserProfile } from '@/ai/recommendation';
+import { Logger } from '@vibe/shared-utils';
+
+const logger = new Logger('useAI');
 
 export function useAI() {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -226,7 +229,7 @@ export function useAIModerator() {
       const result = await moderateContent(content);
       setModerationResult(result);
     } catch (error) {
-      console.error('Moderation error:', error);
+      logger.error('Moderation error', error as Error);
       setModerationResult(null);
     } finally {
       setIsChecking(false);
@@ -259,7 +262,7 @@ export function useAITagSuggestions() {
       const tags = await generateTags(content, maxTags);
       setSuggestions(tags);
     } catch (error) {
-      console.error('Tag generation error:', error);
+      logger.error('Tag generation error', error as Error);
       setSuggestions([]);
     } finally {
       setIsGenerating(false);

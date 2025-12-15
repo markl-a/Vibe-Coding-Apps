@@ -4,6 +4,9 @@
  */
 
 import { create, IPFSHTTPClient } from 'ipfs-http-client';
+import { Logger } from '@vibe/shared-utils';
+
+const logger = new Logger('IPFS');
 
 // IPFS 客戶端配置
 let ipfsClient: IPFSHTTPClient | null = null;
@@ -56,7 +59,7 @@ export async function uploadToIPFS(data: {
 
     return result.path; // 返回 CID
   } catch (error) {
-    console.error('IPFS upload error:', error);
+    logger.error('IPFS upload error', error as Error);
     throw new Error('Failed to upload to IPFS');
   }
 }
@@ -80,7 +83,7 @@ export async function fetchFromIPFS(cid: string): Promise<any> {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('IPFS fetch error:', error);
+    logger.error('IPFS fetch error', error as Error);
     throw new Error('Failed to fetch from IPFS');
   }
 }
@@ -136,7 +139,7 @@ export async function uploadToWeb3Storage(data: {
 
     return `${cid}/post.json`;
   } catch (error) {
-    console.error('Web3.Storage upload error:', error);
+    logger.error('Web3.Storage upload error', error as Error);
     // 降級到普通 IPFS
     return uploadToIPFS(data);
   }
@@ -154,7 +157,7 @@ export async function uploadImageToIPFS(file: File): Promise<string> {
     const result = await client.add(Buffer.from(buffer));
     return result.path;
   } catch (error) {
-    console.error('Image upload error:', error);
+    logger.error('Image upload error', error as Error);
     throw new Error('Failed to upload image to IPFS');
   }
 }
@@ -202,7 +205,7 @@ export async function batchUploadToIPFS(files: File[]): Promise<string[]> {
 
     return cids;
   } catch (error) {
-    console.error('Batch upload error:', error);
+    logger.error('Batch upload error', error as Error);
     throw new Error('Failed to batch upload to IPFS');
   }
 }
@@ -215,7 +218,7 @@ export async function pinToIPFS(cid: string): Promise<void> {
     const client = getIPFSClient();
     await client.pin.add(cid);
   } catch (error) {
-    console.error('Pin error:', error);
+    logger.error('Pin error', error as Error);
     // 不拋出錯誤，因為釘選失敗不影響功能
   }
 }
@@ -228,7 +231,7 @@ export async function unpinFromIPFS(cid: string): Promise<void> {
     const client = getIPFSClient();
     await client.pin.rm(cid);
   } catch (error) {
-    console.error('Unpin error:', error);
+    logger.error('Unpin error', error as Error);
   }
 }
 

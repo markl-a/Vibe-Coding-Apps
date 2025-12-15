@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/config';
 import { ConfigService } from '@nestjs/config';
+import { Logger } from '@vibe/shared-utils';
 
 interface RelatedLink {
   pageId: string;
@@ -19,10 +20,12 @@ interface ContentGap {
 export class KnowledgeAIService {
   private apiKey: string;
   private apiEndpoint: string;
+  private logger: Logger;
 
   constructor(private configService: ConfigService) {
     this.apiKey = this.configService.get<string>('OPENAI_API_KEY') || '';
     this.apiEndpoint = 'https://api.openai.com/v1/chat/completions';
+    this.logger = new Logger('KnowledgeAIService');
   }
 
   /**
@@ -55,7 +58,7 @@ ${content.substring(0, 2000)}`;
         topics: result.topics || [],
       };
     } catch (error) {
-      console.error('Error extracting keywords:', error);
+      this.logger.error('Error extracting keywords', error as Error);
       return {
         keywords: [],
         entities: [],
@@ -103,7 +106,7 @@ ${pagesList}`;
         context: s.context,
       }));
     } catch (error) {
-      console.error('Error suggesting related links:', error);
+      this.logger.error('Error suggesting related links', error as Error);
       return [];
     }
   }
@@ -132,7 +135,7 @@ ${content}`;
       const response = await this.callOpenAI(prompt);
       return JSON.parse(response);
     } catch (error) {
-      console.error('Error generating table of contents:', error);
+      this.logger.error('Error generating table of contents', error as Error);
       return [];
     }
   }
@@ -167,7 +170,7 @@ ${pagesSummary}
       const response = await this.callOpenAI(prompt, 'gpt-4');
       return JSON.parse(response);
     } catch (error) {
-      console.error('Error identifying content gaps:', error);
+      this.logger.error('Error identifying content gaps', error as Error);
       return [];
     }
   }
@@ -198,7 +201,7 @@ ${currentContent.substring(0, 2000)}`;
       const response = await this.callOpenAI(prompt);
       return JSON.parse(response);
     } catch (error) {
-      console.error('Error suggesting content expansion:', error);
+      this.logger.error('Error suggesting content expansion', error as Error);
       return [];
     }
   }
@@ -225,7 +228,7 @@ ${content}`;
       const response = await this.callOpenAI(prompt, 'gpt-4');
       return JSON.parse(response);
     } catch (error) {
-      console.error('Error generating FAQ:', error);
+      this.logger.error('Error generating FAQ', error as Error);
       return [];
     }
   }
@@ -262,7 +265,7 @@ ${content.substring(0, 2000)}`;
       const response = await this.callOpenAI(prompt, 'gpt-4');
       return JSON.parse(response);
     } catch (error) {
-      console.error('Error assessing content quality:', error);
+      this.logger.error('Error assessing content quality', error as Error);
       return {
         overallScore: 0,
         scores: {
@@ -311,7 +314,7 @@ ${content}`;
       const response = await this.callOpenAI(prompt, 'gpt-4');
       return JSON.parse(response);
     } catch (error) {
-      console.error('Error standardizing terminology:', error);
+      this.logger.error('Error standardizing terminology', error as Error);
       return {
         standardizedContent: content,
         changes: [],
@@ -343,7 +346,7 @@ ${content}`;
       const response = await this.callOpenAI(prompt, 'gpt-4');
       return JSON.parse(response);
     } catch (error) {
-      console.error('Error generating multi-level summary:', error);
+      this.logger.error('Error generating multi-level summary', error as Error);
       return {
         oneLine: '',
         short: '',
@@ -392,7 +395,7 @@ ${structureList}`;
       const response = await this.callOpenAI(prompt, 'gpt-4');
       return JSON.parse(response);
     } catch (error) {
-      console.error('Error suggesting hierarchy placement:', error);
+      this.logger.error('Error suggesting hierarchy placement', error as Error);
       return {
         suggestedPath: '/未分類',
         confidence: 0,
@@ -433,7 +436,7 @@ ${content.substring(0, 2000)}`;
       const response = await this.callOpenAI(prompt);
       return JSON.parse(response);
     } catch (error) {
-      console.error('Error detecting outdated content:', error);
+      this.logger.error('Error detecting outdated content', error as Error);
       return {
         isLikelyOutdated: false,
         confidence: 0,
