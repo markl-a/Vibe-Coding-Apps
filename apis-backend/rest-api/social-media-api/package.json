@@ -1,0 +1,51 @@
+{
+  "name": "social-media-api",
+  "version": "1.0.0",
+  "description": "社交媒體 REST API - 完整的社交平台後端服務",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest --coverage --verbose",
+    "test:watch": "jest --watch",
+    "test:unit": "jest --testPathPattern=__tests__"
+  },
+  "keywords": ["social-media", "rest-api", "nodejs", "express", "mongodb"],
+  "author": "AI-Driven Development",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0",
+    "express-validator": "^7.0.1",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "morgan": "^1.10.0",
+    "dotenv": "^16.3.1",
+    "bcrypt": "^5.1.1",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "jest": "^29.6.4",
+    "supertest": "^6.3.3",
+    "nodemon": "^3.0.1",
+    "@types/jest": "^29.5.4",
+    "mongodb-memory-server": "^9.0.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/index.js",
+      "!src/**/__tests__/**"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.test.js"
+    ],
+    "setupFilesAfterEnv": ["<rootDir>/src/__tests__/setup.js"],
+    "clearMocks": true,
+    "resetMocks": true,
+    "restoreMocks": true,
+    "testTimeout": 30000
+  }
+}

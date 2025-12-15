@@ -38,9 +38,13 @@ router.post('/register', [
     const userId = result.lastInsertRowid;
 
     // Generate token
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw new Error('JWT_SECRET environment variable is required');
+    }
     const token = jwt.sign(
       { userId, email, username },
-      process.env.JWT_SECRET,
+      jwtSecret,
       { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
     );
 
@@ -81,9 +85,13 @@ router.post('/login', [
     }
 
     // Generate token
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw new Error('JWT_SECRET environment variable is required');
+    }
     const token = jwt.sign(
       { userId: user.id, email: user.email, username: user.username },
-      process.env.JWT_SECRET,
+      jwtSecret,
       { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
     );
 

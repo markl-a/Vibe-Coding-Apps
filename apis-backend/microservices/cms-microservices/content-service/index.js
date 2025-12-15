@@ -9,9 +9,22 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 6001;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/cms_content';
-const JWT_SECRET = process.env.JWT_SECRET || 'cms-secret';
+const ENVIRONMENT = process.env.NODE_ENV || 'development';
 
-app.use(cors());
+// Security: Require JWT_SECRET in production
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET && ENVIRONMENT === 'production') {
+  throw new Error('JWT_SECRET environment variable is required in production');
+}
+const jwtSecret = JWT_SECRET || 'dev-only-secret-change-in-production';
+
+const corsOptions = {
+  origin: process.env.CORS_ORIGINS?.split(',') || (process.env.NODE_ENV === 'production' ? [] : ['http://localhost:3000']),
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 mongoose.connect(MONGODB_URI)
@@ -64,7 +77,7 @@ app.post('/api/auth/login', async (req, res) => {
 
     const token = jwt.sign(
       { userId: user._id, email: user.email, role: user.role },
-      JWT_SECRET,
+      jwtSecret,
       { expiresIn: '24h' }
     );
 

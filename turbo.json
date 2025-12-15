@@ -29,9 +29,11 @@
       "persistent": true
     },
     "test": {
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "outputs": [
-        "coverage/**"
+        "coverage/**",
+        ".nyc_output/**",
+        "test-results/**"
       ],
       "cache": true
     },
@@ -40,12 +42,17 @@
       "persistent": true
     },
     "lint": {
-      "outputs": [],
+      "dependsOn": ["^build"],
+      "outputs": [
+        ".eslintcache"
+      ],
       "cache": true
     },
     "type-check": {
       "dependsOn": ["^build"],
-      "outputs": [],
+      "outputs": [
+        "*.tsbuildinfo"
+      ],
       "cache": true
     },
     "clean": {
@@ -54,6 +61,10 @@
     "format": {
       "outputs": [],
       "cache": false
+    },
+    "format:check": {
+      "outputs": [],
+      "cache": true
     }
   },
   "globalEnv": [

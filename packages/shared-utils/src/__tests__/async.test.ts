@@ -45,15 +45,13 @@ describe('Async Utils', () => {
     it('should throw after all retries exhausted', async () => {
       const fn = vi.fn().mockRejectedValue(new Error('fail'));
 
-      const promise = retry(fn, { retries: 2, delay: 100 }).catch((e) => e);
+      const promise = retry(fn, { retries: 2, delay: 100 });
 
       // Advance through all retries
       await vi.advanceTimersByTimeAsync(100);
       await vi.advanceTimersByTimeAsync(200);
 
-      const error = await promise;
-      expect(error).toBeInstanceOf(Error);
-      expect(error.message).toBe('fail');
+      await expect(promise).rejects.toThrow('fail');
       expect(fn).toHaveBeenCalledTimes(3);
     });
 

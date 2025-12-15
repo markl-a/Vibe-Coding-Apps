@@ -15,19 +15,37 @@ export class CommentsService {
     return this.commentsRepository.save(comment);
   }
 
-  async findByArticle(articleId: string): Promise<Comment[]> {
-    return this.commentsRepository.find({
-      where: { article: { id: articleId }, isApproved: true },
-      relations: ['user'],
-      order: { createdAt: 'DESC' },
-    });
+  async findByArticle(
+    articleId: string,
+    page = 1,
+    limit = 50,
+  ): Promise<{ data: Comment[]; total: number }> {
+    // Ensure limit doesn't exceed maximum
+    const maxLimit = 100;
+    const safeLimit = Math.min(limit, maxLimit);
+    const offset = (page - 1) * safeLimit;
+
+    const [data, total] = await this.commentsRepository
+      .createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.user', 'user')
+      .where('comment.articleId = :articleId', { articleId })
+      .andWhere('comment.isApproved = :isApproved', { isApproved: true })
+      .orderBy('comment.createdAt', 'DESC')
+      .skip(offset)
+      .take(safeLimit)
+      .getManyAndCount();
+
+    return { data, total };
   }
 
   async findOne(id: string): Promise<Comment> {
-    const comment = await this.commentsRepository.findOne({
-      where: { id },
-      relations: ['user', 'article'],
-    });
+    const comment = await this.commentsRepository
+      .createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.user', 'user')
+      .leftJoinAndSelect('comment.article', 'article')
+      .where('comment.id = :id', { id })
+      .getOne();
+
     if (!comment) {
       throw new NotFoundException(`Comment with ID ${id} not found`);
     }

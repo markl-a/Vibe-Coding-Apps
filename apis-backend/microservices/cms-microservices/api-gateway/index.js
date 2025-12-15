@@ -8,10 +8,23 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 6000;
-const JWT_SECRET = process.env.JWT_SECRET || 'cms-secret';
+const ENVIRONMENT = process.env.NODE_ENV || 'development';
+
+// Security: Require JWT_SECRET in production
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET && ENVIRONMENT === 'production') {
+  throw new Error('JWT_SECRET environment variable is required in production');
+}
+const jwtSecret = JWT_SECRET || 'dev-only-secret-change-in-production';
 
 app.use(helmet());
-app.use(cors());
+const corsOptions = {
+  origin: process.env.CORS_ORIGINS?.split(',') || (process.env.NODE_ENV === 'production' ? [] : ['http://localhost:3000']),
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 500 });
@@ -22,7 +35,7 @@ const authMiddleware = (req, res, next) => {
   if (!token) return res.status(401).json({ error: 'No token provided' });
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, jwtSecret);
     req.user = decoded;
     next();
   } catch (err) {
