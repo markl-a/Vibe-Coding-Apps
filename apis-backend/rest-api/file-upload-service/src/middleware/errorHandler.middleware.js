@@ -85,12 +85,14 @@ const errorHandler = (err, req, res, next) => {
   // 發送錯誤響應
   res.status(error.statusCode || err.status || 500).json({
     success: false,
-    error: error.message || err.message || 'Server Error',
-    code: error.code || 'INTERNAL_ERROR',
-    ...(process.env.NODE_ENV === 'development' && {
-      stack: err.stack,
-      details: err
-    })
+    error: {
+      code: error.code || 'INTERNAL_ERROR',
+      message: error.message || err.message || 'Server Error',
+      ...(process.env.NODE_ENV === 'development' && {
+        stack: err.stack,
+        details: err
+      })
+    }
   });
 };
 

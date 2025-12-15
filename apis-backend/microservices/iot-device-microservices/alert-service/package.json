@@ -2,11 +2,28 @@
   "name": "iot-alert-service",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {"start": "node index.js"},
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
   "dependencies": {
     "express": "^4.18.2",
     "amqplib": "^0.10.3",
     "cors": "^2.8.5",
+    "helmet": "^7.1.0",
     "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   }
 }

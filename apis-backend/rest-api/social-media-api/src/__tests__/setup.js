@@ -10,12 +10,16 @@ beforeAll(async () => {
     await mongoose.disconnect();
   }
 
-  // Create in-memory MongoDB server
-  mongoServer = await MongoMemoryServer.create();
+  // Create in-memory MongoDB server with specific version
+  mongoServer = await MongoMemoryServer.create({
+    binary: {
+      version: '7.0.0',
+    },
+  });
   const mongoUri = mongoServer.getUri();
 
   await mongoose.connect(mongoUri);
-});
+}, 60000);
 
 // Cleanup after each test
 afterEach(async () => {

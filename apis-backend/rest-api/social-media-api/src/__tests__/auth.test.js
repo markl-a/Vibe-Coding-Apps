@@ -44,7 +44,9 @@ describe('Auth API', () => {
         .send(userData)
         .expect(400);
 
-      expect(res.body.error).toBe('Email already registered');
+      expect(res.body.success).toBe(false);
+      expect(res.body.error.message).toBe('Email already registered');
+      expect(res.body.error.code).toBe('EMAIL_EXISTS');
     });
 
     it('should reject registration with duplicate username', async () => {
@@ -63,7 +65,9 @@ describe('Auth API', () => {
         .send(userData)
         .expect(400);
 
-      expect(res.body.error).toBe('Username already taken');
+      expect(res.body.success).toBe(false);
+      expect(res.body.error.message).toBe('Username already taken');
+      expect(res.body.error.code).toBe('USERNAME_EXISTS');
     });
 
     it('should reject registration with invalid email', async () => {
@@ -128,7 +132,9 @@ describe('Auth API', () => {
         })
         .expect(401);
 
-      expect(res.body.error).toBe('Invalid credentials');
+      expect(res.body.success).toBe(false);
+      expect(res.body.error.message).toBe('Invalid credentials');
+      expect(res.body.error.code).toBe('INVALID_CREDENTIALS');
     });
 
     it('should reject login with incorrect password', async () => {
@@ -145,7 +151,9 @@ describe('Auth API', () => {
         })
         .expect(401);
 
-      expect(res.body.error).toBe('Invalid credentials');
+      expect(res.body.success).toBe(false);
+      expect(res.body.error.message).toBe('Invalid credentials');
+      expect(res.body.error.code).toBe('INVALID_CREDENTIALS');
     });
   });
 
@@ -170,7 +178,9 @@ describe('Auth API', () => {
         .get('/api/auth/me')
         .expect(401);
 
-      expect(res.body.error).toBe('No token provided');
+      expect(res.body.success).toBe(false);
+      expect(res.body.error.message).toBe('No token provided');
+      expect(res.body.error.code).toBe('NO_TOKEN');
     });
 
     it('should reject request with invalid token', async () => {
@@ -179,7 +189,9 @@ describe('Auth API', () => {
         .set('Authorization', 'Bearer invalid-token')
         .expect(401);
 
-      expect(res.body.error).toBe('Invalid token');
+      expect(res.body.success).toBe(false);
+      expect(res.body.error.message).toBe('Invalid token');
+      expect(res.body.error.code).toBe('INVALID_TOKEN');
     });
   });
 });

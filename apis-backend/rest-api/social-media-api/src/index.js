@@ -6,6 +6,7 @@ const morgan = require('morgan');
 require('dotenv').config();
 
 const routes = require('./routes');
+const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -43,16 +44,17 @@ app.use('/api', routes);
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ error: 'Route not found' });
-});
-
-// Error handler
-app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(err.status || 500).json({
-    error: err.message || 'Internal server error'
+  res.status(404).json({
+    success: false,
+    error: {
+      code: 'ROUTE_NOT_FOUND',
+      message: 'Route not found'
+    }
   });
 });
+
+// Error handler - use centralized error handling middleware
+app.use(errorHandler);
 
 // Start server (only if not in test mode)
 if (process.env.NODE_ENV !== 'test') {

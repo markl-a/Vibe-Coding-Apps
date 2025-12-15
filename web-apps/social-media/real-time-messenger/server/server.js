@@ -5,7 +5,13 @@ const cors = require('cors')
 const aiBot = require('./aiBot')
 
 const app = express()
-app.use(cors())
+const corsOptions = {
+  origin: process.env.CORS_ORIGINS?.split(',') || (process.env.NODE_ENV === 'production' ? [] : ['http://localhost:3000']),
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}
+app.use(cors(corsOptions))
 
 const server = http.createServer(app)
 const io = new Server(server, {

@@ -7,7 +7,13 @@ const app = express();
 const PORT = process.env.PORT || 6004;
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 
-app.use(cors());
+const corsOptions = {
+  origin: process.env.CORS_ORIGINS?.split(',') || (process.env.NODE_ENV === 'production' ? [] : ['http://localhost:3000']),
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 const redisClient = createClient({ url: REDIS_URL });

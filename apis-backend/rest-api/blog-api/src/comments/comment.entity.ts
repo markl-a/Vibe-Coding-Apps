@@ -20,7 +20,7 @@ export class Comment {
   @Column({ default: true })
   isApproved: boolean;
 
-  @ManyToOne(() => User, (user) => user.comments, { eager: true })
+  @ManyToOne(() => User, (user) => user.comments)
   user: User;
 
   @ManyToOne(() => Article, (article) => article.comments)

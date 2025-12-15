@@ -18,7 +18,13 @@ if (!JWT_SECRET && ENVIRONMENT === 'production') {
 }
 const jwtSecret = JWT_SECRET || 'dev-only-secret-change-in-production';
 
-app.use(cors());
+const corsOptions = {
+  origin: process.env.CORS_ORIGINS?.split(',') || (process.env.NODE_ENV === 'production' ? [] : ['http://localhost:3000']),
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 mongoose.connect(MONGODB_URI)

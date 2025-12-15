@@ -5,6 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { initDatabase } = require('./utils/db');
 const ChatHandler = require('./sockets/chatHandler');
+const errorHandler = require('./middlewares/errorHandler');
 
 require('dotenv').config();
 
@@ -44,14 +45,17 @@ async function startServer() {
 
     // 404 handler
     app.use((req, res) => {
-      res.status(404).json({ success: false, error: 'Route not found' });
+      res.status(404).json({
+        success: false,
+        error: {
+          code: 'ROUTE_NOT_FOUND',
+          message: 'Route not found'
+        }
+      });
     });
 
-    // Error handler
-    app.use((err, req, res, next) => {
-      console.error(err.stack);
-      res.status(500).json({ success: false, error: 'Internal server error' });
-    });
+    // Error handler - use centralized error handling middleware
+    app.use(errorHandler);
 
     // Initialize chat handler
     const chatHandler = new ChatHandler(io);

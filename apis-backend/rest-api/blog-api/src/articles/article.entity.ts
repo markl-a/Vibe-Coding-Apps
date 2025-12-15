@@ -56,10 +56,10 @@ export class Article {
   @Column({ type: 'timestamp', nullable: true })
   publishedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.articles, { eager: true })
+  @ManyToOne(() => User, (user) => user.articles)
   author: User;
 
-  @ManyToMany(() => Category, (category) => category.articles, { eager: true })
+  @ManyToMany(() => Category, (category) => category.articles)
   @JoinTable({
     name: 'article_categories',
     joinColumn: { name: 'article_id', referencedColumnName: 'id' },
@@ -67,7 +67,7 @@ export class Article {
   })
   categories: Category[];
 
-  @ManyToMany(() => Tag, (tag) => tag.articles, { eager: true })
+  @ManyToMany(() => Tag, (tag) => tag.articles)
   @JoinTable({
     name: 'article_tags',
     joinColumn: { name: 'article_id', referencedColumnName: 'id' },
