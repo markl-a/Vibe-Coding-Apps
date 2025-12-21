@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { createLogger } from '@vibe/shared-utils';
+
+const logger = createLogger('NotificationService');
 
 @Injectable()
 export class NotificationService {
@@ -7,7 +10,10 @@ export class NotificationService {
    */
   async sendMentionNotification(userId: string, message: any): Promise<void> {
     // TODO: 實現通知邏輯
-    console.log(`Sending mention notification to user ${userId} for message ${message.id}`);
+    logger.info('Sending mention notification', {
+      userId,
+      messageId: message.id
+    });
 
     // 可以整合多種通知渠道：
     // 1. 推送通知
@@ -23,7 +29,7 @@ export class NotificationService {
     userId: string,
     message: any,
   ): Promise<void> {
-    console.log(`Sending DM notification to user ${userId}`);
+    logger.info('Sending DM notification', { userId });
   }
 
   /**
@@ -34,7 +40,7 @@ export class NotificationService {
     channelId: string,
     message: any,
   ): Promise<void> {
-    console.log(`Sending channel notification to user ${userId} for channel ${channelId}`);
+    logger.info('Sending channel notification', { userId, channelId });
   }
 
   /**
@@ -44,7 +50,7 @@ export class NotificationService {
     userIds: string[],
     notification: any,
   ): Promise<void> {
-    console.log(`Sending bulk notifications to ${userIds.length} users`);
+    logger.info('Sending bulk notifications', { userCount: userIds.length });
 
     // 使用消息隊列批量處理
     for (const userId of userIds) {
