@@ -2,6 +2,7 @@ const express = require('express')
 const http = require('http')
 const { Server } = require('socket.io')
 const cors = require('cors')
+const jwt = require('jsonwebtoken')
 const aiBot = require('./aiBot')
 
 const app = express()
@@ -65,6 +66,22 @@ const getRoomList = () => {
     userCount: room.users.size,
   }))
 }
+
+// JWT authentication middleware for Socket.io
+io.use((socket, next) => {
+  const token = socket.handshake.auth.token;
+  if (!token) {
+    return next(new Error('Authentication required'));
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key-change-in-production');
+    socket.userId = decoded.id;
+    socket.userRole = decoded.role;
+    next();
+  } catch(error) {
+    next(new Error('Invalid token'));
+  }
+});
 
 // Socket.io connection handler
 io.on('connection', (socket) => {

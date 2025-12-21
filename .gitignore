@@ -153,3 +153,7 @@ tmp/
 *.pdf
 *.csv
 *.xlsx
+
+# Lock files (only use pnpm-lock.yaml)
+package-lock.json
+yarn.lock

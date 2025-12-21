@@ -15,21 +15,20 @@ class ChatHandler {
    */
   initialize() {
     this.io.use((socket, next) => {
+      const token = socket.handshake.auth.token;
+      if (!token) {
+        return next(new Error('Authentication required'));
+      }
       try {
-        const token = socket.handshake.auth.token;
-        if (!token) {
-          return next(new Error('Authentication error'));
-        }
-
         const decoded = verifyToken(token);
         if (!decoded) {
           return next(new Error('Invalid token'));
         }
-
-        socket.userId = decoded.userId;
+        socket.userId = decoded.userId || decoded.id;
+        socket.userRole = decoded.role;
         next();
-      } catch (error) {
-        next(new Error('Authentication error'));
+      } catch(error) {
+        next(new Error('Invalid token'));
       }
     });
 

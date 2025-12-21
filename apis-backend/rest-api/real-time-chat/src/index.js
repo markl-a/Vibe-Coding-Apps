@@ -20,17 +20,29 @@ async function startServer() {
     const app = express();
     const httpServer = http.createServer(app);
 
+    // CORS configuration
+    const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:3000').split(',');
+    const corsOptions = {
+      origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error('CORS policy violation'));
+        }
+      },
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization']
+    };
+
     // Initialize Socket.io
     const io = new Server(httpServer, {
-      cors: {
-        origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-        credentials: true,
-      },
+      cors: corsOptions
     });
 
     // Middleware
     app.use(helmet());
-    app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:3000' }));
+    app.use(cors(corsOptions));
     app.use(express.json());
 
     // Health check

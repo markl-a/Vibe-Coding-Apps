@@ -10,5 +10,6 @@ export * from './date';
 export * from './validation';
 export * from './async';
 export * from './error';
+export * from './errors';
 export * from './api-response';
 export * from './logger';

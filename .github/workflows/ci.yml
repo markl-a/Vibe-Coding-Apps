@@ -105,6 +105,18 @@ jobs:
       - name: Run tests
         run: pnpm test
 
+      - name: Check coverage threshold
+        if: matrix.node-version == 20
+        run: |
+          pnpm test --coverage --coverageReporters=json-summary
+          COVERAGE=$(cat coverage/coverage-summary.json | jq '.total.lines.pct')
+          echo "Line coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 75" | bc -l) )); then
+            echo "❌ Coverage is below 75%"
+            exit 1
+          fi
+          echo "✅ Coverage meets threshold"
+
       - name: Upload coverage
         if: matrix.node-version == 20
         uses: codecov/codecov-action@v3
