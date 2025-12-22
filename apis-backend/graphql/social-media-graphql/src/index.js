@@ -1,17 +1,19 @@
 const { ApolloServer } = require('@apollo/server');
 const { startStandaloneServer } = require('@apollo/server/standalone');
+const { createLogger } = require('@shared-utils/logger');
 const { initDatabase } = require('./utils/db');
 const { getUserFromContext } = require('./utils/auth');
 const typeDefs = require('./schema/typeDefs');
 const resolvers = require('./resolvers');
 require('dotenv').config();
 
+const logger = createLogger('social-media-graphql');
 const PORT = process.env.PORT || 4002;
 
 async function startServer() {
   try {
     // 初始化資料庫
-    console.log('🔄 Initializing database...');
+    logger.info('Initializing database');
     await initDatabase();
 
     // 創建 Apollo Server
@@ -20,7 +22,7 @@ async function startServer() {
       resolvers,
       introspection: true,
       formatError: (error) => {
-        console.error('GraphQL Error:', error);
+        logger.error('GraphQL Error', error);
         return error;
       }
     });
@@ -34,42 +36,26 @@ async function startServer() {
       }
     });
 
-    console.log(`
-╔════════════════════════════════════════════════════════╗
-║                                                        ║
-║   🚀 Social Media GraphQL API Server is running!     ║
-║                                                        ║
-║   🌐 GraphQL Endpoint:                                ║
-║      ${url.padEnd(48)}║
-║                                                        ║
-║   📊 GraphQL Playground:                              ║
-║      ${url.padEnd(48)}║
-║                                                        ║
-║   🔌 WebSocket (Subscriptions):                       ║
-║      ws://localhost:${PORT}/graphql                      ║
-║                                                        ║
-║   💡 Ready to connect people!                         ║
-║                                                        ║
-╚════════════════════════════════════════════════════════╝
-
-📝 Demo credentials:
-   Email: demo@example.com
-   Password: demo123
-    `);
+    logger.info('Social Media GraphQL API Server is running', {
+      graphqlEndpoint: url,
+      wsEndpoint: `ws://localhost:${PORT}/graphql`,
+      port: PORT,
+      demo: 'demo@example.com / demo123'
+    });
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
+    logger.error('Failed to start server', error);
     process.exit(1);
   }
 }
 
 // 優雅關閉
 process.on('SIGTERM', () => {
-  console.log('🛑 SIGTERM signal received: closing server');
+  logger.info('SIGTERM signal received: closing server');
   process.exit(0);
 });
 
 process.on('SIGINT', () => {
-  console.log('🛑 SIGINT signal received: closing server');
+  logger.info('SIGINT signal received: closing server');
   process.exit(0);
 });
 

@@ -3,18 +3,21 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const helmet = require('helmet');
+const { createLogger } = require('@shared-utils/logger');
 const { initDatabase } = require('./utils/db');
 const ChatHandler = require('./sockets/chatHandler');
 const errorHandler = require('./middlewares/errorHandler');
 
 require('dotenv').config();
 
+const logger = createLogger('real-time-chat');
+
 const PORT = process.env.PORT || 4000;
 
 async function startServer() {
   try {
     // Initialize database
-    console.log('🔄 Initializing database...');
+    logger.info('Initializing database');
     await initDatabase();
 
     const app = express();
@@ -75,38 +78,28 @@ async function startServer() {
 
     // Start server
     httpServer.listen(PORT, () => {
-      console.log(`
-╔════════════════════════════════════════════════════════╗
-║                                                        ║
-║   💬 Real-time Chat REST API is running!             ║
-║                                                        ║
-║   🌐 HTTP Endpoint:                                   ║
-║      http://localhost:${PORT}                           ║
-║                                                        ║
-║   🔌 Socket.io:                                       ║
-║      ws://localhost:${PORT}                             ║
-║                                                        ║
-║   💡 Ready for real-time messaging!                   ║
-║                                                        ║
-╚════════════════════════════════════════════════════════╝
-      `);
+      logger.info('Real-time Chat REST API is running', {
+        httpEndpoint: `http://localhost:${PORT}`,
+        socketEndpoint: `ws://localhost:${PORT}`,
+        port: PORT
+      });
     });
 
     return { app, httpServer, io };
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
+    logger.error('Failed to start server', error);
     process.exit(1);
   }
 }
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('🛑 SIGTERM signal received: closing server');
+  logger.info('SIGTERM signal received: closing server');
   process.exit(0);
 });
 
 process.on('SIGINT', () => {
-  console.log('🛑 SIGINT signal received: closing server');
+  logger.info('SIGINT signal received: closing server');
   process.exit(0);
 });
 

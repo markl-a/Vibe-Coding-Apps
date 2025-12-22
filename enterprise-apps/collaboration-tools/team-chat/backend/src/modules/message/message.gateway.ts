@@ -9,8 +9,11 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UseGuards } from '@nestjs/common';
+import { createLogger } from '@shared-utils/logger';
 import { WsJwtGuard } from '../../common/guards/ws-jwt.guard';
 import { Message } from './message.entity';
+
+const logger = createLogger('team-chat-gateway');
 
 @WebSocketGateway({
   cors: {
@@ -25,11 +28,11 @@ export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect 
   private connectedUsers: Map<string, Set<string>> = new Map(); // channelId -> Set of socketIds
 
   handleConnection(client: Socket) {
-    console.log(`Client connected: ${client.id}`);
+    logger.info('Client connected', { clientId: client.id });
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`Client disconnected: ${client.id}`);
+    logger.info('Client disconnected', { clientId: client.id });
     // 從所有頻道中移除該客戶端
     this.connectedUsers.forEach((sockets, channelId) => {
       sockets.delete(client.id);

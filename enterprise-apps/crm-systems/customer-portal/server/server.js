@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const http = require('http');
 const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
+const { createLogger } = require('@shared-utils/logger');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
@@ -14,6 +15,7 @@ const orderRoutes = require('./routes/orders');
 const ticketRoutes = require('./routes/tickets');
 const documentRoutes = require('./routes/documents');
 
+const logger = createLogger('customer-portal');
 const app = express();
 const server = http.createServer(app);
 
@@ -53,8 +55,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/customer_
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('✅ MongoDB connected'))
-.catch(err => console.error('❌ MongoDB connection error:', err));
+.then(() => logger.info('MongoDB connected'))
+.catch(err => logger.error('MongoDB connection error', err));
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -89,11 +91,11 @@ io.use((socket, next) => {
 
 // Socket.IO for real-time chat
 io.on('connection', (socket) => {
-  console.log('Client connected:', socket.id);
+  logger.info('Client connected', { socketId: socket.id });
 
   socket.on('join-room', (customerId) => {
     socket.join(`customer-${customerId}`);
-    console.log(`Customer ${customerId} joined room`);
+    logger.info('Customer joined room', { customerId });
   });
 
   socket.on('send-message', (data) => {
@@ -101,13 +103,16 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
+    logger.info('Client disconnected', { socketId: socket.id });
   });
 });
 
 // Error handling
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  logger.error('Request error', err, {
+    method: req.method,
+    path: req.path
+  });
   res.status(err.status || 500).json({
     error: {
       message: err.message || 'Internal Server Error',
@@ -123,9 +128,11 @@ app.use((req, res) => {
 
 // Start server
 server.listen(PORT, () => {
-  console.log(`🚀 Customer Portal server running on port ${PORT}`);
-  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔗 Health check: http://localhost:${PORT}/health`);
+  logger.info('Customer Portal server running', {
+    port: PORT,
+    environment: process.env.NODE_ENV || 'development',
+    healthCheck: `http://localhost:${PORT}/health`
+  });
 });
 
 module.exports = { app, io };

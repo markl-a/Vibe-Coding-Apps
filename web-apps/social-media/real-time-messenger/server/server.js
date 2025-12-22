@@ -3,8 +3,10 @@ const http = require('http')
 const { Server } = require('socket.io')
 const cors = require('cors')
 const jwt = require('jsonwebtoken')
+const { createLogger } = require('@shared-utils/logger')
 const aiBot = require('./aiBot')
 
+const logger = createLogger('real-time-messenger')
 const app = express()
 const corsOptions = {
   origin: process.env.CORS_ORIGINS?.split(',') || (process.env.NODE_ENV === 'production' ? [] : ['http://localhost:3000']),
@@ -85,7 +87,7 @@ io.use((socket, next) => {
 
 // Socket.io connection handler
 io.on('connection', (socket) => {
-  console.log('✅ User connected:', socket.id)
+  logger.info('User connected', { socketId: socket.id })
 
   const userId = socket.handshake.auth.userId
   const nickname = socket.handshake.auth.nickname
@@ -96,7 +98,7 @@ io.on('connection', (socket) => {
       nickname,
       joinedAt: new Date(),
     })
-    console.log(`👤 User registered: ${nickname} (${userId})`)
+    logger.info('User registered', { nickname, userId })
   }
 
   // Send room list to newly connected user
@@ -116,7 +118,7 @@ io.on('connection', (socket) => {
     }
 
     rooms.set(roomId, newRoom)
-    console.log(`🏠 New room created: ${data.name} (${roomId})`)
+    logger.info('New room created', { roomName: data.name, roomId })
 
     // Broadcast updated room list to all clients
     io.emit('room:list', getRoomList())
@@ -126,7 +128,7 @@ io.on('connection', (socket) => {
   socket.on('room:join', (data) => {
     const room = rooms.get(data.roomId)
     if (!room) {
-      console.error(`❌ Room not found: ${data.roomId}`)
+      logger.error('Room not found', new Error('Room not found'), { roomId: data.roomId })
       return
     }
 
@@ -134,7 +136,7 @@ io.on('connection', (socket) => {
     room.users.add(socket.id)
 
     const user = users.get(socket.id)
-    console.log(`📥 ${user?.nickname || 'Unknown'} joined room: ${room.name}`)
+    logger.info('User joined room', { nickname: user?.nickname || 'Unknown', roomName: room.name })
 
     // Send message history to the user
     socket.emit('message:history', room.messages)
@@ -163,7 +165,7 @@ io.on('connection', (socket) => {
     room.users.delete(socket.id)
 
     const user = users.get(socket.id)
-    console.log(`📤 ${user?.nickname || 'Unknown'} left room: ${room.name}`)
+    logger.info('User left room', { nickname: user?.nickname || 'Unknown', roomName: room.name })
 
     // Notify other users that someone left
     if (user) {
@@ -202,8 +204,6 @@ io.on('connection', (socket) => {
       room.messages = room.messages.slice(-100)
     }
 
-    console.log(`💬 Message in ${room.name}: ${data.username}: ${data.content.substring(0, 50)}`)
-
     // Broadcast message to all users in the room
     io.to(data.roomId).emit('message:new', message)
 
@@ -218,11 +218,11 @@ io.on('connection', (socket) => {
 
           // Broadcast AI response
           io.to(data.roomId).emit('message:new', aiResponse)
-          console.log(`🤖 AI Bot responded in ${room.name}`)
+          logger.info('AI Bot responded', { roomName: room.name })
         }, 1000 + Math.random() * 1000) // 1-2 seconds delay
       }
     } catch (error) {
-      console.error('AI Bot error:', error)
+      logger.error('AI Bot error', error)
     }
   })
 
@@ -275,8 +275,6 @@ io.on('connection', (socket) => {
         messageId,
         reactions: message.reactions,
       })
-
-      console.log(`👍 Reaction ${emoji} on message ${messageId.substring(0, 10)}...`)
     }
   })
 
@@ -309,7 +307,7 @@ io.on('connection', (socket) => {
       // Send back to sender (for confirmation)
       socket.emit('message:private:sent', privateMessage)
 
-      console.log(`📩 Private message from ${fromUsername} to ${toUserId}`)
+      logger.info('Private message sent', { fromUsername, toUserId })
     } else {
       socket.emit('message:private:error', {
         error: 'User not online',
@@ -333,7 +331,6 @@ io.on('connection', (socket) => {
 
       // Broadcast deletion
       io.to(roomId).emit('message:deleted', { messageId })
-      console.log(`🗑️ Message deleted: ${messageId}`)
     }
   })
 
@@ -358,14 +355,12 @@ io.on('connection', (socket) => {
         content: newContent,
         editedAt: message.editedAt,
       })
-
-      console.log(`✏️ Message edited: ${messageId}`)
     }
   })
 
   // Handle disconnection
   socket.on('disconnect', () => {
-    console.log('❌ User disconnected:', socket.id)
+    logger.info('User disconnected', { socketId: socket.id })
 
     const user = users.get(socket.id)
 
@@ -410,26 +405,25 @@ app.get('/health', (req, res) => {
 const PORT = process.env.PORT || 3001
 
 server.listen(PORT, () => {
-  console.log('=================================')
-  console.log('🚀 Socket.io Server Started')
-  console.log(`📡 Listening on port: ${PORT}`)
-  console.log(`🏠 Default rooms: ${defaultRooms.length}`)
-  console.log('=================================')
+  logger.info('Socket.io Server Started', {
+    port: PORT,
+    defaultRooms: defaultRooms.length
+  })
 })
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('SIGTERM received, closing server...')
+  logger.info('SIGTERM received, closing server')
   server.close(() => {
-    console.log('Server closed')
+    logger.info('Server closed')
     process.exit(0)
   })
 })
 
 process.on('SIGINT', () => {
-  console.log('\nSIGINT received, closing server...')
+  logger.info('SIGINT received, closing server')
   server.close(() => {
-    console.log('Server closed')
+    logger.info('Server closed')
     process.exit(0)
   })
 })

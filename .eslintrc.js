@@ -31,7 +31,7 @@ module.exports = {
     '@typescript-eslint/prefer-optional-chain': 'warn',
 
     // 最佳實踐
-    'no-console': ['warn', { allow: ['warn', 'error'] }],
+    'no-console': ['error', { allow: ['warn', 'error'] }],
     'no-debugger': 'error',
     'prefer-const': 'error',
     'no-var': 'error',

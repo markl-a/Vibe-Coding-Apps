@@ -8,7 +8,7 @@ export function PostComposer() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('發布貼文:', content);
+    // TODO: Implement post submission
     setContent('');
   };
 

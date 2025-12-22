@@ -3,8 +3,10 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const { createLogger } = require('@shared-utils/logger');
 require('dotenv').config();
 
+const logger = createLogger('ecommerce-api-gateway');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -60,9 +62,12 @@ app.use('*', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`API Gateway running on port ${PORT}`);
-  console.log(`Routing:`);
-  console.log(`  /api/users    -> ${USER_SERVICE}`);
-  console.log(`  /api/products -> ${PRODUCT_SERVICE}`);
-  console.log(`  /api/orders   -> ${ORDER_SERVICE}`);
+  logger.info('API Gateway running', {
+    port: PORT,
+    routing: {
+      users: USER_SERVICE,
+      products: PRODUCT_SERVICE,
+      orders: ORDER_SERVICE
+    }
+  });
 });

@@ -5,11 +5,14 @@ const rateLimit = require('express-rate-limit');
 const compression = require('compression');
 require('dotenv').config();
 
+const { createLogger } = require('@shared-utils/logger');
 const connectDB = require('./config/database');
 const authRoutes = require('./routes/authRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 const errorHandler = require('./middleware/errorHandler');
+
+const logger = createLogger('task-manager-api');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -78,15 +81,11 @@ app.use(errorHandler);
 
 // 啟動伺服器
 app.listen(PORT, () => {
-  console.log(`
-╔═══════════════════════════════════════╗
-║   Task Manager API Server Started    ║
-╠═══════════════════════════════════════╣
-║  Port: ${PORT.toString().padEnd(30)}║
-║  Environment: ${(process.env.NODE_ENV || 'development').padEnd(23)}║
-║  AI-Driven & AI-Native 🚀            ║
-╚═══════════════════════════════════════╝
-  `);
+  logger.info('Task Manager API Server Started', {
+    port: PORT,
+    environment: process.env.NODE_ENV || 'development',
+    features: 'AI-Driven & AI-Native'
+  });
 });
 
 module.exports = app;

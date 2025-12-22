@@ -5,10 +5,12 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 const { doubleCsrf } = require('csrf-csrf');
+const { createLogger } = require('@shared-utils/logger');
 require('dotenv').config();
 
 const uploadRoutes = require('./routes/upload.routes');
 
+const logger = createLogger('file-upload-service');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -114,7 +116,11 @@ app.get('/', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
+  logger.error('Request error', err, {
+    method: req.method,
+    path: req.path,
+    status: err.status
+  });
   res.status(err.status || 500).json({
     success: false,
     error: err.message || 'Internal server error',
@@ -134,9 +140,11 @@ app.use((req, res) => {
 // Start server
 if (require.main === module) {
   app.listen(PORT, () => {
-    console.log(`🚀 File Upload Service running on port ${PORT}`);
-    console.log(`📁 Storage provider: ${process.env.STORAGE_PROVIDER || 's3'}`);
-    console.log(`🪣 Storage bucket: ${process.env.STORAGE_BUCKET || 'uploads'}`);
+    logger.info('File Upload Service running', {
+      port: PORT,
+      storageProvider: process.env.STORAGE_PROVIDER || 's3',
+      storageBucket: process.env.STORAGE_BUCKET || 'uploads'
+    });
   });
 }
 

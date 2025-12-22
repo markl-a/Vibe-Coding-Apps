@@ -1,8 +1,9 @@
 'use client';
 
 import { Heart, MessageCircle, Share2, Bookmark } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { zhTW } from 'date-fns/locale';
+// 优化：使用具体路径导入减少包大小
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import { zhTW } from 'date-fns/locale/zh-TW';
 
 interface PostCardProps {
   post: {

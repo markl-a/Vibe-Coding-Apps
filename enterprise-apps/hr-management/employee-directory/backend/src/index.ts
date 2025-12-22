@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { createLogger } from '@shared-utils/logger';
 import employeeRoutes from './routes/employee.routes';
 import departmentRoutes from './routes/department.routes';
 import aiRoutes from './routes/ai.routes';
@@ -8,6 +9,7 @@ import { errorHandler } from './middleware/error.middleware';
 
 dotenv.config();
 
+const logger = createLogger('employee-directory');
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
 
@@ -36,7 +38,10 @@ app.get('/health', (req, res) => {
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+  logger.info('Employee Directory Server running', {
+    port: PORT,
+    url: `http://localhost:${PORT}`
+  });
 });
 
 export default app;
