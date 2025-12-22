@@ -3,6 +3,7 @@
  * Prometheus 格式的指标收集
  */
 
+import * as os from 'os';
 import {
   MetricLabels,
   MetricOptions,
@@ -233,7 +234,8 @@ class Summary implements SummaryMetric {
 
     for (const q of this.quantiles) {
       const index = Math.ceil(sorted.length * q) - 1;
-      quantiles.set(q, sorted[Math.max(0, index)]);
+      const value = sorted[Math.max(0, index)] ?? 0;
+      quantiles.set(q, value);
     }
 
     this.data.set(key, { count, sum, quantiles });
@@ -486,7 +488,7 @@ export function createSystemMetrics(registry: MetricsRegistry): SystemMetrics {
     let totalIdle = 0;
     let totalTick = 0;
 
-    cpus.forEach((cpu) => {
+    cpus.forEach((cpu: os.CpuInfo) => {
       for (const type in cpu.times) {
         totalTick += cpu.times[type as keyof typeof cpu.times];
       }

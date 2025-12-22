@@ -1,6 +1,8 @@
 const { verifyToken } = require('../utils/auth');
 const messageService = require('../services/messageService');
 const userService = require('../services/userService');
+const { createLogger } = require('@vibe/shared-utils');
+const logger = createLogger('real-time-chat:socket');
 
 // Store connected users
 const connectedUsers = new Map();
@@ -44,10 +46,10 @@ class ChatHandler {
     const userId = socket.userId;
     connectedUsers.set(userId, socket.id);
 
-    console.log(`User ${userId} connected (socket: ${socket.id})`);
+    logger.info(`User ${userId} connected (socket: ${socket.id})`);
 
     // Update user online status
-    userService.updateOnlineStatus(userId, 'online').catch(console.error);
+    userService.updateOnlineStatus(userId, 'online').catch(err => logger.error('Failed to update online status', err));
 
     // Broadcast user online status
     socket.broadcast.emit('user:online', { userId });
@@ -156,10 +158,10 @@ class ChatHandler {
     const userId = socket.userId;
     connectedUsers.delete(userId);
 
-    console.log(`User ${userId} disconnected`);
+    logger.info(`User ${userId} disconnected`);
 
     // Update user offline status
-    await userService.updateOnlineStatus(userId, 'offline').catch(console.error);
+    await userService.updateOnlineStatus(userId, 'offline').catch(err => logger.error('Failed to update offline status', err));
 
     // Broadcast user offline status
     socket.broadcast.emit('user:offline', { userId });

@@ -7,7 +7,7 @@ const morgan = require('morgan');
 const http = require('http');
 const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
-const { createLogger } = require('@shared-utils/logger');
+const { createLogger } = require('@vibe/shared-utils');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');

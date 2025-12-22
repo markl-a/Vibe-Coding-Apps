@@ -9,7 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UseGuards } from '@nestjs/common';
-import { createLogger } from '@shared-utils/logger';
+import { createLogger } from '@vibe/shared-utils';
 import { WsJwtGuard } from '../../common/guards/ws-jwt.guard';
 import { Message } from './message.entity';
 

@@ -5,7 +5,7 @@ const rateLimit = require('express-rate-limit');
 const compression = require('compression');
 require('dotenv').config();
 
-const { createLogger } = require('@shared-utils/logger');
+const { createLogger } = require('@vibe/shared-utils');
 const connectDB = require('./config/database');
 const authRoutes = require('./routes/authRoutes');
 const taskRoutes = require('./routes/taskRoutes');

@@ -1,7 +1,7 @@
 import express, { Application } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { createLogger } from '@shared-utils/logger';
+import { createLogger } from '@vibe/shared-utils';
 import employeeRoutes from './routes/employee.routes';
 import departmentRoutes from './routes/department.routes';
 import aiRoutes from './routes/ai.routes';

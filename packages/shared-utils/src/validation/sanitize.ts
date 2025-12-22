@@ -137,8 +137,8 @@ export function sanitizeHTML(
       if (allowedAttrs.includes(attrName.toLowerCase())) {
         // Validate URL attributes
         if (['href', 'src'].includes(attrName.toLowerCase())) {
-          const protocol = attrValue.split(':')[0].toLowerCase();
-          if (allowedProtocols.includes(protocol) || attrValue.startsWith('/') || attrValue.startsWith('#')) {
+          const protocol = attrValue.split(':')[0]?.toLowerCase();
+          if ((protocol && allowedProtocols.includes(protocol)) || attrValue.startsWith('/') || attrValue.startsWith('#')) {
             cleanMatch += ` ${attrName}="${attrValue}"`;
           }
         } else {

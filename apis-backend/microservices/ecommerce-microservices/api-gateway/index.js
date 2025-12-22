@@ -3,8 +3,14 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const { createLogger } = require('@shared-utils/logger');
 require('dotenv').config();
+
+// Simple logger utility
+const createLogger = (serviceName) => ({
+  info: (message, data) => console.log(`[${serviceName}] INFO:`, message, data || ''),
+  error: (message, data) => console.error(`[${serviceName}] ERROR:`, message, data || ''),
+  warn: (message, data) => console.warn(`[${serviceName}] WARN:`, message, data || '')
+});
 
 const logger = createLogger('ecommerce-api-gateway');
 const app = express();

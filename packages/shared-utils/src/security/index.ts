@@ -34,7 +34,7 @@ export function securityHeaders(options: SecurityHeadersOptions = {}) {
     permissionsPolicy
   } = options;
 
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (_req: Request, res: Response, next: NextFunction) => {
     // X-XSS-Protection
     if (xssFilter) {
       res.setHeader('X-XSS-Protection', '1; mode=block');

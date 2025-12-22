@@ -1,6 +1,8 @@
 const User = require('../models/User');
 const Follow = require('../models/Follow');
 const { validationResult } = require('express-validator');
+const { createLogger } = require('@vibe/shared-utils');
+const logger = createLogger('social-media-api:user-controller');
 
 // Get user profile
 exports.getUserProfile = async (req, res) => {
@@ -13,7 +15,7 @@ exports.getUserProfile = async (req, res) => {
 
     res.json({ user: user.toPublicJSON() });
   } catch (error) {
-    console.error('Get user profile error:', error);
+    logger.error('Get user profile error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -47,7 +49,7 @@ exports.updateUserProfile = async (req, res) => {
 
     res.json({ message: 'Profile updated successfully', user: user.toPublicJSON() });
   } catch (error) {
-    console.error('Update profile error:', error);
+    logger.error('Update profile error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -98,7 +100,7 @@ exports.followUser = async (req, res) => {
 
     res.json({ message: 'User followed successfully' });
   } catch (error) {
-    console.error('Follow user error:', error);
+    logger.error('Follow user error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -135,7 +137,7 @@ exports.unfollowUser = async (req, res) => {
 
     res.json({ message: 'User unfollowed successfully' });
   } catch (error) {
-    console.error('Unfollow user error:', error);
+    logger.error('Unfollow user error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -167,7 +169,7 @@ exports.getUserFollowers = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Get followers error:', error);
+    logger.error('Get followers error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -199,7 +201,7 @@ exports.getUserFollowing = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Get following error:', error);
+    logger.error('Get following error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -245,7 +247,7 @@ exports.searchUsers = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Search users error:', error);
+    logger.error('Search users error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };

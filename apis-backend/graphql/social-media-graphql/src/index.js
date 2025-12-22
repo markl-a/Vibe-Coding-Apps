@@ -1,19 +1,17 @@
 const { ApolloServer } = require('@apollo/server');
 const { startStandaloneServer } = require('@apollo/server/standalone');
-const { createLogger } = require('@shared-utils/logger');
 const { initDatabase } = require('./utils/db');
 const { getUserFromContext } = require('./utils/auth');
 const typeDefs = require('./schema/typeDefs');
 const resolvers = require('./resolvers');
 require('dotenv').config();
 
-const logger = createLogger('social-media-graphql');
 const PORT = process.env.PORT || 4002;
 
 async function startServer() {
   try {
     // 初始化資料庫
-    logger.info('Initializing database');
+    console.log('🔄 Initializing database...');
     await initDatabase();
 
     // 創建 Apollo Server
@@ -22,7 +20,7 @@ async function startServer() {
       resolvers,
       introspection: true,
       formatError: (error) => {
-        logger.error('GraphQL Error', error);
+        console.error('❌ GraphQL Error:', error);
         return error;
       }
     });
@@ -36,26 +34,38 @@ async function startServer() {
       }
     });
 
-    logger.info('Social Media GraphQL API Server is running', {
-      graphqlEndpoint: url,
-      wsEndpoint: `ws://localhost:${PORT}/graphql`,
-      port: PORT,
-      demo: 'demo@example.com / demo123'
-    });
+    console.log(`
+╔════════════════════════════════════════════════════════╗
+║                                                        ║
+║   🚀 Social Media GraphQL API Server is running!     ║
+║                                                        ║
+║   🌐 GraphQL Endpoint:                                ║
+║      ${url}                                           ║
+║                                                        ║
+║   🔌 WebSocket Subscriptions:                         ║
+║      ws://localhost:${PORT}/graphql                      ║
+║                                                        ║
+║   💡 Ready to accept requests!                        ║
+║                                                        ║
+╚════════════════════════════════════════════════════════╝
+
+📝 Demo credentials:
+   demo@example.com / demo123
+    `);
   } catch (error) {
-    logger.error('Failed to start server', error);
+    console.error('❌ Failed to start server:', error);
     process.exit(1);
   }
 }
 
 // 優雅關閉
 process.on('SIGTERM', () => {
-  logger.info('SIGTERM signal received: closing server');
+  console.log('🛑 SIGTERM signal received: closing server');
   process.exit(0);
 });
 
 process.on('SIGINT', () => {
-  logger.info('SIGINT signal received: closing server');
+  console.log('🛑 SIGINT signal received: closing server');
   process.exit(0);
 });
 

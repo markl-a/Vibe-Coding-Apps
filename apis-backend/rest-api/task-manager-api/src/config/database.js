@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const { createLogger } = require('@vibe/shared-utils');
+const logger = createLogger('task-manager-api:database');
 
 const connectDB = async () => {
   try {
@@ -7,9 +9,9 @@ const connectDB = async () => {
       useUnifiedTopology: true,
     });
 
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    logger.info(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error(`Error connecting to MongoDB: ${error.message}`);
+    logger.error(`Error connecting to MongoDB: ${error.message}`);
     process.exit(1);
   }
 };

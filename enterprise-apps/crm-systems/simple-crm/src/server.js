@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const compression = require('compression');
-const { createLogger } = require('@shared-utils/logger');
+const { createLogger } = require('@vibe/shared-utils');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');

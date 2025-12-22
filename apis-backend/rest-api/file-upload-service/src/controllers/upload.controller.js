@@ -1,5 +1,7 @@
 const storageService = require('../services/storage.service');
 const validationService = require('../services/validation.service');
+const { createLogger } = require('@vibe/shared-utils');
+const logger = createLogger('file-upload-service:upload-controller');
 
 class UploadController {
   /**
@@ -39,7 +41,7 @@ class UploadController {
         data: result
       });
     } catch (error) {
-      console.error('Upload error:', error);
+      logger.error('Upload error', error);
       res.status(500).json({
         success: false,
         error: 'Failed to upload file',
@@ -99,7 +101,7 @@ class UploadController {
         results
       });
     } catch (error) {
-      console.error('Multiple upload error:', error);
+      logger.error('Multiple upload error', error);
       res.status(500).json({
         success: false,
         error: 'Failed to upload files',
@@ -130,7 +132,7 @@ class UploadController {
 
       res.send(file.buffer);
     } catch (error) {
-      console.error('Download error:', error);
+      logger.error('Download error', error);
       res.status(404).json({
         success: false,
         error: 'File not found',
@@ -161,7 +163,7 @@ class UploadController {
         data: result
       });
     } catch (error) {
-      console.error('Delete error:', error);
+      logger.error('Delete error', error);
       res.status(500).json({
         success: false,
         error: 'Failed to delete file',
@@ -186,7 +188,7 @@ class UploadController {
         }
       });
     } catch (error) {
-      console.error('List error:', error);
+      logger.error('List error', error);
       res.status(500).json({
         success: false,
         error: 'Failed to list files',
@@ -216,7 +218,7 @@ class UploadController {
         data: metadata
       });
     } catch (error) {
-      console.error('Metadata error:', error);
+      logger.error('Metadata error', error);
       res.status(404).json({
         success: false,
         error: 'File not found',

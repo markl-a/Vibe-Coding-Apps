@@ -1,3 +1,6 @@
+const { createLogger } = require('@vibe/shared-utils');
+const logger = createLogger('file-upload-service:error-handler');
+
 /**
  * 全局錯誤處理中間件
  */
@@ -7,7 +10,7 @@ const errorHandler = (err, req, res, next) => {
 
   // 記錄錯誤
   if (process.env.NODE_ENV !== 'test') {
-    console.error('Error:', err);
+    logger.error('Request error', err);
   }
 
   // Multer 錯誤

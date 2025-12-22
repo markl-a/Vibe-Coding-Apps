@@ -59,7 +59,7 @@ export interface ErrorBoundaryState {
  * ```
  */
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  private resetTimer?: NodeJS.Timeout;
+  private resetTimer?: NodeJS.Timeout | undefined;
 
   constructor(props: ErrorBoundaryProps) {
     super(props);

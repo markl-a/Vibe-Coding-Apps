@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 const { doubleCsrf } = require('csrf-csrf');
-const { createLogger } = require('@shared-utils/logger');
+const { createLogger } = require('@vibe/shared-utils');
 require('dotenv').config();
 
 const uploadRoutes = require('./routes/upload.routes');

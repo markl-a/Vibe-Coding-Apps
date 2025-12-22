@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { createLogger } from '@shared-utils/logger';
+import { createLogger } from '@vibe/shared-utils';
 import attendanceRoutes from './routes/attendance.routes';
 
 dotenv.config();

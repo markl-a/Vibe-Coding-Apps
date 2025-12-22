@@ -58,12 +58,15 @@ class SpanImpl implements Span {
     this.startTime = options?.startTime || Date.now();
 
     // 生成 span context
-    this.context = {
+    const context: SpanContext = {
       traceId: parentContext?.traceId || generateId(32),
       spanId: generateId(16),
-      parentSpanId: parentContext?.spanId,
       traceFlags: parentContext?.traceFlags || 1,
     };
+    if (parentContext?.spanId !== undefined) {
+      context.parentSpanId = parentContext.spanId;
+    }
+    this.context = context;
 
     if (options?.attributes) {
       this.attributes = { ...options.attributes };
@@ -84,18 +87,23 @@ class SpanImpl implements Span {
 
   addEvent(name: string, attributes?: Record<string, any>): void {
     if (this.recording) {
-      this.events.push({
+      const event: SpanEvent = {
         name,
         timestamp: Date.now(),
-        attributes,
-      });
+      };
+      if (attributes !== undefined) {
+        event.attributes = attributes;
+      }
+      this.events.push(event);
     }
   }
 
   setStatus(status: SpanStatus, message?: string): void {
     if (this.recording) {
       this.status = status;
-      this.statusMessage = message;
+      if (message !== undefined) {
+        this.statusMessage = message;
+      }
     }
   }
 
@@ -189,7 +197,7 @@ export class BatchSpanExporter implements SpanExporter {
   private spans: any[] = [];
   private batchSize: number;
   private batchTimeout: number;
-  private timer?: NodeJS.Timeout;
+  private timer?: NodeJS.Timeout | undefined;
   private exporter: SpanExporter;
 
   constructor(
@@ -547,8 +555,12 @@ export function parseTraceparent(traceparent: string): SpanContext | null {
     return null;
   }
 
-  const [version, traceId, spanId, flags] = parts;
-  if (version !== '00') {
+  const version = parts[0];
+  const traceId = parts[1];
+  const spanId = parts[2];
+  const flags = parts[3];
+
+  if (!version || !traceId || !spanId || !flags || version !== '00') {
     return null;
   }
 

@@ -317,12 +317,11 @@ export function cached<T extends (...args: any[]) => Promise<any>>(
   ttl?: number,
   cacheManager?: CacheManager
 ): T {
-  return withCache(fn, {
-    keyPrefix,
-    ttl,
-    cacheManager,
-    name: fn.name,
-  });
+  const options: CacheableOptions & { name?: string } = { keyPrefix };
+  if (ttl !== undefined) options.ttl = ttl;
+  if (cacheManager !== undefined) options.cacheManager = cacheManager;
+  if (fn.name) options.name = fn.name;
+  return withCache(fn, options);
 }
 
 /**

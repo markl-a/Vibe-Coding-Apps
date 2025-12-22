@@ -15,7 +15,8 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
-    project: './tsconfig.json',
+    project: ['./tsconfig.json', './tsconfig.*.json'],
+    tsconfigRootDir: __dirname,
   },
   plugins: ['@typescript-eslint', 'import'],
   rules: {
@@ -49,5 +50,13 @@ module.exports = {
       'alphabetize': { order: 'asc' }
     }],
   },
-  ignorePatterns: ['node_modules', 'dist', 'build', '*.js'],
+  ignorePatterns: [
+    'node_modules',
+    'dist',
+    'build',
+    'test-results',
+    'playwright-report',
+    '*.config.js',
+    '.eslintrc.js'
+  ],
 };

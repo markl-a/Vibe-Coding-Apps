@@ -52,11 +52,14 @@ export class Logger {
     };
 
     if (error) {
-      entry.error = {
+      const errorInfo: { name: string; message: string; stack?: string } = {
         name: error.name,
         message: error.message,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
       };
+      if (process.env.NODE_ENV === 'development' && error.stack) {
+        errorInfo.stack = error.stack;
+      }
+      entry.error = errorInfo;
     }
 
     const output = JSON.stringify(entry);

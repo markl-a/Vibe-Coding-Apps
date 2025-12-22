@@ -30,7 +30,7 @@ export function createHealthRouter(options: {
   const startTime = Date.now();
 
   // 簡單的 liveness 探針
-  router.get('/health', (req: Request, res: Response) => {
+  router.get('/health', (_req: Request, res: Response) => {
     res.json({
       status: 'healthy',
       timestamp: new Date().toISOString(),
@@ -39,7 +39,7 @@ export function createHealthRouter(options: {
   });
 
   // 詳細的 readiness 探針
-  router.get('/health/ready', async (req: Request, res: Response) => {
+  router.get('/health/ready', async (_req: Request, res: Response) => {
     const checks: HealthCheckResult['checks'] = [];
     let overallStatus: HealthCheckResult['status'] = 'healthy';
 
@@ -48,12 +48,15 @@ export function createHealthRouter(options: {
         const start = Date.now();
         try {
           const result = await checker();
-          checks.push({
+          const checkResult: HealthCheckResult['checks'][number] = {
             name,
             status: result.status,
-            message: result.message,
-            responseTime: Date.now() - start
-          });
+          };
+          if (result.message !== undefined) {
+            checkResult.message = result.message;
+          }
+          checkResult.responseTime = Date.now() - start;
+          checks.push(checkResult);
           if (result.status === 'fail') overallStatus = 'unhealthy';
           else if (result.status === 'warn' && overallStatus === 'healthy') overallStatus = 'degraded';
         } catch (error: any) {
@@ -72,9 +75,12 @@ export function createHealthRouter(options: {
       status: overallStatus,
       timestamp: new Date().toISOString(),
       uptime: Math.floor((Date.now() - startTime) / 1000),
-      version: options.version,
       checks
     };
+
+    if (options.version !== undefined) {
+      result.version = options.version;
+    }
 
     res.status(overallStatus === 'healthy' ? 200 : overallStatus === 'degraded' ? 200 : 503).json(result);
   });

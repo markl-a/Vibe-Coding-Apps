@@ -5,10 +5,12 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const { doubleCsrf } = require('csrf-csrf');
+const { createLogger } = require('@vibe/shared-utils');
 require('dotenv').config();
 
 const routes = require('./routes');
 const errorHandler = require('./middleware/errorHandler');
+const logger = createLogger('social-media-api');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -64,8 +66,8 @@ app.use('/api', (req, res, next) => {
 
 // MongoDB Connection
 mongoose.connect(MONGODB_URI)
-  .then(() => console.log('✅ Connected to MongoDB'))
-  .catch(err => console.error('❌ MongoDB connection error:', err));
+  .then(() => logger.info('Connected to MongoDB'))
+  .catch(err => logger.error('MongoDB connection error', err));
 
 // Health check
 app.get('/health', (req, res) => {
@@ -97,8 +99,10 @@ app.use(errorHandler);
 // Start server (only if not in test mode)
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
-    console.log(`🚀 Social Media API running on port ${PORT}`);
-    console.log(`📡 API endpoint: http://localhost:${PORT}/api`);
+    logger.info('Social Media API running', {
+      port: PORT,
+      endpoint: `http://localhost:${PORT}/api`
+    });
   });
 }
 

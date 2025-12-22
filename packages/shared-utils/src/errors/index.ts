@@ -20,7 +20,9 @@ export class AppError extends Error {
     this.statusCode = statusCode;
     this.isOperational = true;
     this.timestamp = new Date().toISOString();
-    this.details = details;
+    if (details !== undefined) {
+      this.details = details;
+    }
     Error.captureStackTrace(this, this.constructor);
   }
 }
@@ -64,7 +66,7 @@ export class RateLimitError extends AppError {
 /**
  * Express 錯誤處理中間件
  */
-export function errorHandler(err: Error, req: any, res: any, next: any) {
+export function errorHandler(err: Error, _req: any, res: any, _next: any) {
   const isDev = process.env.NODE_ENV === 'development';
 
   if (err instanceof AppError) {
