@@ -63,14 +63,42 @@ export class RateLimitError extends AppError {
   }
 }
 
+// Express-compatible types (without requiring express dependency)
+interface ExpressRequest {
+  method?: string;
+  url?: string;
+  headers?: Record<string, string | string[] | undefined>;
+  body?: unknown;
+  params?: Record<string, string>;
+  query?: Record<string, string | string[] | undefined>;
+}
+
+interface ExpressResponse {
+  status(code: number): this;
+  json(body: unknown): void;
+}
+
+type NextFunction = (err?: unknown) => void;
+
+type AsyncRequestHandler = (
+  req: ExpressRequest,
+  res: ExpressResponse,
+  next: NextFunction
+) => Promise<void> | void;
+
 /**
  * Express 錯誤處理中間件
  */
-export function errorHandler(err: Error, _req: any, res: any, _next: any) {
+export function errorHandler(
+  err: Error,
+  _req: ExpressRequest,
+  res: ExpressResponse,
+  _next: NextFunction
+): void {
   const isDev = process.env.NODE_ENV === 'development';
 
   if (err instanceof AppError) {
-    return res.status(err.statusCode).json({
+    res.status(err.statusCode).json({
       success: false,
       error: {
         code: err.code,
@@ -80,11 +108,20 @@ export function errorHandler(err: Error, _req: any, res: any, _next: any) {
         ...(isDev && { stack: err.stack }),
       },
     });
+    return;
   }
 
-  // 未知錯誤
-  console.error('Unhandled error:', err);
-  return res.status(500).json({
+  // 未知錯誤 - 使用結構化日誌記錄
+  const errorLog = {
+    type: 'unhandled_error',
+    message: err.message,
+    stack: err.stack,
+    timestamp: new Date().toISOString(),
+  };
+  // eslint-disable-next-line no-console
+  console.error(JSON.stringify(errorLog));
+
+  res.status(500).json({
     success: false,
     error: {
       code: 'INTERNAL_ERROR',
@@ -98,8 +135,8 @@ export function errorHandler(err: Error, _req: any, res: any, _next: any) {
 /**
  * 異步處理包裝器
  */
-export function asyncHandler(fn: Function) {
-  return (req: any, res: any, next: any) => {
+export function asyncHandler(fn: AsyncRequestHandler): AsyncRequestHandler {
+  return (req: ExpressRequest, res: ExpressResponse, next: NextFunction): void => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 }

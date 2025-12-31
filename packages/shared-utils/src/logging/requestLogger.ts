@@ -6,6 +6,27 @@
 import { Request, Response, NextFunction } from 'express';
 import { Logger } from '../logger';
 
+// Extend Express Request to include correlationId
+interface RequestWithCorrelation extends Request {
+  correlationId?: string;
+}
+
+// Type for sanitizable values
+type SanitizableValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | SanitizableObject
+  | SanitizableArray;
+
+interface SanitizableObject {
+  [key: string]: SanitizableValue;
+}
+
+type SanitizableArray = SanitizableValue[];
+
 /**
  * 敏感信息字段列表（需要過濾）
  */
@@ -33,7 +54,7 @@ const SENSITIVE_FIELDS = [
 /**
  * 過濾敏感信息
  */
-function sanitize(obj: any, depth = 0): any {
+function sanitize(obj: SanitizableValue, depth = 0): SanitizableValue {
   if (depth > 5) return '[Max Depth Reached]';
   if (obj === null || obj === undefined) return obj;
 
@@ -42,7 +63,7 @@ function sanitize(obj: any, depth = 0): any {
   }
 
   if (typeof obj === 'object') {
-    const sanitized: any = {};
+    const sanitized: SanitizableObject = {};
     for (const [key, value] of Object.entries(obj)) {
       const lowerKey = key.toLowerCase();
       const isSensitive = SENSITIVE_FIELDS.some(field =>
@@ -52,9 +73,9 @@ function sanitize(obj: any, depth = 0): any {
       if (isSensitive) {
         sanitized[key] = '[REDACTED]';
       } else if (typeof value === 'object') {
-        sanitized[key] = sanitize(value, depth + 1);
+        sanitized[key] = sanitize(value as SanitizableValue, depth + 1);
       } else {
-        sanitized[key] = value;
+        sanitized[key] = value as SanitizableValue;
       }
     }
     return sanitized;
@@ -66,7 +87,7 @@ function sanitize(obj: any, depth = 0): any {
 /**
  * 過濾請求頭中的敏感信息
  */
-function sanitizeHeaders(headers: any): Record<string, string> {
+function sanitizeHeaders(headers: Record<string, string | string[] | undefined>): Record<string, string> {
   const sanitized: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(headers)) {
@@ -77,8 +98,10 @@ function sanitizeHeaders(headers: any): Record<string, string> {
 
     if (isSensitive) {
       sanitized[key] = '[REDACTED]';
-    } else {
-      sanitized[key] = value as string;
+    } else if (Array.isArray(value)) {
+      sanitized[key] = value.join(', ');
+    } else if (value !== undefined) {
+      sanitized[key] = value;
     }
   }
 
@@ -117,8 +140,11 @@ export interface RequestLoggerOptions {
   /**
    * 自定義日誌級別判斷函數
    */
-  getLogLevel?: (req: Request, res: Response) => 'debug' | 'info' | 'warn' | 'error';
+  getLogLevel?: (req: RequestWithCorrelation, res: Response) => 'debug' | 'info' | 'warn' | 'error';
 }
+
+// Export the extended request type for external use
+export type { RequestWithCorrelation };
 
 /**
  * 請求日誌中間件
@@ -147,7 +173,7 @@ export function requestLogger(logger: Logger, options: RequestLoggerOptions = {}
     SENSITIVE_FIELDS.push(...additionalSensitiveFields);
   }
 
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: RequestWithCorrelation, res: Response, next: NextFunction) => {
     // 檢查是否應該跳過此路徑
     if (excludePaths.some(path => req.path.startsWith(path))) {
       return next();
@@ -156,12 +182,12 @@ export function requestLogger(logger: Logger, options: RequestLoggerOptions = {}
     const startTime = Date.now();
 
     // 構建日誌上下文
-    const logContext: any = {
+    const logContext: Record<string, unknown> = {
       traceId: req.correlationId,
       method: req.method,
       url: req.originalUrl || req.url,
       path: req.path,
-      ip: req.ip || req.connection?.remoteAddress,
+      ip: req.ip || req.socket?.remoteAddress,
       userAgent: req.headers['user-agent'],
     };
 

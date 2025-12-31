@@ -3,6 +3,64 @@
  * 支持 Express 和 NestJS 应用的 API 文档自动生成
  */
 
+// OpenAPI 3.0 Schema Types
+interface OpenAPISchema {
+  type: string;
+  properties?: Record<string, OpenAPISchema | { type: string; example?: unknown }>;
+  items?: OpenAPISchema | { type: string; properties?: Record<string, unknown> };
+  example?: unknown;
+}
+
+interface OpenAPISecurityScheme {
+  type: string;
+  scheme?: string;
+  bearerFormat?: string;
+  description?: string;
+  in?: string;
+  name?: string;
+  flows?: Record<string, unknown>;
+}
+
+interface OpenAPIDocument {
+  openapi: string;
+  info: {
+    title: string;
+    description: string;
+    version: string;
+    contact?: { name?: string; email?: string; url?: string };
+    license?: { name: string; url?: string };
+  };
+  externalDocs?: { description: string; url: string };
+  servers: Array<{ url: string; description: string; variables?: Record<string, unknown> }>;
+  tags: SwaggerTag[];
+  components: {
+    securitySchemes: Record<string, OpenAPISecurityScheme>;
+    schemas: Record<string, OpenAPISchema>;
+  };
+}
+
+// Express-compatible types
+interface HttpRequest {
+  method?: string;
+  url?: string;
+  headers?: Record<string, string | string[] | undefined>;
+}
+
+interface HttpResponse {
+  setHeader(name: string, value: string): void;
+  send(body: unknown): void;
+}
+
+interface ExpressApp {
+  get(path: string, handler: (req: HttpRequest, res: HttpResponse) => void): void;
+  use(path: string, ...handlers: unknown[]): void;
+}
+
+interface NestApp {
+  // NestJS application interface - minimal for our needs
+  getHttpAdapter?(): unknown;
+}
+
 /**
  * Swagger 基础配置选项
  */
@@ -289,7 +347,7 @@ export interface ExpressSwaggerOptions extends SwaggerConfig {
  * 需要安装: npm install swagger-ui-express swagger-jsdoc
  */
 export function setupExpressSwagger(
-  app: any,
+  app: ExpressApp,
   options: ExpressSwaggerOptions
 ): void {
   try {
@@ -317,7 +375,7 @@ export function setupExpressSwagger(
     });
 
     // 提供 JSON 格式的 API 文档
-    app.get(swaggerJsonPath, (req: any, res: any) => {
+    app.get(swaggerJsonPath, (_req: HttpRequest, res: HttpResponse) => {
       res.setHeader('Content-Type', 'application/json');
       res.send(swaggerSpec);
     });
@@ -357,7 +415,7 @@ export interface NestSwaggerOptions extends SwaggerConfig {
  * 为 NestJS 应用配置 Swagger
  * 需要安装: npm install @nestjs/swagger
  */
-export function setupNestSwagger(app: any, options: NestSwaggerOptions): void {
+export function setupNestSwagger(app: NestApp, options: NestSwaggerOptions): void {
   try {
     // 动态导入 @nestjs/swagger
     const { DocumentBuilder, SwaggerModule } = require('@nestjs/swagger');

@@ -7,14 +7,51 @@ import { Request, Response, NextFunction } from 'express';
 import { Logger } from '../logger';
 import { sanitize } from './requestLogger';
 
+// Extend Request to include correlationId
+interface RequestWithCorrelation extends Request {
+  correlationId?: string;
+}
+
+// Response write/end function types
+type WriteCallback = (error?: Error | null) => void;
+type EndCallback = () => void;
+
+type WriteFunction = {
+  (chunk: Buffer | string, encoding?: BufferEncoding, callback?: WriteCallback): boolean;
+  (chunk: Buffer | string, callback?: WriteCallback): boolean;
+};
+
+type EndFunction = {
+  (chunk?: Buffer | string, encoding?: BufferEncoding, callback?: EndCallback): Response;
+  (chunk?: Buffer | string, callback?: EndCallback): Response;
+  (callback?: EndCallback): Response;
+};
+
+// Log context type
+interface LogContext {
+  traceId?: string;
+  method: string;
+  url: string;
+  path: string;
+  statusCode?: number;
+  duration?: string;
+  ip?: string;
+  userAgent?: string;
+  headers?: Record<string, unknown>;
+  body?: unknown;
+  responseHeaders?: Record<string, string | number | string[] | undefined>;
+  responseBody?: unknown;
+  [key: string]: unknown;
+}
+
 /**
  * 響應體攔截器
  * 攔截並記錄響應數據
  */
 class ResponseInterceptor {
   private chunks: Buffer[] = [];
-  private originalWrite: any;
-  private originalEnd: any;
+  private originalWrite: WriteFunction;
+  private originalEnd: EndFunction;
 
   constructor(private res: Response) {
     this.originalWrite = res.write.bind(res);
@@ -25,24 +62,45 @@ class ResponseInterceptor {
    * 攔截 res.write
    */
   interceptWrite(): void {
-    this.res.write = ((chunk: any, encoding?: any, callback?: any): boolean => {
+    const self = this;
+    this.res.write = function(
+      chunk: Buffer | string,
+      encodingOrCallback?: BufferEncoding | WriteCallback,
+      callback?: WriteCallback
+    ): boolean {
       if (chunk) {
-        this.chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk, encoding));
+        const encoding = typeof encodingOrCallback === 'string' ? encodingOrCallback : undefined;
+        self.chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk, encoding));
       }
-      return this.originalWrite(chunk, encoding, callback);
-    }) as any;
+      if (typeof encodingOrCallback === 'function') {
+        return self.originalWrite(chunk, encodingOrCallback);
+      }
+      return self.originalWrite(chunk, encodingOrCallback, callback);
+    } as WriteFunction;
   }
 
   /**
    * 攔截 res.end
    */
   interceptEnd(): void {
-    this.res.end = ((chunk?: any, encoding?: any, callback?: any): any => {
-      if (chunk) {
-        this.chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk, encoding));
+    const self = this;
+    this.res.end = function(
+      chunkOrCallback?: Buffer | string | EndCallback,
+      encodingOrCallback?: BufferEncoding | EndCallback,
+      callback?: EndCallback
+    ): Response {
+      if (chunkOrCallback && typeof chunkOrCallback !== 'function') {
+        const encoding = typeof encodingOrCallback === 'string' ? encodingOrCallback : undefined;
+        self.chunks.push(Buffer.isBuffer(chunkOrCallback) ? chunkOrCallback : Buffer.from(chunkOrCallback, encoding));
       }
-      return this.originalEnd(chunk, encoding, callback);
-    }) as any;
+      if (typeof chunkOrCallback === 'function') {
+        return self.originalEnd(chunkOrCallback);
+      }
+      if (typeof encodingOrCallback === 'function') {
+        return self.originalEnd(chunkOrCallback, encodingOrCallback);
+      }
+      return self.originalEnd(chunkOrCallback, encodingOrCallback, callback);
+    } as EndFunction;
   }
 
   /**
@@ -121,7 +179,7 @@ export function responseLogger(logger: Logger, options: ResponseLoggerOptions = 
     onlyErrors = false,
   } = options;
 
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: RequestWithCorrelation, res: Response, next: NextFunction) => {
     // 檢查是否應該跳過此路徑
     if (excludePaths.some(path => req.path.startsWith(path))) {
       return next();
@@ -147,7 +205,7 @@ export function responseLogger(logger: Logger, options: ResponseLoggerOptions = 
         return;
       }
 
-      const logContext: any = {
+      const logContext: LogContext = {
         traceId: req.correlationId,
         method: req.method,
         url: req.originalUrl || req.url,
@@ -158,7 +216,7 @@ export function responseLogger(logger: Logger, options: ResponseLoggerOptions = 
 
       // 添加響應頭
       if (logHeaders) {
-        const headers: Record<string, any> = {};
+        const headers: Record<string, string | number | string[] | undefined> = {};
         res.getHeaderNames().forEach(name => {
           headers[name] = res.getHeader(name);
         });
@@ -247,7 +305,7 @@ export function httpLogger(logger: Logger, options: HttpLoggerOptions = {}) {
     onlyErrors = false,
   } = options;
 
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: RequestWithCorrelation, res: Response, next: NextFunction) => {
     // 檢查是否應該跳過此路徑
     if (excludePaths.some(path => req.path.startsWith(path))) {
       return next();
@@ -264,20 +322,20 @@ export function httpLogger(logger: Logger, options: HttpLoggerOptions = {}) {
     }
 
     // 記錄請求
-    const requestContext: any = {
+    const requestContext: LogContext = {
       traceId: req.correlationId,
       method: req.method,
       url: req.originalUrl || req.url,
       path: req.path,
-      ip: req.ip || req.connection?.remoteAddress,
+      ip: req.ip || req.socket?.remoteAddress,
       userAgent: req.headers['user-agent'],
     };
 
     if (logRequestHeaders) {
-      requestContext.headers = sanitize(req.headers);
+      requestContext.headers = sanitize(req.headers) as Record<string, unknown>;
     }
 
-    if (logRequestBody && req.body && Object.keys(req.body).length > 0) {
+    if (logRequestBody && req.body && Object.keys(req.body as object).length > 0) {
       requestContext.body = sanitize(req.body);
     }
 
@@ -293,14 +351,14 @@ export function httpLogger(logger: Logger, options: HttpLoggerOptions = {}) {
         return;
       }
 
-      const responseContext: any = {
+      const responseContext: LogContext = {
         ...requestContext,
         statusCode,
         duration: `${duration}ms`,
       };
 
       if (logResponseHeaders) {
-        const headers: Record<string, any> = {};
+        const headers: Record<string, string | number | string[] | undefined> = {};
         res.getHeaderNames().forEach(name => {
           headers[name] = res.getHeader(name);
         });

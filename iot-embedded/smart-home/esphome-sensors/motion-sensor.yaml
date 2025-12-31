@@ -1,0 +1,86 @@
+# ESPHome Motion Sensor with Light Control
+# Hardware: ESP32 + PIR Sensor + Relay
+# Features: Motion detection, Auto light control, Timeout
+
+substitutions:
+  device_name: "motion-hallway"
+  friendly_name: "Hallway Motion"
+  # Auto-off timeout in seconds
+  motion_timeout: "120"
+
+packages:
+  base: !include common/base.yaml
+
+# PIR Motion Sensor
+binary_sensor:
+  - platform: gpio
+    pin: GPIO27
+    name: "${friendly_name} Motion"
+    id: motion_sensor
+    device_class: motion
+    filters:
+      - delayed_off: 5s
+    on_press:
+      then:
+        - switch.turn_on: relay
+        - script.execute: motion_timeout_script
+    on_release:
+      then:
+        - script.execute: motion_timeout_script
+
+# Relay for light control
+switch:
+  - platform: gpio
+    pin: GPIO26
+    name: "${friendly_name} Light"
+    id: relay
+    icon: "mdi:lightbulb"
+    restore_mode: ALWAYS_OFF
+
+  # Manual override switch
+  - platform: template
+    name: "${friendly_name} Auto Mode"
+    id: auto_mode
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+
+# Light sensor (optional LDR)
+sensor:
+  - platform: adc
+    pin: GPIO34
+    name: "${friendly_name} Light Level"
+    id: light_level
+    update_interval: 10s
+    attenuation: 11db
+    unit_of_measurement: "lx"
+    filters:
+      - lambda: |-
+          // Convert ADC to approximate lux
+          return (4095 - x) / 4095.0 * 1000;
+
+# Motion timeout script
+script:
+  - id: motion_timeout_script
+    mode: restart
+    then:
+      - delay: ${motion_timeout}s
+      - if:
+          condition:
+            binary_sensor.is_off: motion_sensor
+          then:
+            - switch.turn_off: relay
+
+# Automation: Only turn on light if dark enough
+# Uncomment and adjust threshold
+# automation:
+#   - id: light_automation
+#     trigger:
+#       - platform: state
+#         entity_id: binary_sensor.motion_sensor
+#         to: "on"
+#     condition:
+#       - platform: numeric_state
+#         entity_id: sensor.light_level
+#         below: 100
+#     action:
+#       - switch.turn_on: relay

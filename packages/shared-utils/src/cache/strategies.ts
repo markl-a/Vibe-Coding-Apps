@@ -5,11 +5,30 @@
 
 import { CacheManager, getDefaultCacheManager } from './CacheManager';
 
+// Context types for different strategies
+interface EventContext {
+  event: string;
+  data?: unknown;
+}
+
+interface TagContext {
+  tags?: string[];
+}
+
+interface KeyContext {
+  key?: string;
+}
+
+type InvalidationContext = EventContext | TagContext | KeyContext | undefined;
+
+// Event handler type
+type EventHandler = (data: unknown) => Promise<void>;
+
 export interface InvalidationStrategy {
   /** Strategy name */
   name: string;
   /** Execute the strategy */
-  execute(cacheManager: CacheManager, context?: any): Promise<void>;
+  execute(cacheManager: CacheManager, context?: InvalidationContext): Promise<void>;
 }
 
 /**
@@ -56,7 +75,7 @@ export class TimeBasedInvalidation implements InvalidationStrategy {
  */
 export class EventBasedInvalidation implements InvalidationStrategy {
   name = 'event-based';
-  private listeners: Map<string, Set<(data: any) => Promise<void>>>;
+  private listeners: Map<string, Set<EventHandler>>;
 
   constructor() {
     this.listeners = new Map();
@@ -65,7 +84,7 @@ export class EventBasedInvalidation implements InvalidationStrategy {
   /**
    * Register an event listener
    */
-  on(event: string, handler: (data: any) => Promise<void>): void {
+  on(event: string, handler: EventHandler): void {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, new Set());
     }
@@ -75,7 +94,7 @@ export class EventBasedInvalidation implements InvalidationStrategy {
   /**
    * Remove an event listener
    */
-  off(event: string, handler: (data: any) => Promise<void>): void {
+  off(event: string, handler: EventHandler): void {
     const eventListeners = this.listeners.get(event);
     if (eventListeners) {
       eventListeners.delete(handler);
@@ -85,16 +104,16 @@ export class EventBasedInvalidation implements InvalidationStrategy {
   /**
    * Emit an event
    */
-  async emit(event: string, data: any): Promise<void> {
+  async emit(event: string, data: unknown): Promise<void> {
     const eventListeners = this.listeners.get(event);
     if (eventListeners) {
       await Promise.all(Array.from(eventListeners).map((handler) => handler(data)));
     }
   }
 
-  async execute(cacheManager: CacheManager, context?: any): Promise<void> {
+  async execute(_cacheManager: CacheManager, context?: InvalidationContext): Promise<void> {
     // Implementation depends on context
-    if (context && context.event) {
+    if (context && 'event' in context) {
       await this.emit(context.event, context.data);
     }
   }
@@ -102,7 +121,7 @@ export class EventBasedInvalidation implements InvalidationStrategy {
   /**
    * Create a handler to invalidate specific keys
    */
-  invalidateKeys(...keys: string[]): (data: any) => Promise<void> {
+  invalidateKeys(...keys: string[]): EventHandler {
     return async () => {
       const cacheManager = getDefaultCacheManager();
       await Promise.all(keys.map((key) => cacheManager.delete(key)));
@@ -112,7 +131,7 @@ export class EventBasedInvalidation implements InvalidationStrategy {
   /**
    * Create a handler to invalidate keys matching a pattern
    */
-  invalidatePattern(pattern: RegExp): (data: any) => Promise<void> {
+  invalidatePattern(_pattern: RegExp): EventHandler {
     return async () => {
       const cacheManager = getDefaultCacheManager();
       // Note: This requires getting all keys, which may not be efficient for large caches

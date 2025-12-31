@@ -12,6 +12,23 @@ import {
   Tracer,
 } from './types';
 
+// Span attribute value types (OpenTelemetry compatible)
+type SpanAttributeValue = string | number | boolean | undefined;
+
+// Span data structure for export
+interface SpanData {
+  name: string;
+  context: SpanContext;
+  kind: SpanKind;
+  startTime: number;
+  endTime?: number;
+  duration?: number;
+  attributes: Record<string, SpanAttributeValue>;
+  events: SpanEvent[];
+  status: SpanStatus;
+  statusMessage?: string;
+}
+
 /**
  * 生成随机 ID
  */
@@ -30,7 +47,7 @@ function generateId(length: number = 16): string {
 interface SpanEvent {
   name: string;
   timestamp: number;
-  attributes?: Record<string, any>;
+  attributes?: Record<string, SpanAttributeValue>;
 }
 
 /**
@@ -42,7 +59,7 @@ class SpanImpl implements Span {
   private kind: SpanKind;
   private startTime: number;
   private endTime?: number;
-  private attributes: Record<string, any> = {};
+  private attributes: Record<string, SpanAttributeValue> = {};
   private events: SpanEvent[] = [];
   private status: SpanStatus = SpanStatus.UNSET;
   private statusMessage?: string;
@@ -73,19 +90,19 @@ class SpanImpl implements Span {
     }
   }
 
-  setAttribute(key: string, value: any): void {
+  setAttribute(key: string, value: SpanAttributeValue): void {
     if (this.recording) {
       this.attributes[key] = value;
     }
   }
 
-  setAttributes(attributes: Record<string, any>): void {
+  setAttributes(attributes: Record<string, SpanAttributeValue>): void {
     if (this.recording) {
       Object.assign(this.attributes, attributes);
     }
   }
 
-  addEvent(name: string, attributes?: Record<string, any>): void {
+  addEvent(name: string, attributes?: Record<string, SpanAttributeValue>): void {
     if (this.recording) {
       const event: SpanEvent = {
         name,
@@ -121,7 +138,7 @@ class SpanImpl implements Span {
     return this.recording;
   }
 
-  toJSON(): any {
+  toJSON(): SpanData {
     return {
       name: this.name,
       context: this.context,
@@ -141,8 +158,8 @@ class SpanImpl implements Span {
  * Async Local Storage for context propagation
  */
 class AsyncLocalStorage<T> {
-  private store = new Map<any, T>();
-  private currentId: any = null;
+  private store = new Map<object, T>();
+  private currentId: object | null = null;
 
   run<R>(context: T, fn: () => R): R {
     const id = {};
@@ -176,14 +193,14 @@ const asyncLocalStorage = new AsyncLocalStorage<TracingContext>();
  * Span Exporter Interface
  */
 export interface SpanExporter {
-  export(spans: any[]): void | Promise<void>;
+  export(spans: SpanData[]): void | Promise<void>;
 }
 
 /**
  * Console Span Exporter
  */
 export class ConsoleSpanExporter implements SpanExporter {
-  export(spans: any[]): void {
+  export(spans: SpanData[]): void {
     spans.forEach((span) => {
       console.log('[Trace]', JSON.stringify(span, null, 2));
     });
@@ -194,7 +211,7 @@ export class ConsoleSpanExporter implements SpanExporter {
  * Batch Span Exporter
  */
 export class BatchSpanExporter implements SpanExporter {
-  private spans: any[] = [];
+  private spans: SpanData[] = [];
   private batchSize: number;
   private batchTimeout: number;
   private timer?: NodeJS.Timeout | undefined;
@@ -210,7 +227,7 @@ export class BatchSpanExporter implements SpanExporter {
     this.batchTimeout = batchTimeout;
   }
 
-  export(spans: any[]): void {
+  export(spans: SpanData[]): void {
     this.spans.push(...spans);
 
     if (this.spans.length >= this.batchSize) {
@@ -255,7 +272,7 @@ export class HttpSpanExporter implements SpanExporter {
     };
   }
 
-  async export(spans: any[]): Promise<void> {
+  async export(spans: SpanData[]): Promise<void> {
     try {
       const response = await fetch(this.url, {
         method: 'POST',
@@ -287,7 +304,7 @@ class TracerImpl implements Tracer {
     this.sampleRate = Math.max(0, Math.min(1, rate));
   }
 
-  static exportSpan(span: any): void {
+  static exportSpan(span: SpanData): void {
     // 采样决策
     if (Math.random() > this.sampleRate) {
       return;
@@ -334,18 +351,26 @@ export function configureTracer(options: {
 /**
  * HTTP 请求追踪装饰器
  */
+// HTTP request type for tracing decorators
+interface TracingHttpRequest {
+  method?: string;
+  url?: string;
+  path?: string;
+  headers?: Record<string, string | string[] | undefined>;
+}
+
 export function traceHttp(options?: {
   name?: string;
   extractHeaders?: boolean;
 }) {
   return function (
-    target: any,
+    _target: object,
     propertyKey: string,
     descriptor: PropertyDescriptor
   ) {
     const originalMethod = descriptor.value;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]) {
       const span = defaultTracer.startSpan(
         options?.name || `HTTP ${propertyKey}`,
         { kind: SpanKind.SERVER }
@@ -353,7 +378,7 @@ export function traceHttp(options?: {
 
       try {
         // 提取请求信息
-        const req = args[0];
+        const req = args[0] as TracingHttpRequest | undefined;
         if (req) {
           span.setAttribute('http.method', req.method);
           span.setAttribute('http.url', req.url);
@@ -362,7 +387,7 @@ export function traceHttp(options?: {
           if (options?.extractHeaders && req.headers) {
             // 提取追踪上下文
             const traceParent = req.headers['traceparent'];
-            if (traceParent) {
+            if (typeof traceParent === 'string') {
               span.setAttribute('http.traceparent', traceParent);
             }
           }
@@ -397,13 +422,13 @@ export function traceDatabase(options?: {
   operation?: string;
 }) {
   return function (
-    target: any,
+    _target: object,
     propertyKey: string,
     descriptor: PropertyDescriptor
   ) {
     const originalMethod = descriptor.value;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]) {
       const span = defaultTracer.startSpan(
         options?.name || `DB ${propertyKey}`,
         { kind: SpanKind.CLIENT }
@@ -445,15 +470,15 @@ export function traceDatabase(options?: {
  */
 export function trace(name?: string) {
   return function (
-    target: any,
+    target: object,
     propertyKey: string,
     descriptor: PropertyDescriptor
   ) {
     const originalMethod = descriptor.value;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]) {
       const span = defaultTracer.startSpan(
-        name || `${target.constructor.name}.${propertyKey}`,
+        name || `${(target.constructor as { name?: string }).name || 'Unknown'}.${propertyKey}`,
         { kind: SpanKind.INTERNAL }
       );
 
