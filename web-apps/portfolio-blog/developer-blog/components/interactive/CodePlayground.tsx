@@ -25,9 +25,9 @@ export default function CodePlayground({
       // Create a safe execution context
       const logs: string[] = [];
       const customConsole = {
-        log: (...args: any[]) => logs.push(args.map(String).join(' ')),
-        error: (...args: any[]) => logs.push('Error: ' + args.map(String).join(' ')),
-        warn: (...args: any[]) => logs.push('Warning: ' + args.map(String).join(' ')),
+        log: (...args: unknown[]) => logs.push(args.map(String).join(' ')),
+        error: (...args: unknown[]) => logs.push('Error: ' + args.map(String).join(' ')),
+        warn: (...args: unknown[]) => logs.push('Warning: ' + args.map(String).join(' ')),
       };
 
       // Execute code in isolated context

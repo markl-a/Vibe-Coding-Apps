@@ -50,7 +50,7 @@ app.post('/ingest', async (req, res) => {
       success: true,
       message: `Ingested ${docs.length} chunks from ${documents.length} documents`
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Ingest error:', error);
     res.status(500).json({ error: 'Failed to ingest documents' });
   }
@@ -73,7 +73,7 @@ app.post('/chat', async (req, res) => {
 
     const result = await ragChain.invokeWithSources(question);
     res.json(result);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Chat error:', error);
     res.status(500).json({ error: 'Failed to process question' });
   }
@@ -106,7 +106,7 @@ app.post('/chat/stream', async (req, res) => {
 
     res.write('data: [DONE]\n\n');
     res.end();
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Stream error:', error);
     res.status(500).json({ error: 'Failed to stream response' });
   }

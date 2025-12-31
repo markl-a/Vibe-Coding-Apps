@@ -3,6 +3,7 @@ import {
   ArcElement,
   Tooltip,
   Legend,
+  TooltipItem,
 } from 'chart.js'
 import { Doughnut } from 'react-chartjs-2'
 
@@ -43,7 +44,7 @@ const DoughnutChartComponent = () => {
       },
       tooltip: {
         callbacks: {
-          label: function(context: any) {
+          label: function(context: TooltipItem<'doughnut'>) {
             const label = context.label || ''
             const value = context.parsed || 0
             return `${label}: $${value.toLocaleString()}`

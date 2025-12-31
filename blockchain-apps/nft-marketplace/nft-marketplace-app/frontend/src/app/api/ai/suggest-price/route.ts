@@ -5,6 +5,11 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+interface NFTAttribute {
+  trait_type: string;
+  value: string | number;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { metadata } = await request.json();
@@ -23,7 +28,7 @@ Description: ${metadata.description}
 ${
   metadata.attributes
     ? `Attributes: ${metadata.attributes
-        .map((attr: any) => `${attr.trait_type}: ${attr.value}`)
+        .map((attr: NFTAttribute) => `${attr.trait_type}: ${attr.value}`)
         .join(', ')}`
     : ''
 }

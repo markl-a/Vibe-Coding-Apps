@@ -10,6 +10,29 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { MeetingAIService } from './meeting-ai.service';
 
+interface TranscriptionSegment {
+  speaker: string;
+  text: string;
+  timestamp: number;
+  confidence?: number;
+}
+
+interface MeetingSummary {
+  title: string;
+  summary: string;
+  keyPoints: string[];
+  decisions: string[];
+  actionItems: Array<{
+    task: string;
+    assignee?: string;
+    dueDate?: string;
+    priority: 'low' | 'medium' | 'high';
+  }>;
+  participants: string[];
+  duration: number;
+  sentiment: 'positive' | 'neutral' | 'negative';
+}
+
 @Controller('meetings/ai')
 @UseGuards(JwtAuthGuard)
 export class MeetingAIController {
@@ -45,11 +68,7 @@ export class MeetingAIController {
   async generateSummary(
     @Body()
     body: {
-      transcripts: Array<{
-        speaker: string;
-        text: string;
-        timestamp: number;
-      }>;
+      transcripts: TranscriptionSegment[];
       meetingInfo: {
         title: string;
         participants: string[];
@@ -58,7 +77,7 @@ export class MeetingAIController {
     },
   ) {
     const summary = await this.meetingAIService.generateMeetingSummary(
-      body.transcripts as any,
+      body.transcripts,
       body.meetingInfo,
     );
 
@@ -100,19 +119,15 @@ export class MeetingAIController {
   async analyzeConversation(
     @Body()
     body: {
-      transcripts: Array<{
-        speaker: string;
-        text: string;
-        timestamp: number;
-      }>;
+      transcripts: TranscriptionSegment[];
     },
   ) {
     const analysis = await this.meetingAIService.analyzeConversation(
-      body.transcripts as any,
+      body.transcripts,
     );
 
     // Convert Map to Object for JSON serialization
-    const speakingTimeObj: any = {};
+    const speakingTimeObj: Record<string, number> = {};
     analysis.speakingTime.forEach((time, speaker) => {
       speakingTimeObj[speaker] = time;
     });
@@ -139,7 +154,7 @@ export class MeetingAIController {
     );
 
     // Convert Map to Object
-    const emotionsObj: any = {};
+    const emotionsObj: Record<string, number> = {};
     result.emotions.forEach((value, key) => {
       emotionsObj[key] = value;
     });
@@ -163,18 +178,14 @@ export class MeetingAIController {
     @Body()
     body: {
       currentTopic: string;
-      recentTranscripts: Array<{
-        speaker: string;
-        text: string;
-        timestamp: number;
-      }>;
+      recentTranscripts: TranscriptionSegment[];
       timeElapsed: number;
       scheduledDuration: number;
     },
   ) {
     const suggestions = await this.meetingAIService.getSmartSuggestions({
       currentTopic: body.currentTopic,
-      recentTranscripts: body.recentTranscripts as any,
+      recentTranscripts: body.recentTranscripts,
       timeElapsed: body.timeElapsed,
       scheduledDuration: body.scheduledDuration,
     });
@@ -193,7 +204,7 @@ export class MeetingAIController {
   async generateReminders(
     @Body()
     body: {
-      summary: any;
+      summary: MeetingSummary;
     },
   ) {
     const reminders = await this.meetingAIService.generateMeetingReminders(

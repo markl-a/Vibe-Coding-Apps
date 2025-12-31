@@ -1,6 +1,11 @@
 import { BlockList, BlockerSettings, DEFAULT_SETTINGS } from '../types/blocker';
 import { urlMatchesPattern } from '../utils/urlMatcher';
 
+interface BlockedSite {
+  url: string;
+  count: number;
+}
+
 // Load settings and block lists
 async function loadSettings(): Promise<BlockerSettings> {
   const result = await chrome.storage.local.get(['blockerSettings']);
@@ -30,7 +35,7 @@ async function updateStats(url: string) {
   stats.timeSaved += 5; // Estimate 5 minutes saved per block
 
   // Update most blocked sites
-  const siteEntry = stats.mostBlockedSites.find((s: any) => s.url === url);
+  const siteEntry = stats.mostBlockedSites.find((s: BlockedSite) => s.url === url);
   if (siteEntry) {
     siteEntry.count += 1;
   } else {
@@ -38,7 +43,7 @@ async function updateStats(url: string) {
   }
 
   // Sort and keep top 10
-  stats.mostBlockedSites.sort((a: any, b: any) => b.count - a.count);
+  stats.mostBlockedSites.sort((a: BlockedSite, b: BlockedSite) => b.count - a.count);
   stats.mostBlockedSites = stats.mostBlockedSites.slice(0, 10);
 
   await chrome.storage.local.set({ blockerStats: stats });

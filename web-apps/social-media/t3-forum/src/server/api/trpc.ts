@@ -12,6 +12,7 @@ import { ZodError } from "zod";
 import { db } from "@/server/db";
 import { getServerAuthSession } from "@/server/auth";
 import type { Session } from "next-auth";
+import type { NextApiRequest, NextApiResponse } from "next";
 
 /**
  * 1. CONTEXT
@@ -48,7 +49,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = async (opts: { req: any; res: any }) => {
+export const createTRPCContext = async (opts: { req: NextApiRequest; res: NextApiResponse }) => {
   const session = await getServerAuthSession({ req: opts.req, res: opts.res });
 
   return createInnerTRPCContext({

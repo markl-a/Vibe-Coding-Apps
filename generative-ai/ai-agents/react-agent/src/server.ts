@@ -54,7 +54,7 @@ app.post('/run', async (req, res) => {
 
     console.log(`✅ Output: ${result.output}`);
     res.json(result);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Agent error:', error);
     res.status(500).json({ error: 'Failed to process request' });
   }
@@ -83,7 +83,7 @@ app.post('/stream', async (req, res) => {
 
     res.write('data: [DONE]\n\n');
     res.end();
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Stream error:', error);
     res.status(500).json({ error: 'Failed to stream response' });
   }

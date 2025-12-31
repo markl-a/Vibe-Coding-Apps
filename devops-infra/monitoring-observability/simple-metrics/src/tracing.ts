@@ -1,4 +1,4 @@
-import type { Span, SpanContext, SpanEvent } from './types.js';
+import type { Span, SpanContext, SpanEvent, ExpressRequest, ExpressResponse, NextFunction } from './types.js';
 import { setTraceContext, clearTraceContext } from './logger.js';
 
 /**
@@ -159,7 +159,7 @@ export class Tracer {
    * Create middleware for Express
    */
   middleware() {
-    return (req: any, res: any, next: any) => {
+    return (req: ExpressRequest, res: ExpressResponse, next: NextFunction) => {
       const span = this.startSpan('http_request');
 
       span.setAttributes({

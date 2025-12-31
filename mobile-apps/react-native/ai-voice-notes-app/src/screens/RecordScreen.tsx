@@ -15,7 +15,13 @@ import { VoiceNote, AIProcessingOptions } from '../types';
 import { useNotesStore } from '../store/notesStore';
 import { chat, AIConfig } from '../../../shared/services/aiService';
 
-export const RecordScreen = ({ navigation }: any) => {
+type RecordScreenProps = {
+  navigation: {
+    navigate: (screen: string) => void;
+  };
+};
+
+export const RecordScreen = ({ navigation }: RecordScreenProps) => {
   const addNote = useNotesStore((state) => state.addNote);
   const [recordedUri, setRecordedUri] = useState<string | null>(null);
   const [duration, setDuration] = useState(0);

@@ -1,6 +1,15 @@
 // Background service worker for Pomodoro Timer
 // Handles timer countdown and notifications
 
+interface SessionRecord {
+  date: string;
+  pomodoros: number;
+  focusTime: number;
+  completionRate: number;
+  timeOfDay: 'morning' | 'afternoon' | 'evening' | 'night';
+  dayOfWeek: number;
+}
+
 let timerInterval: NodeJS.Timeout | null = null;
 
 // Listen for messages from popup
@@ -137,7 +146,7 @@ async function handleSessionComplete(sessionType: string) {
     const sessionHistory = statsResult.sessionHistory || [];
 
     // Find or create today's session record
-    let todaySession = sessionHistory.find((s: any) => s.date === today);
+    let todaySession = sessionHistory.find((s: SessionRecord) => s.date === today);
     if (!todaySession) {
       todaySession = {
         date: today,

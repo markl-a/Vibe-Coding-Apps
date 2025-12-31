@@ -12,9 +12,25 @@ import { Logger } from '@nestjs/common';
 import * as Y from 'yjs';
 import { applyUpdate, encodeStateAsUpdate, encodeStateVector } from 'yjs';
 
+interface CollaborationUser {
+  id: string;
+  name: string;
+  email?: string;
+  avatar?: string;
+}
+
+interface CursorPosition {
+  line: number;
+  column: number;
+  selection?: {
+    start: { line: number; column: number };
+    end: { line: number; column: number };
+  };
+}
+
 interface DocumentRoom {
   doc: Y.Doc;
-  users: Map<string, { socketId: string; user: any; cursor: any }>;
+  users: Map<string, { socketId: string; user: CollaborationUser; cursor: CursorPosition | null }>;
 }
 
 @WebSocketGateway({
@@ -63,7 +79,7 @@ export class CollaborationGateway implements OnGatewayConnection, OnGatewayDisco
 
   @SubscribeMessage('join-document')
   async handleJoinDocument(
-    @MessageBody() data: { documentId: string; user: any },
+    @MessageBody() data: { documentId: string; user: CollaborationUser },
     @ConnectedSocket() client: Socket,
   ) {
     const { documentId, user } = data;
@@ -186,7 +202,7 @@ export class CollaborationGateway implements OnGatewayConnection, OnGatewayDisco
 
   @SubscribeMessage('cursor-position')
   handleCursorPosition(
-    @MessageBody() data: { documentId: string; cursor: any },
+    @MessageBody() data: { documentId: string; cursor: CursorPosition },
     @ConnectedSocket() client: Socket,
   ) {
     const { documentId, cursor } = data;

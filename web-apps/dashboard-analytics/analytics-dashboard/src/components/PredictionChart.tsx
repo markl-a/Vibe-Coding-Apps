@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler, TooltipItem } from 'chart.js';
 import { generateForecast } from '../services/aiService';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
@@ -98,7 +98,7 @@ const PredictionChart = ({ historicalData, labels, title = '收入趋势与 AI �
           size: 13,
         },
         callbacks: {
-          label: function (context: any) {
+          label: function (context: TooltipItem<'line'>) {
             let label = context.dataset.label || '';
             if (label) {
               label += ': ';
@@ -128,8 +128,8 @@ const PredictionChart = ({ historicalData, labels, title = '收入趋势与 AI �
           color: 'rgba(0, 0, 0, 0.05)',
         },
         ticks: {
-          callback: function (value: any) {
-            return '$' + value.toLocaleString();
+          callback: function (value: string | number) {
+            return '$' + Number(value).toLocaleString();
           },
           font: {
             size: 11,

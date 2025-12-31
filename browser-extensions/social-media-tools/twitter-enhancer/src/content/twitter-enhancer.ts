@@ -6,11 +6,28 @@ import { MediaDownloader } from './media-downloader';
 import { AdBlocker } from './ad-blocker';
 import { ThemeManager } from './theme-manager';
 
+interface TwitterEnhancerSettings {
+  blockAds: boolean;
+  enableDownloader: boolean;
+  theme: string;
+  autoHideRead: boolean;
+}
+
+interface TwitterResponse {
+  success: boolean;
+  error?: string;
+  info?: {
+    tweets: number;
+    ads: number;
+    hiddenAds: number;
+  };
+}
+
 class TwitterEnhancer {
   private mediaDownloader: MediaDownloader;
   private adBlocker: AdBlocker;
   private themeManager: ThemeManager;
-  private settings: any;
+  private settings: TwitterEnhancerSettings;
 
   constructor() {
     this.mediaDownloader = new MediaDownloader();
@@ -42,7 +59,7 @@ class TwitterEnhancer {
    */
   private async loadSettings(): Promise<void> {
     const result = await chrome.storage.local.get('settings');
-    this.settings = result.settings || {
+    this.settings = (result.settings as TwitterEnhancerSettings) || {
       blockAds: true,
       enableDownloader: true,
       theme: 'default',
@@ -125,7 +142,7 @@ class TwitterEnhancer {
   /**
    * 處理下載推文媒體
    */
-  private handleDownloadTweetMedia(tweetUrl: string, sendResponse: (response: any) => void): void {
+  private handleDownloadTweetMedia(tweetUrl: string, sendResponse: (response: TwitterResponse) => void): void {
     try {
       // 實作下載邏輯
       sendResponse({ success: true });
@@ -138,7 +155,7 @@ class TwitterEnhancer {
   /**
    * 處理獲取頁面資訊
    */
-  private handleGetPageInfo(sendResponse: (response: any) => void): void {
+  private handleGetPageInfo(sendResponse: (response: TwitterResponse) => void): void {
     try {
       const tweets = document.querySelectorAll('[data-testid="tweet"]').length;
       const ads = document.querySelectorAll('[data-testid="placementTracking"]').length;

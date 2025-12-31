@@ -1,4 +1,5 @@
 import { IsString, IsNotEmpty, IsOptional, IsEnum, IsArray } from 'class-validator';
+import { MessageAttachment } from '../message.entity';
 
 export enum MessageType {
   TEXT = 'TEXT',
@@ -26,5 +27,5 @@ export class CreateMessageDto {
 
   @IsArray()
   @IsOptional()
-  attachments?: any[];
+  attachments?: MessageAttachment[];
 }

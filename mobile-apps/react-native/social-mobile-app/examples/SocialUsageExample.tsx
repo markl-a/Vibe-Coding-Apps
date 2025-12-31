@@ -11,6 +11,43 @@ import { View, Text } from 'react-native';
  * 4. 通知功能
  */
 
+// MARK: - 類型定義
+
+interface Post {
+  id: string;
+  userId: string;
+  userName: string;
+  userAvatar: string;
+  content: string;
+  images: string[];
+  likes: number;
+  comments: number;
+  shares: number;
+  timestamp: Date;
+  isLiked: boolean;
+}
+
+interface Comment {
+  id: string;
+  postId: string;
+  userId: string;
+  userName: string;
+  userAvatar: string;
+  content: string;
+  likes: number;
+  timestamp: Date;
+}
+
+interface Notification {
+  id: string;
+  type: string;
+  userId: string;
+  userName: string;
+  message: string;
+  timestamp: Date;
+  isRead: boolean;
+}
+
 // MARK: - 測試數據
 
 export const SocialTestData = {
@@ -228,30 +265,30 @@ const formatTimestamp = (date: Date): string => {
 
 export const SocialUtils = {
   // 按讚
-  toggleLike: (post: any) => ({
+  toggleLike: (post: Post): Post => ({
     ...post,
     isLiked: !post.isLiked,
     likes: post.isLiked ? post.likes - 1 : post.likes + 1,
   }),
 
   // 添加評論
-  addComment: (comments: any[], postId: string, comment: any) => {
+  addComment: (comments: Comment[], postId: string, comment: Omit<Comment, 'postId' | 'timestamp'>): Comment[] => {
     return [...comments, { ...comment, postId, timestamp: new Date() }];
   },
 
   // 分享貼文
-  sharePost: (post: any) => ({
+  sharePost: (post: Post): Post => ({
     ...post,
     shares: post.shares + 1,
   }),
 
   // 篩選未讀通知
-  getUnreadNotifications: (notifications: any[]) => {
+  getUnreadNotifications: (notifications: Notification[]): Notification[] => {
     return notifications.filter(n => !n.isRead);
   },
 
   // 標記通知為已讀
-  markAsRead: (notifications: any[], notificationId: string) => {
+  markAsRead: (notifications: Notification[], notificationId: string): Notification[] => {
     return notifications.map(n =>
       n.id === notificationId ? { ...n, isRead: true } : n
     );

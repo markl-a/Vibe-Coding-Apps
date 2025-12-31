@@ -8,6 +8,13 @@ import { Logger } from '@vibe/shared-utils';
 
 const logger = new Logger('IPFS');
 
+export interface IPFSPostData {
+  content: string;
+  timestamp: number;
+  metadata: Record<string, unknown>;
+  image?: string;
+}
+
 // IPFS 客戶端配置
 let ipfsClient: IPFSHTTPClient | null = null;
 
@@ -34,13 +41,13 @@ function getIPFSClient(): IPFSHTTPClient {
 export async function uploadToIPFS(data: {
   content: string;
   image?: File;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }): Promise<string> {
   try {
     const client = getIPFSClient();
 
     // 準備數據
-    const postData: any = {
+    const postData: IPFSPostData = {
       content: data.content,
       timestamp: Date.now(),
       metadata: data.metadata || {},
@@ -69,7 +76,7 @@ export async function uploadToIPFS(data: {
  * @param cid IPFS CID
  * @returns 內容數據
  */
-export async function fetchFromIPFS(cid: string): Promise<any> {
+export async function fetchFromIPFS(cid: string): Promise<IPFSPostData> {
   try {
     const gateway = import.meta.env.VITE_IPFS_GATEWAY || 'https://ipfs.io/ipfs/';
     const url = `${gateway}${cid}`;
@@ -81,7 +88,7 @@ export async function fetchFromIPFS(cid: string): Promise<any> {
     }
 
     const data = await response.json();
-    return data;
+    return data as IPFSPostData;
   } catch (error) {
     logger.error('IPFS fetch error', error as Error);
     throw new Error('Failed to fetch from IPFS');
@@ -94,7 +101,7 @@ export async function fetchFromIPFS(cid: string): Promise<any> {
 export async function uploadToWeb3Storage(data: {
   content: string;
   image?: File;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }): Promise<string> {
   try {
     // 動態導入 Web3.Storage

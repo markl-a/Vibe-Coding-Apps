@@ -51,9 +51,9 @@ export const useNotesStore = create<NotesStore>((set, get) => ({
     try {
       const stored = await AsyncStorage.getItem('voice_notes');
       if (stored) {
-        const notes = JSON.parse(stored);
+        const notes = JSON.parse(stored) as Array<Omit<VoiceNote, 'createdAt' | 'updatedAt'> & { createdAt: string; updatedAt: string }>;
         // 转换日期字符串为 Date 对象
-        const parsedNotes = notes.map((note: any) => ({
+        const parsedNotes: VoiceNote[] = notes.map((note) => ({
           ...note,
           createdAt: new Date(note.createdAt),
           updatedAt: new Date(note.updatedAt),

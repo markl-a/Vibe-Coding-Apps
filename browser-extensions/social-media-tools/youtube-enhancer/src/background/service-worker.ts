@@ -2,6 +2,12 @@
  * YouTube Enhancer - 背景服務
  */
 
+interface VideoDownloadParams {
+  videoId: string;
+  quality: string;
+  title: string;
+}
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'DOWNLOAD_VIDEO') {
     handleVideoDownload(message)
@@ -14,7 +20,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 /**
  * 處理影片下載
  */
-async function handleVideoDownload(params: any): Promise<void> {
+async function handleVideoDownload(params: VideoDownloadParams): Promise<void> {
   const { videoId, quality, title } = params;
 
   // 注意：實際的影片下載需要額外的 API 或服務

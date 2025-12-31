@@ -16,6 +16,12 @@ interface ContentGap {
   priority: 'high' | 'medium' | 'low';
 }
 
+interface RelatedLinkSuggestion {
+  pageId: string;
+  relevance: number;
+  context: string;
+}
+
 @Injectable()
 export class KnowledgeAIService {
   private apiKey: string;
@@ -97,9 +103,9 @@ ${content.substring(0, 2000)}`;
 ${pagesList}`;
 
       const response = await this.callOpenAI(prompt, 'gpt-4');
-      const suggestions = JSON.parse(response);
+      const suggestions: RelatedLinkSuggestion[] = JSON.parse(response);
 
-      return suggestions.map((s: any) => ({
+      return suggestions.map((s) => ({
         pageId: s.pageId,
         title: allPages.find(p => p.id === s.pageId)?.title || '',
         relevance: s.relevance,

@@ -60,7 +60,7 @@ async function main() {
         }
 
         console.log(`Agent: ${result.output}\n`);
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error:', error);
       }
 

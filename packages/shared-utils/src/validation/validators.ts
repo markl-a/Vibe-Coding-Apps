@@ -370,7 +370,7 @@ export function isNumeric(str: string): boolean {
 /**
  * Integer validation
  */
-export function isInteger(value: any): boolean {
+export function isInteger(value: unknown): boolean {
   return Number.isInteger(Number(value));
 }
 

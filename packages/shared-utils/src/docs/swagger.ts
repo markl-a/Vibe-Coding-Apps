@@ -242,8 +242,8 @@ export const CommonErrorResponses = {
 /**
  * 生成通用的 OpenAPI 配置对象
  */
-export function createOpenAPIConfig(config: SwaggerConfig) {
-  const openApiConfig: any = {
+export function createOpenAPIConfig(config: SwaggerConfig): OpenAPIDocument {
+  const openApiConfig: OpenAPIDocument = {
     openapi: '3.0.0',
     info: {
       title: config.title,
