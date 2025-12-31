@@ -1,0 +1,30 @@
+{
+  "name": "@vibe/payment-gateway",
+  "version": "1.0.0",
+  "description": "Payment processing gateway with multi-provider support, refunds, and webhooks",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "example": "tsx src/example.ts",
+    "test": "vitest",
+    "lint": "eslint src --ext .ts"
+  },
+  "keywords": [
+    "payment",
+    "gateway",
+    "stripe",
+    "fintech",
+    "checkout",
+    "transactions"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  }
+}
