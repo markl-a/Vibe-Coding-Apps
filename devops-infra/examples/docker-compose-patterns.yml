@@ -1,0 +1,238 @@
+# Docker Compose Multi-Service Setup Example
+# Demonstrates common patterns for orchestrating multiple services
+
+version: '3.8'
+
+# Define shared networks for service isolation and communication
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+  monitoring:
+    driver: bridge
+
+# Define volumes for persistent data
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+services:
+  # ===== Frontend Services =====
+
+  # React web application
+  web:
+    build:
+      context: ./web-apps/react-app
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: production
+    container_name: vibe-web
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://api:4000
+      - REACT_APP_WS_URL=ws://api:4000
+    networks:
+      - frontend
+    depends_on:
+      - api
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ===== Backend Services =====
+
+  # Node.js API server
+  api:
+    build:
+      context: ./apis-backend/express-api
+      dockerfile: Dockerfile
+    container_name: vibe-api
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/vibedb
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=${JWT_SECRET}
+      - LOG_LEVEL=info
+    networks:
+      - frontend
+      - backend
+      - monitoring
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ===== Database Services =====
+
+  # PostgreSQL database
+  postgres:
+    image: postgres:15-alpine
+    container_name: vibe-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=vibedb
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    networks:
+      - backend
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./devops-infra/infrastructure-as-code/postgres-init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis cache and session store
+  redis:
+    image: redis:7-alpine
+    container_name: vibe-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    networks:
+      - backend
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ===== Message Queue =====
+
+  # RabbitMQ message broker
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: vibe-rabbitmq
+    ports:
+      - "5672:5672"   # AMQP port
+      - "15672:15672" # Management UI
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    networks:
+      - backend
+    volumes:
+      - ./data/rabbitmq:/var/lib/rabbitmq
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ===== Worker Services =====
+
+  # Background job processor
+  worker:
+    build:
+      context: ./apis-backend/express-api
+      dockerfile: Dockerfile.worker
+    container_name: vibe-worker
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/vibedb
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://admin:${RABBITMQ_PASSWORD}@rabbitmq:5672
+    networks:
+      - backend
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    restart: unless-stopped
+    deploy:
+      replicas: 2
+
+  # ===== Monitoring & Observability =====
+
+  # Prometheus metrics collector
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: vibe-prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    networks:
+      - monitoring
+    volumes:
+      - ./devops-infra/monitoring-observability/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    restart: unless-stopped
+
+  # Grafana dashboards
+  grafana:
+    image: grafana/grafana:latest
+    container_name: vibe-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - monitoring
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./devops-infra/monitoring-observability/grafana-dashboards:/etc/grafana/provisioning/dashboards
+      - ./devops-infra/monitoring-observability/grafana-datasources:/etc/grafana/provisioning/datasources
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  # ===== Reverse Proxy & Load Balancer =====
+
+  # Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: vibe-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - frontend
+    volumes:
+      - ./devops-infra/cloud-management/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./devops-infra/cloud-management/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - web
+      - api
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
