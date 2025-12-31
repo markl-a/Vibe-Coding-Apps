@@ -1,0 +1,27 @@
+{
+  "name": "@vibe/drone-simulator",
+  "version": "0.1.0",
+  "description": "Drone flight controller simulator with physics and waypoint navigation",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/visualization.ts",
+    "start": "node dist/visualization.js",
+    "example": "tsx src/example.ts",
+    "sim": "tsx src/visualization.ts"
+  },
+  "dependencies": {
+    "blessed": "^0.1.81"
+  },
+  "devDependencies": {
+    "@types/blessed": "^0.1.25",
+    "@types/node": "^20.10.0",
+    "tsx": "^4.6.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
