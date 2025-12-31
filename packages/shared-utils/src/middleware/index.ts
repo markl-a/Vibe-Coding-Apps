@@ -4,11 +4,45 @@
 
 import { Request, Response, NextFunction } from 'express';
 
+// User type for authentication middleware
+interface AuthUser {
+  _id?: string | { toString(): string };
+  id?: string | { toString(): string };
+  [key: string]: unknown;
+}
+
+// Resource type with dynamic owner field
+interface OwnedResource {
+  [key: string]: unknown | { toString(): string };
+}
+
+// Pagination info type
+interface PaginationInfo {
+  page: number;
+  limit: number;
+  skip: number;
+}
+
+// Extended request types
+interface RequestWithAuth extends Request {
+  user?: AuthUser;
+  resource?: OwnedResource;
+}
+
+interface RequestWithPagination extends Request {
+  pagination?: PaginationInfo;
+}
+
+// Zod-like validation error type
+interface ValidationError extends Error {
+  errors?: unknown[];
+}
+
 /**
  * 資源所有權驗證中間件
  */
 export function checkOwnership(resourceField: string = 'userId') {
-  return async (req: Request & { user?: any; resource?: any }, res: Response, next: NextFunction): Promise<void> => {
+  return async (req: RequestWithAuth, res: Response, next: NextFunction): Promise<void> => {
     try {
       const resource = req.resource;
       if (!resource) {
@@ -19,8 +53,14 @@ export function checkOwnership(resourceField: string = 'userId') {
         return;
       }
 
-      const resourceOwner = resource[resourceField]?.toString();
-      const userId = req.user?._id?.toString() || req.user?.id?.toString();
+      const ownerField = resource[resourceField];
+      const resourceOwner = typeof ownerField === 'object' && ownerField !== null && 'toString' in ownerField
+        ? (ownerField as { toString(): string }).toString()
+        : String(ownerField);
+      const userIdField = req.user?._id ?? req.user?.id;
+      const userId = typeof userIdField === 'object' && userIdField !== null && 'toString' in userIdField
+        ? (userIdField as { toString(): string }).toString()
+        : String(userIdField);
 
       if (resourceOwner !== userId) {
         res.status(403).json({
@@ -45,7 +85,8 @@ export function validateBody<T>(schema: { parse: (data: unknown) => T }) {
     try {
       req.body = schema.parse(req.body);
       next();
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as ValidationError;
       res.status(400).json({
         success: false,
         error: {
@@ -61,12 +102,13 @@ export function validateBody<T>(schema: { parse: (data: unknown) => T }) {
 /**
  * 查詢參數驗證中間件
  */
-export function validateQuery<T>(schema: { parse: (data: unknown) => T }) {
+export function validateQuery<T extends Record<string, unknown>>(schema: { parse: (data: unknown) => T }) {
   return (req: Request, res: Response, next: NextFunction): void => {
     try {
-      req.query = schema.parse(req.query) as any;
+      req.query = schema.parse(req.query) as typeof req.query;
       next();
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as ValidationError;
       res.status(400).json({
         success: false,
         error: {
@@ -85,7 +127,7 @@ export function validateQuery<T>(schema: { parse: (data: unknown) => T }) {
 export function parsePagination(defaults: { page?: number; limit?: number; maxLimit?: number } = {}) {
   const { page: defaultPage = 1, limit: defaultLimit = 20, maxLimit = 100 } = defaults;
 
-  return (req: Request & { pagination?: any }, _res: Response, next: NextFunction) => {
+  return (req: RequestWithPagination, _res: Response, next: NextFunction) => {
     const page = Math.max(1, parseInt(req.query.page as string) || defaultPage);
     const limit = Math.min(maxLimit, Math.max(1, parseInt(req.query.limit as string) || defaultLimit));
     const skip = (page - 1) * limit;
@@ -94,3 +136,6 @@ export function parsePagination(defaults: { page?: number; limit?: number; maxLi
     next();
   };
 }
+
+// Export types for external use
+export type { AuthUser, OwnedResource, PaginationInfo, RequestWithAuth, RequestWithPagination };
