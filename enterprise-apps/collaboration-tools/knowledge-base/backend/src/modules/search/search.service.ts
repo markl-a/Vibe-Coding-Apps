@@ -27,6 +27,24 @@ interface SemanticSearchOptions {
   };
 }
 
+interface PageDocument {
+  id: string;
+  title: string;
+  content: string;
+  tags: string[];
+  category: string;
+  author: string;
+  path: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface SearchFilters {
+  tags?: string[];
+  category?: string;
+  author?: string;
+}
+
 @Injectable()
 export class SearchService {
   private openai: OpenAI;
@@ -40,7 +58,7 @@ export class SearchService {
     });
   }
 
-  async indexPage(page: any): Promise<void> {
+  async indexPage(page: PageDocument): Promise<void> {
     await this.elasticsearchService.index({
       index: 'wiki_pages',
       id: page.id,
@@ -62,12 +80,12 @@ export class SearchService {
     options?: {
       limit?: number;
       offset?: number;
-      filters?: any;
+      filters?: SearchFilters;
     },
   ): Promise<SearchResult[]> {
     const { limit = 10, offset = 0, filters = {} } = options || {};
 
-    const searchQuery: any = {
+    const searchQuery: Record<string, unknown> = {
       bool: {
         must: [
           {
@@ -163,7 +181,7 @@ export class SearchService {
       const embedding = await this.generateEmbedding(query);
 
       // 2. 向量搜索 (使用 Elasticsearch kNN)
-      const searchQuery: any = {
+      const searchQuery: Record<string, unknown> = {
         bool: {
           must: [
             {
@@ -362,7 +380,7 @@ export class SearchService {
     });
   }
 
-  async updatePage(page: any): Promise<void> {
+  async updatePage(page: PageDocument): Promise<void> {
     await this.indexPage(page);
   }
 }

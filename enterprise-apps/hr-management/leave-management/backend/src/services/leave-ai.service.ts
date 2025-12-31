@@ -1,6 +1,40 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
+
+interface Factor {
+  factor: string;
+  impact: 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL';
+  description: string;
+}
+
+interface Risk {
+  type: string;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH';
+  message: string;
+  affectedEmployees?: number;
+}
+
+interface Pattern {
+  type: string;
+  description: string;
+}
+
+interface PeakDate {
+  date: string;
+  employeeCount: number;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH';
+}
+
+interface LeaveRequestInput {
+  id: string;
+  employeeId: string;
+  leaveType: string;
+  startDate: Date;
+  endDate: Date;
+  days: number;
+  createdAt: Date;
+}
 
 /**
  * AI 請假分析服務
@@ -286,7 +320,7 @@ export class LeaveAIService {
    * 團隊請假分析
    */
   async analyzeTeamLeave(departmentId?: string, startDate?: Date, endDate?: Date) {
-    const where: any = {
+    const where: Prisma.LeaveRequestWhereInput = {
       status: { in: ['PENDING', 'APPROVED'] },
     };
 
@@ -356,8 +390,8 @@ export class LeaveAIService {
    */
   private generateReasons(
     recommendation: string,
-    factors: any[],
-    risks: any[]
+    factors: Factor[],
+    risks: Risk[]
   ): string[] {
     const reasons = [];
 
@@ -389,7 +423,7 @@ export class LeaveAIService {
   /**
    * 生成條件建議
    */
-  private generateConditions(risks: any[], leaveRequest: any): string[] {
+  private generateConditions(risks: Risk[], leaveRequest: LeaveRequestInput): string[] {
     const conditions = [];
 
     risks.forEach((risk) => {
@@ -423,7 +457,7 @@ export class LeaveAIService {
   /**
    * 生成模式洞察
    */
-  private generatePatternInsights(patterns: any[], approvalRate: number, avgDays: number): string[] {
+  private generatePatternInsights(patterns: Pattern[], approvalRate: number, avgDays: number): string[] {
     const insights = [];
 
     if (approvalRate > 90) {
@@ -450,7 +484,7 @@ export class LeaveAIService {
   /**
    * 生成團隊警告
    */
-  private generateTeamWarnings(peakDates: any[], totalLeaves: number): string[] {
+  private generateTeamWarnings(peakDates: PeakDate[], totalLeaves: number): string[] {
     const warnings = [];
 
     const highSeverityDates = peakDates.filter((d) => d.severity === 'HIGH');
