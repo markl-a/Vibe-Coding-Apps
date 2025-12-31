@@ -1,0 +1,26 @@
+apiVersion: vibe.example.com/v1
+kind: AppConfig
+metadata:
+  name: my-app
+  namespace: default
+spec:
+  environment: production
+  replicas: 3
+  config:
+    LOG_LEVEL: info
+    CACHE_TTL: "3600"
+    FEATURE_FLAG_NEW_UI: "true"
+    API_TIMEOUT: "30"
+---
+apiVersion: vibe.example.com/v1
+kind: AppConfig
+metadata:
+  name: worker-app
+  namespace: default
+spec:
+  environment: staging
+  replicas: 2
+  config:
+    WORKER_CONCURRENCY: "5"
+    QUEUE_NAME: tasks
+    RETRY_ATTEMPTS: "3"

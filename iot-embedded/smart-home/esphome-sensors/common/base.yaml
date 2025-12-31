@@ -1,0 +1,68 @@
+# Common ESPHome Base Configuration
+# Include this in your device configs with:
+# packages:
+#   base: !include common/base.yaml
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+  platform: ESP32
+  board: esp32dev
+
+# WiFi Configuration
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${device_name} Fallback"
+    password: "fallback123"
+
+captive_portal:
+
+# Enable logging
+logger:
+  level: INFO
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+# Enable OTA updates
+ota:
+  password: !secret ota_password
+
+# Web server for debugging (optional)
+web_server:
+  port: 80
+
+# Sensors common to all devices
+sensor:
+  # WiFi signal strength
+  - platform: wifi_signal
+    name: "${friendly_name} WiFi Signal"
+    update_interval: 60s
+
+  # Uptime sensor
+  - platform: uptime
+    name: "${friendly_name} Uptime"
+
+# Text sensors
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "${friendly_name} IP Address"
+    ssid:
+      name: "${friendly_name} Connected SSID"
+
+# Binary sensors
+binary_sensor:
+  - platform: status
+    name: "${friendly_name} Status"
+
+# Buttons
+button:
+  - platform: restart
+    name: "${friendly_name} Restart"

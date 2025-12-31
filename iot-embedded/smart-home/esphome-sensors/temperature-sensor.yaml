@@ -1,0 +1,74 @@
+# ESPHome Temperature & Humidity Sensor
+# Hardware: ESP32 + BME280
+# Features: Temperature, Humidity, Pressure, Deep Sleep
+
+substitutions:
+  device_name: "temp-sensor-living-room"
+  friendly_name: "Living Room Climate"
+
+packages:
+  base: !include common/base.yaml
+
+# I2C bus for BME280
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+  scan: true
+
+sensor:
+  # BME280 Temperature, Humidity, Pressure sensor
+  - platform: bme280_i2c
+    temperature:
+      name: "${friendly_name} Temperature"
+      id: temp
+      oversampling: 16x
+      filters:
+        - offset: -0.5  # Calibration offset
+    pressure:
+      name: "${friendly_name} Pressure"
+      id: pressure
+    humidity:
+      name: "${friendly_name} Humidity"
+      id: humidity
+    address: 0x76
+    update_interval: 60s
+
+  # Dew point calculation
+  - platform: template
+    name: "${friendly_name} Dew Point"
+    unit_of_measurement: "°C"
+    lambda: |-
+      float t = id(temp).state;
+      float h = id(humidity).state;
+      float dp = 243.04 * (log(h/100.0) + ((17.625 * t) / (243.04 + t))) /
+                 (17.625 - log(h/100.0) - ((17.625 * t) / (243.04 + t)));
+      return dp;
+    update_interval: 60s
+
+  # Heat index calculation
+  - platform: template
+    name: "${friendly_name} Heat Index"
+    unit_of_measurement: "°C"
+    lambda: |-
+      float t = id(temp).state;
+      float h = id(humidity).state;
+      // Simplified heat index formula
+      float hi = 0.5 * (t + 61.0 + ((t - 68.0) * 1.2) + (h * 0.094));
+      return (hi + t) / 2;
+    update_interval: 60s
+
+  # Battery voltage (if battery powered)
+  - platform: adc
+    pin: GPIO34
+    name: "${friendly_name} Battery"
+    update_interval: 60s
+    attenuation: 11db
+    filters:
+      - multiply: 2  # Voltage divider factor
+    unit_of_measurement: "V"
+
+# Deep sleep for battery operation (optional)
+# Uncomment to enable
+# deep_sleep:
+#   run_duration: 30s
+#   sleep_duration: 5min

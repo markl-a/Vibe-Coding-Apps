@@ -1,0 +1,31 @@
+{
+  "name": "@vibe/simple-k8s-operator",
+  "version": "1.0.0",
+  "description": "A simple Kubernetes operator in TypeScript that manages custom ConfigMap resources",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsup src/index.ts --format esm --dts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "lint": "eslint src --ext .ts",
+    "type-check": "tsc --noEmit",
+    "apply-crd": "kubectl apply -f manifests/crd.yaml",
+    "delete-crd": "kubectl delete -f manifests/crd.yaml"
+  },
+  "dependencies": {
+    "@kubernetes/client-node": "^0.20.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsup": "^8.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
