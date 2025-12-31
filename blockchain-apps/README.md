@@ -1,193 +1,793 @@
-# 🔗 Blockchain Apps
+# Blockchain Applications
 
-區塊鏈應用開發專案集合，展示如何使用 AI 輔助工具快速開發各種去中心化應用 (DApps)、智能合約和 Web3 項目。
+A comprehensive collection of blockchain and Web3 projects demonstrating decentralized applications (DApps), smart contracts, DeFi protocols, and NFT platforms, built with AI-assisted development tools.
 
-## 📋 目錄結構
+## Overview
 
-本目錄包含以下子分類：
+This directory contains production-ready blockchain projects spanning DeFi (Decentralized Finance), NFT marketplaces, Web3 applications, and smart contracts. Each project showcases modern Web3 development patterns, security best practices, and integration with blockchain networks.
 
-### 1. 💰 [DeFi Projects](./defi-projects/) - 去中心化金融
-去中心化金融應用，包括交易所、借貸平台、流動性挖礦等。
+## Projects
 
-**包含專案**：
-- `dex-swap` - 去中心化交易所（DEX）
-- `lending-protocol` - 借貸協議平台
-- `yield-farming` - 流動性挖礦和收益聚合器
+### 1. DeFi Projects (`defi-projects/`)
 
-### 2. 🎨 [NFT Marketplace](./nft-marketplace/) - NFT 市場
-NFT（非同質化代幣）相關應用，包括市場、鑄造平台和遊戲。
+Decentralized finance applications including exchanges, lending platforms, and yield farming.
 
-**包含專案**：
-- `nft-marketplace-app` - NFT 交易市場
-- `nft-minting-platform` - NFT 鑄造平台
-- `nft-gallery` - NFT 藝廊展示
+**Projects:**
+- `dex-swap` - Decentralized exchange (DEX) with automated market maker
+- `lending-protocol` - Peer-to-peer lending and borrowing platform
+- `yield-farming` - Liquidity mining and yield aggregator
+- `flash-loan` - Flash loan arbitrage protocol
+- `stablecoin` - Algorithmic stablecoin implementation
 
-### 3. 🌐 [Web3 DApps](./web3-dapps/) - Web3 去中心化應用
-基於區塊鏈的去中心化應用，強調用戶主權和數據所有權。
+**Key Features:**
+- Automated Market Maker (AMM)
+- Liquidity pools and farming
+- Flash loans
+- Lending and borrowing protocols
+- Yield optimization
+- Governance tokens
+- Price oracles integration
+- Gas optimization
 
-**包含專案**：
-- `web3-social-network` - 去中心化社交網絡
-- `decentralized-storage` - 去中心化存儲應用
-- `dao-governance` - DAO 治理平台
+**Technologies:**
+- Uniswap V2/V3 protocol
+- Aave lending pools
+- Compound protocol
+- Chainlink oracles
+- ERC-20 token standard
+- Solidity smart contracts
 
-### 4. 📜 [Smart Contracts](./smart-contracts/) - 智能合約
-各種智能合約範例和開發工具。
+### 2. NFT Marketplace (`nft-marketplace/`)
 
-**包含專案**：
-- `erc20-token` - ERC20 代幣合約
-- `erc721-nft` - ERC721 NFT 合約
-- `multisig-wallet` - 多簽錢包合約
+Non-fungible token platforms for minting, trading, and showcasing digital assets.
 
-## 🎯 專案目標
+**Projects:**
+- `nft-marketplace-app` - Full-featured NFT trading platform
+- `nft-minting-platform` - NFT creation and deployment
+- `nft-gallery` - Digital art gallery and showcase
 
-本專案集合旨在：
+**Key Features:**
+- NFT minting and deployment
+- Marketplace functionality (buy, sell, auction)
+- IPFS metadata storage
+- Royalty management
+- Collection creation
+- Rarity traits
+- Lazy minting
+- Multi-chain support
 
-1. **展示區塊鏈開發最佳實踐** - 提供生產級別的代碼範例
-2. **AI 輔助開發** - 演示如何使用 AI 工具加速區塊鏈開發
-3. **全棧 Web3 開發** - 涵蓋前端、智能合約和後端整合
-4. **安全第一** - 強調智能合約安全性和審計
+**Technologies:**
+- ERC-721 (NFT standard)
+- ERC-1155 (Multi-token standard)
+- IPFS/Filecoin for storage
+- The Graph for indexing
+- OpenSea SDK
+- NFTPort API
 
-## 🛠️ 技術棧
+### 3. Web3 DApps (`web3-dapps/`)
 
-### 智能合約開發
-- **Solidity** - 以太坊智能合約語言
-- **Hardhat** - 開發環境和測試框架
-- **OpenZeppelin** - 安全的合約庫
-- **Foundry** - 快速的智能合約開發工具
+Decentralized applications emphasizing user sovereignty and data ownership.
 
-### 前端開發
-- **React / Next.js** - 現代化前端框架
-- **ethers.js / web3.js** - 區塊鏈交互庫
-- **RainbowKit / wagmi** - 錢包連接和 React Hooks
-- **TypeScript** - 類型安全
+**Projects:**
+- `web3-social-network` - Decentralized social media platform
+- `decentralized-storage` - Distributed file storage application
+- `dao-governance` - DAO voting and governance platform
 
-### 後端與索引
-- **The Graph** - 區塊鏈數據索引
-- **Node.js** - 後端服務
-- **IPFS** - 去中心化存儲
+**Key Features:**
+- Wallet connection (MetaMask, WalletConnect)
+- Decentralized identity
+- On-chain governance
+- Token-gated content
+- Decentralized storage
+- ENS integration
+- Multi-signature wallets
+- Cross-chain bridges
 
-### 區塊鏈網絡
-- **Ethereum** - 主要公鏈
-- **Polygon** - Layer 2 擴展方案
-- **Arbitrum / Optimism** - Optimistic Rollup
-- **Base** - Coinbase 的 L2 鏈
+**Technologies:**
+- ethers.js/web3.js
+- RainbowKit
+- wagmi hooks
+- IPFS/Arweave
+- ENS (Ethereum Name Service)
+- The Graph protocol
 
-## 🚀 快速開始
+### 4. Smart Contracts (`smart-contracts/`)
 
-### 環境準備
+Production-ready smart contract examples and templates.
+
+**Projects:**
+- `erc20-token` - Fungible token implementation
+- `erc721-nft` - Non-fungible token contracts
+- `multisig-wallet` - Multi-signature wallet
+- Various utility contracts
+
+**Key Features:**
+- Token standards (ERC-20, ERC-721, ERC-1155)
+- Access control (Ownable, roles)
+- Pausable functionality
+- Upgradeable contracts
+- Batch operations
+- Gas optimization
+- Security patterns
+- Comprehensive tests
+
+**Technologies:**
+- Solidity
+- OpenZeppelin contracts
+- Hardhat
+- Foundry
+- Ethers.js
+
+## Technology Stack
+
+### Smart Contract Development
+
+#### Languages & Frameworks
+- **Solidity** - Primary smart contract language
+- **Vyper** - Alternative contract language
+- **Hardhat** - Development environment
+- **Foundry** - Fast development toolkit
+- **Truffle** - Legacy development suite
+- **Remix** - Online IDE
+
+#### Libraries & Standards
+- **OpenZeppelin Contracts** - Secure contract library
+- **ERC-20** - Fungible token standard
+- **ERC-721** - NFT standard
+- **ERC-1155** - Multi-token standard
+- **ERC-2981** - NFT royalty standard
+- **EIP-712** - Typed data signing
+
+#### Testing & Security
+- **Hardhat Test** - Testing framework
+- **Foundry Forge** - Fast testing
+- **Slither** - Static analysis
+- **Mythril** - Security analysis
+- **Echidna** - Fuzzing tool
+- **Tenderly** - Monitoring and debugging
+- **OpenZeppelin Defender** - Security operations
+
+### Frontend Development
+
+#### Web3 Libraries
+- **ethers.js** - Ethereum library
+- **web3.js** - Web3 JavaScript API
+- **viem** - TypeScript Ethereum library
+- **wagmi** - React hooks for Ethereum
+- **web3-react** - React framework
+- **useDApp** - React hooks
+
+#### Wallet Integration
+- **RainbowKit** - Wallet connection UI
+- **WalletConnect** - Multi-wallet protocol
+- **MetaMask** - Browser wallet
+- **Coinbase Wallet** - Coinbase integration
+- **Ledger** - Hardware wallet
+- **Safe (Gnosis)** - Multi-sig wallet
+
+#### UI Components
+- **React / Next.js** - Frontend frameworks
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling
+- **shadcn/ui** - Component library
+- **Wagmi** - React hooks
+- **ConnectKit** - Connection UI
+
+### Backend & Infrastructure
+
+#### Data Indexing
+- **The Graph** - Blockchain data indexing
+- **Moralis** - Web3 backend
+- **Alchemy** - Blockchain infrastructure
+- **Infura** - Ethereum API
+- **QuickNode** - Multi-chain infrastructure
+
+#### Storage
+- **IPFS** - Decentralized storage
+- **Filecoin** - Decentralized storage network
+- **Arweave** - Permanent storage
+- **Ceramic** - Decentralized data network
+- **NFT.Storage** - Free IPFS storage for NFTs
+
+#### Oracle Services
+- **Chainlink** - Decentralized oracles
+- **Band Protocol** - Data oracle
+- **API3** - First-party oracles
+- **Tellor** - Decentralized oracle
+
+### Blockchain Networks
+
+#### Layer 1
+- **Ethereum** - Primary network
+- **Binance Smart Chain** - EVM compatible
+- **Avalanche** - High-throughput blockchain
+- **Solana** - High-performance blockchain
+- **Polkadot** - Multi-chain network
+
+#### Layer 2
+- **Polygon** - Ethereum scaling
+- **Arbitrum** - Optimistic rollup
+- **Optimism** - Optimistic rollup
+- **zkSync** - Zero-knowledge rollup
+- **Base** - Coinbase L2
+- **Linea** - ConsenSys zkEVM
+
+#### Development Networks
+- **Hardhat Network** - Local development
+- **Ganache** - Local blockchain
+- **Tenderly** - Development network
+- **Sepolia** - Ethereum testnet
+- **Mumbai** - Polygon testnet
+
+## Getting Started
+
+### Prerequisites
 
 ```bash
-# 安裝 Node.js (建議 v18+)
-# 安裝 pnpm
+# Node.js (v18 or higher)
+node --version
+
+# Package manager
 npm install -g pnpm
 
-# 安裝 Foundry (智能合約開發)
+# MetaMask or other Web3 wallet installed
+```
+
+### Environment Setup
+
+```bash
+# Install Hardhat
+npm install --save-dev hardhat
+
+# Or install Foundry
 curl -L https://foundry.paradigm.xyz | bash
 foundryup
 ```
 
-### 開發工具
+### Installation
 
-推薦使用以下工具進行開發：
+#### Hardhat Project
+```bash
+cd blockchain-apps/<category>/<project-name>
 
-1. **MetaMask** - 瀏覽器錢包
-2. **Remix IDE** - 線上智能合約 IDE
-3. **Tenderly** - 智能合約監控和調試
-4. **Etherscan** - 區塊鏈瀏覽器
+# Install dependencies
+pnpm install
 
-### AI 輔助工具
+# Copy environment variables
+cp .env.example .env
 
-使用以下 AI 工具提升開發效率：
+# Add your keys to .env:
+# PRIVATE_KEY=your_private_key
+# ALCHEMY_API_KEY=your_alchemy_key
+# ETHERSCAN_API_KEY=your_etherscan_key
+```
 
-- **GitHub Copilot** - 智能代碼補全
-- **Claude Code** - AI 程式設計助手
-- **ChatGPT** - 智能合約審計和優化建議
-- **Cursor** - AI 優先的編輯器
+#### Foundry Project
+```bash
+cd blockchain-apps/<category>/<project-name>
 
-## 📚 學習資源
+# Install dependencies
+forge install
 
-### 官方文檔
-- [Ethereum 開發文檔](https://ethereum.org/developers)
-- [Solidity 文檔](https://docs.soliditylang.org/)
-- [Hardhat 文檔](https://hardhat.org/docs)
-- [OpenZeppelin 文檔](https://docs.openzeppelin.com/)
+# Build contracts
+forge build
 
-### 教程和指南
-- [CryptoZombies](https://cryptozombies.io/) - Solidity 互動教程
-- [Buildspace](https://buildspace.so/) - Web3 項目實戰
-- [Alchemy University](https://university.alchemy.com/) - 區塊鏈開發課程
+# Run tests
+forge test
+```
 
-### 安全資源
-- [Consensys Smart Contract Best Practices](https://consensys.github.io/smart-contract-best-practices/)
-- [OpenZeppelin Security Audits](https://blog.openzeppelin.com/security-audits)
-- [Immunefi Bug Bounty Platform](https://immunefi.com/)
+### Compile Contracts
 
-## 🔐 安全注意事項
+```bash
+# Hardhat
+npx hardhat compile
 
-### 開發階段
-1. ✅ 使用測試網絡進行開發（Sepolia, Goerli）
-2. ✅ 永不在代碼中硬編碼私鑰
-3. ✅ 使用 `.env` 文件管理敏感信息
-4. ✅ 定期運行安全審計工具（Slither, Mythril）
+# Foundry
+forge build
+```
 
-### 部署前
-1. ✅ 完整的單元測試覆蓋
-2. ✅ 集成測試和壓力測試
-3. ✅ 第三方安全審計
-4. ✅ Bug Bounty 計劃
+### Testing
 
-### 常見漏洞
-- 重入攻擊（Reentrancy）
-- 整數溢出/下溢
-- 前端運行（Front-running）
-- 權限控制問題
-- 未檢查的外部調用
+```bash
+# Hardhat
+npx hardhat test
 
-## 📊 專案狀態
+# With gas reporting
+REPORT_GAS=true npx hardhat test
 
-| 類別 | 專案數 | 狀態 | 完成度 |
-|------|--------|------|--------|
-| DeFi Projects | 3 | ✅ 可用 | 100% |
-| NFT Marketplace | 3 | ✅ 可用 | 100% |
-| Web3 DApps | 3 | ✅ 可用 | 100% |
-| Smart Contracts | 3 | ✅ 可用 | 100% |
+# Foundry
+forge test
 
-## 🤝 貢獻指南
+# With verbosity
+forge test -vvv
+```
 
-歡迎貢獻新的專案或改進現有專案！
+### Deploy Contracts
 
-### 貢獻步驟
-1. Fork 本專案
-2. 創建新的分支 (`git checkout -b feature/amazing-dapp`)
-3. 提交變更 (`git commit -m 'Add amazing DApp'`)
-4. 推送到分支 (`git push origin feature/amazing-dapp`)
-5. 開啟 Pull Request
+```bash
+# Local development network
+npx hardhat node
 
-### 代碼規範
-- 遵循 Solidity Style Guide
-- 使用 ESLint 和 Prettier
-- 編寫完整的測試
-- 添加詳細的註釋
+# Deploy to network
+npx hardhat run scripts/deploy.js --network sepolia
 
-## 📝 授權
+# Foundry deployment
+forge script script/Deploy.s.sol:DeployScript --rpc-url sepolia --broadcast
+```
 
-本專案採用 MIT 授權 - 詳見 [LICENSE](../LICENSE) 文件
+### Verify Contracts
 
-## 🔗 相關連結
+```bash
+# Hardhat verification
+npx hardhat verify --network sepolia CONTRACT_ADDRESS "Constructor Args"
 
-- [主專案 README](../README.md)
-- [Web Apps](../web-apps/)
-- [APIs & Backend](../apis-backend/)
-- [AI/ML Projects](../ai-ml-projects/)
+# Foundry verification
+forge verify-contract CONTRACT_ADDRESS ContractName --chain sepolia
+```
 
-## 💬 社群和支持
+## Common Patterns
 
-- **Discord** - 加入討論
-- **GitHub Issues** - 回報問題
-- **Twitter** - 關注更新
+### 1. ERC-20 Token Contract
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract MyToken is ERC20, Ownable {
+    constructor(uint256 initialSupply) ERC20("MyToken", "MTK") Ownable(msg.sender) {
+        _mint(msg.sender, initialSupply * 10 ** decimals());
+    }
+
+    function mint(address to, uint256 amount) public onlyOwner {
+        _mint(to, amount);
+    }
+}
+```
+
+### 2. ERC-721 NFT Contract
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract MyNFT is ERC721, ERC721URIStorage, Ownable {
+    uint256 private _nextTokenId;
+
+    constructor() ERC721("MyNFT", "MNFT") Ownable(msg.sender) {}
+
+    function safeMint(address to, string memory uri) public onlyOwner {
+        uint256 tokenId = _nextTokenId++;
+        _safeMint(to, tokenId);
+        _setTokenURI(tokenId, uri);
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+}
+```
+
+### 3. Simple DEX (AMM)
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+contract SimpleDEX {
+    IERC20 public token;
+
+    constructor(address _token) {
+        token = IERC20(_token);
+    }
+
+    function addLiquidity(uint256 amount) external payable {
+        require(amount > 0, "Amount must be greater than 0");
+        token.transferFrom(msg.sender, address(this), amount);
+    }
+
+    function swap(uint256 tokenAmount) external payable {
+        require(tokenAmount > 0, "Must swap positive amount");
+
+        uint256 ethReserve = address(this).balance;
+        uint256 tokenReserve = token.balanceOf(address(this));
+
+        uint256 ethBought = getAmount(tokenAmount, tokenReserve, ethReserve);
+
+        token.transferFrom(msg.sender, address(this), tokenAmount);
+        payable(msg.sender).transfer(ethBought);
+    }
+
+    function getAmount(uint256 inputAmount, uint256 inputReserve, uint256 outputReserve)
+        private
+        pure
+        returns (uint256)
+    {
+        require(inputReserve > 0 && outputReserve > 0, "Invalid reserves");
+        uint256 inputAmountWithFee = inputAmount * 997;
+        uint256 numerator = inputAmountWithFee * outputReserve;
+        uint256 denominator = (inputReserve * 1000) + inputAmountWithFee;
+        return numerator / denominator;
+    }
+}
+```
+
+### 4. Frontend Wallet Connection
+
+```typescript
+// Using RainbowKit and wagmi
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount, useBalance, useContractRead } from 'wagmi';
+
+function App() {
+  const { address, isConnected } = useAccount();
+  const { data: balance } = useBalance({ address });
+
+  const { data: tokenBalance } = useContractRead({
+    address: '0x...',
+    abi: ERC20_ABI,
+    functionName: 'balanceOf',
+    args: [address],
+  });
+
+  return (
+    <div>
+      <ConnectButton />
+      {isConnected && (
+        <div>
+          <p>Address: {address}</p>
+          <p>Balance: {balance?.formatted} ETH</p>
+          <p>Token Balance: {tokenBalance?.toString()}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+### 5. Contract Interaction
+
+```typescript
+// Using ethers.js v6
+import { ethers } from 'ethers';
+
+// Connect to provider
+const provider = new ethers.BrowserProvider(window.ethereum);
+const signer = await provider.getSigner();
+
+// Contract instance
+const contract = new ethers.Contract(
+  contractAddress,
+  contractABI,
+  signer
+);
+
+// Read from contract
+const balance = await contract.balanceOf(address);
+
+// Write to contract
+const tx = await contract.transfer(recipientAddress, amount);
+await tx.wait(); // Wait for confirmation
+```
+
+### 6. IPFS Metadata Upload
+
+```typescript
+// Upload NFT metadata to IPFS
+import { create } from 'ipfs-http-client';
+
+const client = create({ url: 'https://ipfs.infura.io:5001' });
+
+async function uploadMetadata(metadata: any) {
+  const { cid } = await client.add(JSON.stringify(metadata));
+  return `ipfs://${cid}`;
+}
+
+// NFT metadata example
+const metadata = {
+  name: "My NFT #1",
+  description: "An awesome NFT",
+  image: "ipfs://QmImageHash",
+  attributes: [
+    { trait_type: "Rarity", value: "Rare" },
+    { trait_type: "Color", value: "Blue" }
+  ]
+};
+```
+
+### 7. The Graph Subgraph Query
+
+```typescript
+// Query blockchain data from The Graph
+import { request, gql } from 'graphql-request';
+
+const query = gql`
+  {
+    tokens(first: 10) {
+      id
+      name
+      symbol
+      totalSupply
+    }
+  }
+`;
+
+const data = await request(
+  'https://api.thegraph.com/subgraphs/name/...',
+  query
+);
+```
+
+## AI-Assisted Development
+
+### Recommended AI Tools
+
+1. **GitHub Copilot**
+   - Smart contract code completion
+   - Test generation
+   - Gas optimization suggestions
+
+2. **Claude Code**
+   - Contract architecture design
+   - Security vulnerability detection
+   - Documentation generation
+
+3. **ChatGPT**
+   - Solidity pattern explanations
+   - DeFi mechanics design
+   - Tokenomics modeling
+
+4. **Cursor**
+   - Full-stack Web3 development
+   - Multi-file refactoring
+   - Integration testing
+
+### AI Development Workflow
+
+1. **Planning Phase**
+   - Use AI to design tokenomics
+   - Analyze contract architecture
+   - Security consideration review
+
+2. **Development Phase**
+   - AI-assisted contract writing
+   - Test case generation
+   - Gas optimization
+
+3. **Audit Phase**
+   - Vulnerability scanning
+   - Code review suggestions
+   - Documentation completion
+
+4. **Deployment Phase**
+   - Deployment script generation
+   - Verification automation
+   - Integration testing
+
+## Best Practices
+
+### Smart Contract Security
+- Follow checks-effects-interactions pattern
+- Use reentrancy guards
+- Validate all inputs
+- Implement access controls
+- Use SafeMath or Solidity 0.8+
+- Avoid delegatecall with untrusted contracts
+- Implement pausable functionality
+- Get professional audits before mainnet
+
+### Gas Optimization
+- Use appropriate data types
+- Pack storage variables
+- Use events for data storage
+- Minimize storage operations
+- Batch operations when possible
+- Use view/pure functions
+- Optimize loops
+- Consider Layer 2 solutions
+
+### Development Workflow
+- Write comprehensive tests (>90% coverage)
+- Use continuous integration
+- Version control contracts
+- Document all functions (NatSpec)
+- Follow style guide
+- Use linters (Solhint)
+- Implement upgrade patterns carefully
+- Test on testnets extensively
+
+### Frontend Integration
+- Never trust client-side validation
+- Handle wallet connection errors
+- Implement proper loading states
+- Display transaction status
+- Show gas estimates
+- Handle network switching
+- Cache blockchain data appropriately
+- Implement retry logic
+
+## Testing
+
+### Unit Tests
+```bash
+# Hardhat
+npx hardhat test
+
+# Foundry
+forge test
+
+# With coverage
+forge coverage
+```
+
+### Integration Tests
+```bash
+# Run local node
+npx hardhat node
+
+# Run integration tests
+npx hardhat test --network localhost
+```
+
+### Gas Reporting
+```bash
+# Enable gas reporting
+REPORT_GAS=true npx hardhat test
+```
+
+### Security Analysis
+```bash
+# Slither static analysis
+slither .
+
+# Mythril analysis
+myth analyze contracts/MyContract.sol
+```
+
+## Deployment
+
+### Testnet Deployment
+```bash
+# Deploy to Sepolia
+npx hardhat run scripts/deploy.js --network sepolia
+
+# Verify contract
+npx hardhat verify --network sepolia CONTRACT_ADDRESS
+```
+
+### Mainnet Deployment
+```bash
+# Pre-deployment checklist:
+# 1. Comprehensive audit completed
+# 2. All tests passing
+# 3. Gas optimizations done
+# 4. Emergency pause implemented
+# 5. Upgrade mechanism tested
+# 6. Insurance/bug bounty setup
+
+# Deploy
+npx hardhat run scripts/deploy.js --network mainnet
+
+# Verify immediately
+npx hardhat verify --network mainnet CONTRACT_ADDRESS
+```
+
+## Security Considerations
+
+### Pre-Deployment
+- Complete professional audit
+- Implement timelocks for admin functions
+- Set up multi-sig for critical operations
+- Test on multiple testnets
+- Prepare incident response plan
+- Set up monitoring and alerts
+
+### Common Vulnerabilities
+- Reentrancy attacks
+- Integer overflow/underflow
+- Front-running
+- Access control issues
+- Unchecked external calls
+- Oracle manipulation
+- Flash loan attacks
+- Denial of service
+
+### Security Resources
+- [ConsenSys Smart Contract Best Practices](https://consensys.github.io/smart-contract-best-practices/)
+- [OpenZeppelin Security](https://docs.openzeppelin.com/contracts/security)
+- [Immunefi Bug Bounties](https://immunefi.com/)
+- [Smart Contract Weakness Classification](https://swcregistry.io/)
+
+## Contributing
+
+Contributions are welcome! Please see the main [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines.
+
+### Adding a New Project
+
+1. Create project directory in appropriate category
+2. Include comprehensive README with:
+   - Contract description
+   - Architecture diagram
+   - Security considerations
+   - Deployment instructions
+3. Write extensive tests
+4. Include deployment scripts
+5. Add example frontend integration
+6. Document all functions
+7. Update this README
+
+## Resources
+
+### Documentation
+- [Solidity Documentation](https://docs.soliditylang.org/)
+- [Hardhat Documentation](https://hardhat.org/docs)
+- [Foundry Book](https://book.getfoundry.sh/)
+- [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/)
+- [ethers.js Documentation](https://docs.ethers.org/)
+
+### Learning Resources
+- [CryptoZombies](https://cryptozombies.io/) - Learn Solidity
+- [Buildspace](https://buildspace.so/) - Web3 projects
+- [Alchemy University](https://university.alchemy.com/) - Blockchain dev
+- [Speedrun Ethereum](https://speedrunethereum.com/) - Practical challenges
+- [Ethereum.org](https://ethereum.org/developers) - Official docs
+
+### Tools
+- [Remix IDE](https://remix.ethereum.org/) - Online IDE
+- [Tenderly](https://tenderly.co/) - Monitoring and debugging
+- [OpenZeppelin Defender](https://www.openzeppelin.com/defender) - Security operations
+- [Etherscan](https://etherscan.io/) - Block explorer
+- [DeFi Llama](https://defillama.com/) - DeFi analytics
+
+### Security
+- [Trail of Bits Tools](https://github.com/trailofbits) - Security tools
+- [Certora](https://www.certora.com/) - Formal verification
+- [Secureum](https://secureum.xyz/) - Security education
+- [Rekt News](https://rekt.news/) - Hack analysis
+
+### Communities
+- [Ethereum Stack Exchange](https://ethereum.stackexchange.com/)
+- [r/ethdev](https://www.reddit.com/r/ethdev/)
+- [Chainlink Discord](https://discord.gg/chainlink)
+- [OpenZeppelin Forum](https://forum.openzeppelin.com/)
+
+## License
+
+All projects in this directory are licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+
+Note: Some projects may use OpenZeppelin contracts which have their own license.
+
+## Related Directories
+
+- [Web Apps](../web-apps/) - Web application projects
+- [APIs & Backend](../apis-backend/) - Backend services
+- [Fintech](../fintech/) - Financial applications
+- [AI/ML Projects](../ai-ml-projects/) - AI and machine learning
 
 ---
 
-**注意**: 所有專案僅供學習和研究用途。在主網部署前請務必進行充分的安全審計！
+**WARNING**: All smart contracts should be thoroughly audited before deploying to mainnet. Never deploy production contracts without professional security review. This code is for educational purposes.
 
-*Last updated: 2025-11-17*
+*Last updated: 2025-12-31*

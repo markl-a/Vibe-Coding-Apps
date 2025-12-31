@@ -1,0 +1,23 @@
+{
+  "name": "kanban-board-backend",
+  "version": "1.0.0",
+  "description": "Kanban Board Backend Services",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts"
+  },
+  "keywords": ["kanban", "project-management", "backend", "typescript"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "tsx": "^4.0.0"
+  }
+}
