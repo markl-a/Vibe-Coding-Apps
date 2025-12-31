@@ -1,9 +1,12 @@
+const { createLogger } = require('@vibe/shared-utils');
+const logger = createLogger('task-manager-api:error-handler');
+
 const errorHandler = (err, req, res, next) => {
   let error = { ...err };
   error.message = err.message;
 
   // Log 錯誤到控制台
-  console.error(err);
+  logger.error('Request error', err);
 
   // Mongoose 驗證錯誤
   if (err.name === 'ValidationError') {

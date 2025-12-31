@@ -1,6 +1,8 @@
 const Post = require('../models/Post');
 const User = require('../models/User');
 const { validationResult } = require('express-validator');
+const { createLogger } = require('@vibe/shared-utils');
+const logger = createLogger('social-media-api:post-controller');
 
 // Create post
 exports.createPost = async (req, res) => {
@@ -32,7 +34,7 @@ exports.createPost = async (req, res) => {
       post
     });
   } catch (error) {
-    console.error('Create post error:', error);
+    logger.error('Create post error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -62,7 +64,7 @@ exports.getTimeline = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Get timeline error:', error);
+    logger.error('Get timeline error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -79,7 +81,7 @@ exports.getPost = async (req, res) => {
 
     res.json({ post });
   } catch (error) {
-    console.error('Get post error:', error);
+    logger.error('Get post error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -114,7 +116,7 @@ exports.updatePost = async (req, res) => {
 
     res.json({ message: 'Post updated successfully', post });
   } catch (error) {
-    console.error('Update post error:', error);
+    logger.error('Update post error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -139,7 +141,7 @@ exports.deletePost = async (req, res) => {
 
     res.json({ message: 'Post deleted successfully' });
   } catch (error) {
-    console.error('Delete post error:', error);
+    logger.error('Delete post error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -165,7 +167,7 @@ exports.likePost = async (req, res) => {
 
     res.json({ message: 'Post liked successfully', likesCount: post.likesCount });
   } catch (error) {
-    console.error('Like post error:', error);
+    logger.error('Like post error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -191,7 +193,7 @@ exports.unlikePost = async (req, res) => {
 
     res.json({ message: 'Post unliked successfully', likesCount: post.likesCount });
   } catch (error) {
-    console.error('Unlike post error:', error);
+    logger.error('Unlike post error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -222,7 +224,7 @@ exports.getUserPosts = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Get user posts error:', error);
+    logger.error('Get user posts error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };

@@ -1,4 +1,6 @@
 const { Pool } = require('pg');
+const { createLogger } = require('@vibe/shared-utils');
+const logger = createLogger('real-time-chat:database');
 
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
@@ -78,9 +80,9 @@ const initDatabase = async () => {
       )
     `);
 
-    console.log('✅ Database initialized successfully');
+    logger.info('Database initialized successfully');
   } catch (error) {
-    console.error('❌ Database initialization error:', error);
+    logger.error('Database initialization error', error);
     throw error;
   }
 };

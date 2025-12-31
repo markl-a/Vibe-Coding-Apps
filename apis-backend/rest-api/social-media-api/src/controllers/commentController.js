@@ -1,6 +1,8 @@
 const Comment = require('../models/Comment');
 const Post = require('../models/Post');
 const { validationResult } = require('express-validator');
+const { createLogger } = require('@vibe/shared-utils');
+const logger = createLogger('social-media-api:comment-controller');
 
 // Create comment
 exports.createComment = async (req, res) => {
@@ -52,7 +54,7 @@ exports.createComment = async (req, res) => {
       comment
     });
   } catch (error) {
-    console.error('Create comment error:', error);
+    logger.error('Create comment error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -84,7 +86,7 @@ exports.getPostComments = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Get comments error:', error);
+    logger.error('Get comments error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -100,7 +102,7 @@ exports.getCommentReplies = async (req, res) => {
 
     res.json({ replies });
   } catch (error) {
-    console.error('Get comment replies error:', error);
+    logger.error('Get comment replies error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -133,7 +135,7 @@ exports.updateComment = async (req, res) => {
 
     res.json({ message: 'Comment updated successfully', comment });
   } catch (error) {
-    console.error('Update comment error:', error);
+    logger.error('Update comment error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -163,7 +165,7 @@ exports.deleteComment = async (req, res) => {
 
     res.json({ message: 'Comment deleted successfully' });
   } catch (error) {
-    console.error('Delete comment error:', error);
+    logger.error('Delete comment error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -189,7 +191,7 @@ exports.likeComment = async (req, res) => {
 
     res.json({ message: 'Comment liked successfully', likesCount: comment.likesCount });
   } catch (error) {
-    console.error('Like comment error:', error);
+    logger.error('Like comment error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -215,7 +217,7 @@ exports.unlikeComment = async (req, res) => {
 
     res.json({ message: 'Comment unliked successfully', likesCount: comment.likesCount });
   } catch (error) {
-    console.error('Unlike comment error:', error);
+    logger.error('Unlike comment error', error);
     res.status(500).json({ error: 'Server error' });
   }
 };

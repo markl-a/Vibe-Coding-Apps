@@ -13,9 +13,11 @@
   "license": "MIT",
   "dependencies": {
     "@prisma/client": "^5.7.1",
+    "@vibe/shared-utils": "workspace:*",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "helmet": "^7.0.0",
     "pdfkit": "^0.14.0",
     "zod": "^3.22.4"
   },

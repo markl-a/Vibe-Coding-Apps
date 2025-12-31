@@ -43,8 +43,6 @@ export function CheckoutForm() {
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    console.log('Order submitted:', data);
-
     // Clear cart and redirect
     clearCart();
     alert('訂單已成功送出！感謝您的購買。');

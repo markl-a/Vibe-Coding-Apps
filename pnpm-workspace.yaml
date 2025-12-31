@@ -26,6 +26,8 @@ packages:
   - 'enterprise-apps/erp-systems/*'
   - 'enterprise-apps/crm-systems/*'
   - 'enterprise-apps/hr-management/*'
+  - 'enterprise-apps/hr-management/*/backend'
+  - 'enterprise-apps/hr-management/*/frontend'
   - 'enterprise-apps/project-management/*'
   - 'enterprise-apps/finance-accounting/*'
   - 'enterprise-apps/supply-chain/*'

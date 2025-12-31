@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createLogger } from '@shared-utils/logger';
 
 /**
  * AI Content Generation API Route
@@ -6,6 +7,8 @@ import { NextRequest, NextResponse } from 'next/server';
  * This is an example API route for AI content generation.
  * In production, integrate with OpenAI, Anthropic, or other AI providers.
  */
+
+const logger = createLogger('ai-generate');
 
 interface GenerateRequest {
   prompt: string;
@@ -80,7 +83,7 @@ export async function POST(request: NextRequest) {
       model: 'simulated', // In production: 'gpt-4' or 'claude-3'
     });
   } catch (error) {
-    console.error('AI generation error:', error);
+    logger.error('AI generation error', error instanceof Error ? error : new Error('Unknown error'));
 
     return NextResponse.json(
       {

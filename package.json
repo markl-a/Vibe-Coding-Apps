@@ -7,6 +7,15 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "test": "turbo run test",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:chromium": "playwright test --project=chromium",
+    "test:e2e:firefox": "playwright test --project=firefox",
+    "test:e2e:webkit": "playwright test --project=webkit",
+    "test:e2e:report": "playwright show-report",
+    "playwright:install": "playwright install --with-deps",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
@@ -15,9 +24,15 @@
     "prepare": "husky install"
   },
   "devDependencies": {
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "@playwright/test": "^1.57.0",
     "@types/node": "^20.10.0",
-    "eslint": "^8.55.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
     "husky": "^8.0.3",
     "lint-staged": "^15.2.0",
     "prettier": "^3.2.5",
@@ -28,6 +43,17 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "typescript": "^5.4.2",
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0",
+      "@types/node": "^20.10.0",
+      "eslint": "^8.56.0",
+      "vite": "^5.1.0",
+      "vitest": "^1.2.0"
+    }
   },
   "workspaces": [
     "ai-ml-projects/*",
@@ -60,18 +86,5 @@
     "tools-utilities/automation-scripts/*",
     "web-apps/*",
     "packages/*"
-  ],
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ],
-    "*.py": [
-      "black",
-      "ruff --fix"
-    ]
-  }
+  ]
 }

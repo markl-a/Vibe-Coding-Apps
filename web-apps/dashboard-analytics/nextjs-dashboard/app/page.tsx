@@ -1,10 +1,28 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { ArrowUp, ArrowDown, DollarSign, Users, ShoppingCart, Activity } from 'lucide-react'
-import SalesChart from '@/components/charts/SalesChart'
-import RevenueChart from '@/components/charts/RevenueChart'
 import MetricCard from '@/components/widgets/MetricCard'
+
+// 使用 dynamic import 懒加载图表组件（recharts 库很大）
+const SalesChart = dynamic(() => import('@/components/charts/SalesChart'), {
+  loading: () => (
+    <div className="w-full h-[300px] bg-gray-100 dark:bg-gray-700 animate-pulse rounded-lg flex items-center justify-center">
+      <span className="text-gray-500 dark:text-gray-400">载入图表中...</span>
+    </div>
+  ),
+  ssr: false, // 图表不需要 SSR，减少服务器负载
+})
+
+const RevenueChart = dynamic(() => import('@/components/charts/RevenueChart'), {
+  loading: () => (
+    <div className="w-full h-[300px] bg-gray-100 dark:bg-gray-700 animate-pulse rounded-lg flex items-center justify-center">
+      <span className="text-gray-500 dark:text-gray-400">载入图表中...</span>
+    </div>
+  ),
+  ssr: false,
+})
 
 // 模擬數據
 const generateRandomData = () => ({

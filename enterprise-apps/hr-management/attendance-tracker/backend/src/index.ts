@@ -1,10 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { createLogger } from '@vibe/shared-utils';
 import attendanceRoutes from './routes/attendance.routes';
 
 dotenv.config();
 
+const logger = createLogger('attendance-tracker');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -24,7 +26,10 @@ app.get('/health', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🕒 Attendance Tracker Server running on http://localhost:${PORT}`);
+  logger.info('Attendance Tracker Server running', {
+    port: PORT,
+    url: `http://localhost:${PORT}`
+  });
 });
 
 export default app;

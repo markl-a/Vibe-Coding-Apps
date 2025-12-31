@@ -1,7 +1,21 @@
-import { PostCard } from '@/components/posts/PostCard';
-import { PostComposer } from '@/components/posts/PostComposer';
-import { Sidebar } from '@/components/ui/Sidebar';
+import dynamic from 'next/dynamic';
 import { TrendingUp } from 'lucide-react';
+
+// 使用 dynamic import 懒加载大型组件
+const PostCard = dynamic(() => import('@/components/posts/PostCard').then(mod => ({ default: mod.PostCard })), {
+  loading: () => <div className="bg-white rounded-lg shadow p-6 animate-pulse h-48" />,
+  ssr: true,
+});
+
+const PostComposer = dynamic(() => import('@/components/posts/PostComposer').then(mod => ({ default: mod.PostComposer })), {
+  loading: () => <div className="bg-white rounded-lg shadow p-6 animate-pulse h-32" />,
+  ssr: false, // 编辑器不需要 SSR
+});
+
+const Sidebar = dynamic(() => import('@/components/ui/Sidebar').then(mod => ({ default: mod.Sidebar })), {
+  loading: () => <div className="bg-white rounded-lg shadow p-4 animate-pulse h-64" />,
+  ssr: false, // 侧边栏不需要 SSR
+});
 
 // 示範資料
 const mockPosts = [

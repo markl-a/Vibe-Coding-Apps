@@ -105,6 +105,18 @@ jobs:
       - name: Run tests
         run: pnpm test
 
+      - name: Check coverage threshold
+        if: matrix.node-version == 20
+        run: |
+          pnpm test --coverage --coverageReporters=json-summary
+          COVERAGE=$(cat coverage/coverage-summary.json | jq '.total.lines.pct')
+          echo "Line coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 75" | bc -l) )); then
+            echo "❌ Coverage is below 75%"
+            exit 1
+          fi
+          echo "✅ Coverage meets threshold"
+
       - name: Upload coverage
         if: matrix.node-version == 20
         uses: codecov/codecov-action@v3
@@ -213,11 +225,60 @@ jobs:
             make all
           fi
 
+  # E2E tests with Playwright
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: [build]
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Run Playwright tests
+        run: pnpm test:e2e --project=${{ matrix.browser }}
+        env:
+          CI: true
+
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-results-${{ matrix.browser }}
+          path: test-results/
+          retention-days: 30
+
   # All checks passed
   all-checks:
     name: All Checks Passed
     runs-on: ubuntu-latest
-    needs: [lint, type-check, test, build, python-quality]
+    needs: [lint, type-check, test, build, python-quality, e2e-tests]
     if: always()
     steps:
       - name: Check if all jobs succeeded
@@ -226,7 +287,8 @@ jobs:
              [[ "${{ needs.type-check.result }}" == "success" ]] && \
              [[ "${{ needs.test.result }}" == "success" ]] && \
              [[ "${{ needs.build.result }}" == "success" ]] && \
-             [[ "${{ needs.python-quality.result }}" == "success" ]]; then
+             [[ "${{ needs.python-quality.result }}" == "success" ]] && \
+             [[ "${{ needs.e2e-tests.result }}" == "success" ]]; then
             echo "✅ All checks passed!"
             exit 0
           else

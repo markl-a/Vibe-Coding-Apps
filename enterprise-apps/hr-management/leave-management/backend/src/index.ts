@@ -1,10 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { createLogger } from '@vibe/shared-utils';
 import leaveRoutes from './routes/leave.routes';
 
 dotenv.config();
 
+const logger = createLogger('leave-management');
 const app = express();
 const PORT = process.env.PORT || 3002;
 
@@ -24,7 +26,10 @@ app.get('/health', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🏖️  Leave Management Server running on http://localhost:${PORT}`);
+  logger.info('Leave Management Server running', {
+    port: PORT,
+    url: `http://localhost:${PORT}`
+  });
 });
 
 export default app;

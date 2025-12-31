@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const { createLogger } = require('@vibe/shared-utils');
+const logger = createLogger('file-upload-service:auth');
 
 const ENVIRONMENT = process.env.NODE_ENV || 'development';
 
@@ -8,8 +10,8 @@ if (!JWT_SECRET) {
   if (ENVIRONMENT === 'production') {
     throw new Error('JWT_SECRET environment variable is required in production');
   }
-  console.warn('WARNING: JWT_SECRET not set. This is insecure and should only be used in local development.');
-  console.warn('Please set JWT_SECRET environment variable immediately.');
+  logger.warn('JWT_SECRET not set. This is insecure and should only be used in local development.');
+  logger.warn('Please set JWT_SECRET environment variable immediately.');
 }
 
 const jwtSecret = JWT_SECRET || (() => {

@@ -15,7 +15,7 @@ export class ArticlesService {
     return this.articlesRepository.save(article);
   }
 
-  async findAll(page = 1, limit = 10): Promise<{ data: Article[]; total: number }> {
+  async findAll(page = 1, limit = 10): Promise<{ data: Article[]; total: number; page: number; limit: number }> {
     // Ensure limit doesn't exceed maximum
     const maxLimit = 100;
     const safeLimit = Math.min(limit, maxLimit);
@@ -32,7 +32,7 @@ export class ArticlesService {
       .take(safeLimit);
 
     const [data, total] = await queryBuilder.getManyAndCount();
-    return { data, total };
+    return { data, total, page, limit: safeLimit };
   }
 
   async findOne(id: string): Promise<Article> {

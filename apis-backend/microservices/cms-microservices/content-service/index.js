@@ -90,19 +90,39 @@ app.post('/api/auth/login', async (req, res) => {
 // Get content list
 app.get('/api/content', async (req, res) => {
   try {
-    const { type, status, limit = 20 } = req.query;
+    const { status, type, limit = 20, page = 1 } = req.query;
     const query = {};
-    if (type) query.type = type;
     if (status) query.status = status;
+    if (type) query.type = type;
 
+    // 優化: 使用 lean() 和投影
     const content = await Content.find(query)
-      .populate('author', 'email')
+      .select('title slug excerpt status createdAt author type')
+      .lean()
       .limit(parseInt(limit))
+      .skip((page - 1) * parseInt(limit))
       .sort({ createdAt: -1 });
 
-    res.json({ content, total: content.length });
+    // 優化: 批量查詢作者信息
+    const authorIds = [...new Set(content.map(c => c.author).filter(Boolean))];
+    const authors = await mongoose.model('User').find({ _id: { $in: authorIds } })
+      .select('_id email name')
+      .lean();
+    const authorMap = Object.fromEntries(authors.map(a => [a._id.toString(), a]));
+
+    const enrichedContent = content.map(c => ({
+      ...c,
+      author: c.author ? authorMap[c.author.toString()] : null
+    }));
+
+    const total = await Content.countDocuments(query);
+
+    res.json({
+      content: enrichedContent,
+      pagination: { page: parseInt(page), limit: parseInt(limit), total }
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: error.message });
   }
 });
 

@@ -3,6 +3,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { Logger } from '@vibe/shared-utils';
+import * as compression from 'compression';
 
 const logger = new Logger('BlogAPI');
 
@@ -14,6 +15,9 @@ async function bootstrap() {
     origin: process.env.CORS_ORIGIN || '*',
     credentials: true,
   });
+
+  // Enable gzip compression
+  app.use(compression());
 
   // Global validation pipe
   app.useGlobalPipes(

@@ -2,13 +2,17 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const compression = require('compression');
 require('dotenv').config();
 
+const { createLogger } = require('@vibe/shared-utils');
 const connectDB = require('./config/database');
 const authRoutes = require('./routes/authRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 const errorHandler = require('./middleware/errorHandler');
+
+const logger = createLogger('task-manager-api');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,6 +31,15 @@ const limiter = rateLimit({
 
 // 中間件
 app.use(helmet());
+// Enable gzip compression
+app.use(compression({
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) return false;
+    return compression.filter(req, res);
+  },
+  level: 6,
+  threshold: 1024
+}));
 app.use(cors({
   origin: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000'],
   credentials: true,
@@ -68,15 +81,11 @@ app.use(errorHandler);
 
 // 啟動伺服器
 app.listen(PORT, () => {
-  console.log(`
-╔═══════════════════════════════════════╗
-║   Task Manager API Server Started    ║
-╠═══════════════════════════════════════╣
-║  Port: ${PORT.toString().padEnd(30)}║
-║  Environment: ${(process.env.NODE_ENV || 'development').padEnd(23)}║
-║  AI-Driven & AI-Native 🚀            ║
-╚═══════════════════════════════════════╝
-  `);
+  logger.info('Task Manager API Server Started', {
+    port: PORT,
+    environment: process.env.NODE_ENV || 'development',
+    features: 'AI-Driven & AI-Native'
+  });
 });
 
 module.exports = app;

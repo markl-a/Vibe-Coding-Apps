@@ -1,3 +1,6 @@
+const { createLogger } = require('@vibe/shared-utils');
+const logger = createLogger('social-media-api:error-handler');
+
 /**
  * 全局錯誤處理中間件
  * 統一的錯誤響應格式: { success: false, error: { code, message, details } }
@@ -8,7 +11,7 @@ const errorHandler = (err, req, res, next) => {
 
   // Log 錯誤到控制台（測試環境下不顯示）
   if (process.env.NODE_ENV !== 'test') {
-    console.error('Error:', err);
+    logger.error('Request error', err);
   }
 
   // Mongoose 驗證錯誤

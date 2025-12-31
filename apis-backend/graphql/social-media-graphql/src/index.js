@@ -20,7 +20,7 @@ async function startServer() {
       resolvers,
       introspection: true,
       formatError: (error) => {
-        console.error('GraphQL Error:', error);
+        console.error('❌ GraphQL Error:', error);
         return error;
       }
     });
@@ -40,21 +40,17 @@ async function startServer() {
 ║   🚀 Social Media GraphQL API Server is running!     ║
 ║                                                        ║
 ║   🌐 GraphQL Endpoint:                                ║
-║      ${url.padEnd(48)}║
+║      ${url}                                           ║
 ║                                                        ║
-║   📊 GraphQL Playground:                              ║
-║      ${url.padEnd(48)}║
-║                                                        ║
-║   🔌 WebSocket (Subscriptions):                       ║
+║   🔌 WebSocket Subscriptions:                         ║
 ║      ws://localhost:${PORT}/graphql                      ║
 ║                                                        ║
-║   💡 Ready to connect people!                         ║
+║   💡 Ready to accept requests!                        ║
 ║                                                        ║
 ╚════════════════════════════════════════════════════════╝
 
 📝 Demo credentials:
-   Email: demo@example.com
-   Password: demo123
+   demo@example.com / demo123
     `);
   } catch (error) {
     console.error('❌ Failed to start server:', error);
