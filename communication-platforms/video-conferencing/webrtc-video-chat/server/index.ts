@@ -3,17 +3,23 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { createCorsConfig, corsPresets } from '@vibe/shared-utils';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
 const server = createServer(app);
+
+// 使用安全的 CORS 配置
+// 生產環境: 設置 ALLOWED_ORIGINS 環境變數，如 "https://example.com,https://app.example.com"
+// 開發環境: 自動允許 localhost 端口
+const corsConfig = process.env.NODE_ENV === 'production'
+  ? createCorsConfig() // 從環境變數讀取
+  : createCorsConfig(corsPresets.development());
+
 const io = new Server(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-  },
+  cors: corsConfig,
 });
 
 const PORT = process.env.PORT ?? 3001;
