@@ -3,6 +3,36 @@
  * 透過修改或偽裝瀏覽器特徵來防止指紋追蹤
  */
 
+// 擴展 Window 類型以支援瀏覽器特定 API
+interface ExtendedWindow extends Window {
+  AudioContext?: typeof AudioContext;
+  webkitAudioContext?: typeof AudioContext;
+  RTCPeerConnection?: typeof RTCPeerConnection;
+}
+
+// 擴展 Navigator 類型
+interface ExtendedNavigator extends Navigator {
+  deviceMemory?: number;
+}
+
+// 擴展 WebGL 類型
+interface WebGLDebugRendererInfo {
+  UNMASKED_VENDOR_WEBGL: number;
+  UNMASKED_RENDERER_WEBGL: number;
+}
+
+// 指紋數據類型
+interface FingerprintData {
+  userAgent: string;
+  language: string;
+  platform: string;
+  screenResolution: string;
+  timezone: string;
+  plugins: string[];
+  canvas: string;
+  webgl: string;
+}
+
 export class FingerprintProtection {
   private static isEnabled = false;
   private static protectionLevel: 'low' | 'medium' | 'high' = 'medium';
@@ -76,19 +106,28 @@ export class FingerprintProtection {
     const originalGetImageData = CanvasRenderingContext2D.prototype.getImageData;
 
     // 在轉換為資料 URL 時添加隨機噪點
-    HTMLCanvasElement.prototype.toDataURL = function(...args: any[]) {
+    HTMLCanvasElement.prototype.toDataURL = function(
+      type?: string,
+      quality?: number
+    ): string {
       if (FingerprintProtection.protectionLevel !== 'low') {
         const context = this.getContext('2d');
         if (context) {
           FingerprintProtection.addCanvasNoise(context, this.width, this.height);
         }
       }
-      return originalToDataURL.apply(this, args as any);
+      return originalToDataURL.call(this, type, quality);
     };
 
     // 在取得圖像資料時添加噪點
-    CanvasRenderingContext2D.prototype.getImageData = function(...args: any[]) {
-      const imageData = originalGetImageData.apply(this, args as any);
+    CanvasRenderingContext2D.prototype.getImageData = function(
+      sx: number,
+      sy: number,
+      sw: number,
+      sh: number,
+      settings?: ImageDataSettings
+    ): ImageData {
+      const imageData = originalGetImageData.call(this, sx, sy, sw, sh, settings);
 
       if (FingerprintProtection.protectionLevel === 'high') {
         FingerprintProtection.addImageDataNoise(imageData);
@@ -132,7 +171,7 @@ export class FingerprintProtection {
   private static protectWebGL(): void {
     const getParameter = WebGLRenderingContext.prototype.getParameter;
 
-    WebGLRenderingContext.prototype.getParameter = function(parameter: any) {
+    WebGLRenderingContext.prototype.getParameter = function(parameter: GLenum): unknown {
       // 偽裝 WebGL 渲染器和供應商資訊
       if (parameter === 37445) {  // UNMASKED_VENDOR_WEBGL
         return 'Intel Inc.';
@@ -141,18 +180,18 @@ export class FingerprintProtection {
         return 'Intel Iris OpenGL Engine';
       }
 
-      return getParameter.apply(this, [parameter]);
+      return getParameter.call(this, parameter);
     };
 
     // 對 WebGL2 進行相同處理
     if (typeof WebGL2RenderingContext !== 'undefined') {
       const getParameter2 = WebGL2RenderingContext.prototype.getParameter;
 
-      WebGL2RenderingContext.prototype.getParameter = function(parameter: any) {
+      WebGL2RenderingContext.prototype.getParameter = function(parameter: GLenum): unknown {
         if (parameter === 37445) return 'Intel Inc.';
         if (parameter === 37446) return 'Intel Iris OpenGL Engine';
 
-        return getParameter2.apply(this, [parameter]);
+        return getParameter2.call(this, parameter);
       };
     }
   }
@@ -162,22 +201,25 @@ export class FingerprintProtection {
    */
   private static protectAudioContext(): void {
     if (this.protectionLevel === 'high') {
-      const audioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
+      const extWindow = window as ExtendedWindow;
+      const audioContext = extWindow.AudioContext || extWindow.webkitAudioContext;
 
       if (audioContext) {
         const originalCreateOscillator = audioContext.prototype.createOscillator;
 
-        audioContext.prototype.createOscillator = function() {
-          const oscillator = originalCreateOscillator.apply(this);
+        audioContext.prototype.createOscillator = function(
+          this: AudioContext
+        ): OscillatorNode {
+          const oscillator = originalCreateOscillator.call(this);
 
           // 添加輕微的頻率偏移
-          const originalStart = oscillator.start;
-          oscillator.start = function(...args: any[]) {
+          const originalStart = oscillator.start.bind(oscillator);
+          oscillator.start = function(when?: number): void {
             if (oscillator.frequency) {
               const noise = (Math.random() - 0.5) * 0.0001;
               oscillator.frequency.value += noise;
             }
-            return originalStart.apply(this, args);
+            return originalStart(when);
           };
 
           return oscillator;
@@ -226,7 +268,7 @@ export class FingerprintProtection {
       plugins: this.protectionLevel === 'high' ? [] : navigator.plugins,
 
       // 裝置記憶體
-      deviceMemory: this.protectionLevel === 'high' ? 8 : (navigator as any).deviceMemory,
+      deviceMemory: this.protectionLevel === 'high' ? 8 : (navigator as ExtendedNavigator).deviceMemory,
     };
 
     // 使用 Object.defineProperty 覆蓋屬性
@@ -277,21 +319,24 @@ export class FingerprintProtection {
    */
   private static protectWebRTC(): void {
     if (this.protectionLevel !== 'low') {
-      const originalRTCPeerConnection = (window as any).RTCPeerConnection;
+      const extWindow = window as ExtendedWindow;
+      const originalRTCPeerConnection = extWindow.RTCPeerConnection;
 
       if (originalRTCPeerConnection) {
-        (window as any).RTCPeerConnection = function(config?: RTCConfiguration, ...args: any[]) {
+        extWindow.RTCPeerConnection = function(
+          config?: RTCConfiguration
+        ): RTCPeerConnection {
           // 強制使用代理，防止 IP 洩漏
-          if (!config) config = {};
-          if (!config.iceServers) config.iceServers = [];
+          const safeConfig: RTCConfiguration = config || {};
+          if (!safeConfig.iceServers) safeConfig.iceServers = [];
 
           // 限制 ICE 候選類型
-          if (config.iceTransportPolicy !== 'relay') {
-            config.iceTransportPolicy = 'all';
+          if (safeConfig.iceTransportPolicy !== 'relay') {
+            safeConfig.iceTransportPolicy = 'all';
           }
 
-          return new originalRTCPeerConnection(config, ...args);
-        };
+          return new originalRTCPeerConnection(safeConfig);
+        } as typeof RTCPeerConnection;
       }
     }
   }
@@ -378,7 +423,7 @@ export class FingerprintProtection {
    * 測試當前指紋唯一性
    */
   static async testFingerprint(): Promise<FingerprintTestResult> {
-    const fingerprint: any = {
+    const fingerprint: FingerprintData = {
       userAgent: navigator.userAgent,
       language: navigator.language,
       platform: navigator.platform,
@@ -421,19 +466,19 @@ export class FingerprintProtection {
    */
   private static testWebGL(): string {
     const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl') as WebGLRenderingContext | null;
     if (!gl) return '';
 
-    const debugInfo = (gl as any).getExtension('WEBGL_debug_renderer_info');
+    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info') as WebGLDebugRendererInfo | null;
     if (!debugInfo) return '';
 
-    return (gl as any).getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+    return gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) as string;
   }
 
   /**
    * 計算指紋熵值
    */
-  private static calculateEntropy(fingerprint: any): number {
+  private static calculateEntropy(fingerprint: FingerprintData): number {
     let entropy = 0;
 
     // 基於各種屬性計算熵值
@@ -484,7 +529,7 @@ interface ProtectionReport {
 }
 
 interface FingerprintTestResult {
-  fingerprint: any;
+  fingerprint: FingerprintData;
   entropy: number;
   uniqueness: number;
   protected: boolean;
