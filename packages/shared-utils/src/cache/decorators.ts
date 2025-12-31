@@ -116,7 +116,7 @@ export function Cacheable(options: CacheableOptions = {}) {
  * @example
  * class UserService {
  *   @CacheEvict({ allEntries: true })
- *   async updateUser(id: string, data: any) {
+ *   async updateUser(id: string, data: unknown) {
  *     return await db.users.update(id, data);
  *   }
  * }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useCourseStore, BADGES } from './store';
 import { sampleCourse } from './sample-course';
-import type { Lesson, QuizContent, QuizQuestion } from './types';
+import type { Lesson, QuizContent, QuizQuestion, TextContent, CodeContent, LessonContent } from './types';
 
 export default function App() {
   const store = useCourseStore();
@@ -112,12 +112,12 @@ export default function App() {
   const earnedBadgeIds = store.earnedBadges;
   const earnedBadges = BADGES.filter((b) => earnedBadgeIds.includes(b.id));
 
-  const renderContent = (content: any) => {
+  const renderContent = (content: LessonContent) => {
     switch (content.type) {
       case 'text':
         return (
           <div key={content.id} className="text-content">
-            {content.data.text.split('\n').map((line: string, i: number) => {
+            {(content as TextContent).data.text.split('\n').map((line: string, i: number) => {
               if (line.startsWith('# ')) {
                 return <h1 key={i}>{line.slice(2)}</h1>;
               }
@@ -138,7 +138,7 @@ export default function App() {
       case 'code':
         return (
           <div key={content.id} className="code-block">
-            <code>{content.data.code}</code>
+            <code>{(content as CodeContent).data.code}</code>
           </div>
         );
 

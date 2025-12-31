@@ -24,14 +24,49 @@ import {
 } from '@ant-design/icons'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
+import { getErrorMessage } from '@vibe/shared-utils'
 
 const api = axios.create({ baseURL: 'http://localhost:3003/api' })
+
+interface Payroll {
+  id: string
+  employeeId: string
+  period: string
+  baseSalary: number
+  totalEarnings: number
+  totalDeductions: number
+  netSalary: number
+  bonus: number
+  overtimePay: number
+  tax: number
+  socialInsurance: number
+  housingFund: number
+  status: 'DRAFT' | 'CALCULATED' | 'APPROVED' | 'PAID'
+}
+
+interface PayrollCalculateRequest {
+  employeeId: string
+  period: string
+  baseSalary: number
+  allowances: Array<{ type: string; amount: number }>
+  bonus: number
+  overtimePay: number
+}
+
+type PayrollStatus = 'DRAFT' | 'CALCULATED' | 'APPROVED' | 'PAID'
+
+const STATUS_COLOR_MAP: Record<PayrollStatus, string> = {
+  DRAFT: 'default',
+  CALCULATED: 'blue',
+  APPROVED: 'green',
+  PAID: 'success',
+}
 
 function App() {
   const [employeeId] = useState('emp-001')
   const [selectedPeriod, setSelectedPeriod] = useState('2024-01')
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const [selectedPayroll, setSelectedPayroll] = useState<any>(null)
+  const [selectedPayroll, setSelectedPayroll] = useState<Payroll | null>(null)
   const [form] = Form.useForm()
   const queryClient = useQueryClient()
 
@@ -46,13 +81,16 @@ function App() {
   })
 
   const calculateMutation = useMutation({
-    mutationFn: (data: any) => api.post('/payroll/calculate', data),
+    mutationFn: (data: PayrollCalculateRequest) => api.post('/payroll/calculate', data),
     onSuccess: () => {
       message.success('薪資計算完成')
       queryClient.invalidateQueries({ queryKey: ['payrolls'] })
       queryClient.invalidateQueries({ queryKey: ['payroll-stats'] })
       setIsModalVisible(false)
       form.resetFields()
+    },
+    onError: (error: unknown) => {
+      message.error(getErrorMessage(error))
     },
   })
 
@@ -62,6 +100,9 @@ function App() {
       message.success('薪資已批准')
       queryClient.invalidateQueries({ queryKey: ['payrolls'] })
     },
+    onError: (error: unknown) => {
+      message.error(getErrorMessage(error))
+    },
   })
 
   const paidMutation = useMutation({
@@ -69,6 +110,9 @@ function App() {
     onSuccess: () => {
       message.success('已標記為已發放')
       queryClient.invalidateQueries({ queryKey: ['payrolls'] })
+    },
+    onError: (error: unknown) => {
+      message.error(getErrorMessage(error))
     },
   })
 
@@ -87,7 +131,7 @@ function App() {
     })
   }
 
-  const showDetail = (record: any) => {
+  const showDetail = (record: Payroll) => {
     setSelectedPayroll(record)
   }
 
@@ -99,22 +143,22 @@ function App() {
     {
       title: '底薪',
       dataIndex: 'baseSalary',
-      render: (val: any) => `$${Number(val).toLocaleString()}`,
+      render: (val: number) => `$${Number(val).toLocaleString()}`,
     },
     {
       title: '總收入',
       dataIndex: 'totalEarnings',
-      render: (val: any) => `$${Number(val).toLocaleString()}`,
+      render: (val: number) => `$${Number(val).toLocaleString()}`,
     },
     {
       title: '總扣除',
       dataIndex: 'totalDeductions',
-      render: (val: any) => `$${Number(val).toLocaleString()}`,
+      render: (val: number) => `$${Number(val).toLocaleString()}`,
     },
     {
       title: '實發薪資',
       dataIndex: 'netSalary',
-      render: (val: any) => (
+      render: (val: number) => (
         <strong style={{ color: '#52c41a' }}>
           ${Number(val).toLocaleString()}
         </strong>
@@ -123,19 +167,13 @@ function App() {
     {
       title: '狀態',
       dataIndex: 'status',
-      render: (status: string) => {
-        const colorMap: any = {
-          DRAFT: 'default',
-          CALCULATED: 'blue',
-          APPROVED: 'green',
-          PAID: 'success',
-        }
-        return <Tag color={colorMap[status]}>{status}</Tag>
+      render: (status: PayrollStatus) => {
+        return <Tag color={STATUS_COLOR_MAP[status]}>{status}</Tag>
       },
     },
     {
       title: '操作',
-      render: (_: any, record: any) => (
+      render: (_: unknown, record: Payroll) => (
         <Space>
           <Button
             type="link"

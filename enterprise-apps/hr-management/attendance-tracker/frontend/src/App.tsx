@@ -3,7 +3,8 @@ import { Card, Button, Space, Table, Tag, message, DatePicker } from 'antd'
 import { ClockCircleOutlined } from '@ant-design/icons'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
+import { getErrorMessage } from '@vibe/shared-utils'
 
 const api = axios.create({
   baseURL: 'http://localhost:3001/api',
@@ -11,7 +12,7 @@ const api = axios.create({
 
 function App() {
   const [employeeId] = useState('emp-001') // 示例員工ID
-  const [dateRange, setDateRange] = useState([
+  const [dateRange, setDateRange] = useState<[Dayjs, Dayjs]>([
     dayjs().startOf('month'),
     dayjs().endOf('month'),
   ])
@@ -27,8 +28,12 @@ function App() {
       message.success('上班打卡成功')
       queryClient.invalidateQueries({ queryKey: ['attendance'] })
     },
-    onError: (error: any) => {
-      message.error(error.response?.data?.error || '打卡失敗')
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error) && error.response?.data?.error) {
+        message.error(error.response.data.error)
+      } else {
+        message.error(getErrorMessage(error) || '打卡失敗')
+      }
     },
   })
 
@@ -42,8 +47,12 @@ function App() {
       message.success('下班打卡成功')
       queryClient.invalidateQueries({ queryKey: ['attendance'] })
     },
-    onError: (error: any) => {
-      message.error(error.response?.data?.error || '打卡失敗')
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error) && error.response?.data?.error) {
+        message.error(error.response.data.error)
+      } else {
+        message.error(getErrorMessage(error) || '打卡失敗')
+      }
     },
   })
 
@@ -84,7 +93,7 @@ function App() {
       title: '狀態',
       dataIndex: 'status',
       render: (status: string) => {
-        const colorMap: any = {
+        const colorMap: Record<string, string> = {
           PRESENT: 'green',
           LATE: 'orange',
           ABSENT: 'red',
@@ -118,8 +127,8 @@ function App() {
               下班打卡
             </Button>
             <DatePicker.RangePicker
-              value={dateRange as any}
-              onChange={(dates) => dates && setDateRange(dates as any)}
+              value={dateRange}
+              onChange={(dates) => dates && setDateRange(dates as [Dayjs, Dayjs])}
             />
           </Space>
 

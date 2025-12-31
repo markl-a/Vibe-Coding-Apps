@@ -19,6 +19,7 @@ import { PlusOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import dayjs from 'dayjs'
+import { getErrorMessage } from '@vibe/shared-utils'
 
 const api = axios.create({ baseURL: 'http://localhost:3002/api' })
 
@@ -31,6 +32,40 @@ const leaveTypeMap: Record<string, string> = {
   PATERNITY: '陪產假',
   BEREAVEMENT: '喪假',
   UNPAID: '無薪假',
+}
+
+interface LeaveRequest {
+  id: string
+  employeeId: string
+  leaveType: string
+  startDate: string
+  endDate: string
+  days: number
+  reason: string
+  status: 'PENDING' | 'APPROVED' | 'REJECTED'
+}
+
+interface LeaveBalance {
+  leaveType: string
+  total: number
+  used: number
+  available: number
+}
+
+interface LeaveCreateRequest {
+  employeeId: string
+  leaveType: string
+  startDate: string
+  endDate: string
+  reason: string
+}
+
+type LeaveStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
+
+const STATUS_COLOR_MAP: Record<LeaveStatus, string> = {
+  PENDING: 'orange',
+  APPROVED: 'green',
+  REJECTED: 'red',
 }
 
 function App() {
@@ -53,13 +88,16 @@ function App() {
   })
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => api.post('/leaves', data),
+    mutationFn: (data: LeaveCreateRequest) => api.post('/leaves', data),
     onSuccess: () => {
       message.success('請假申請已提交')
       queryClient.invalidateQueries({ queryKey: ['leaves'] })
       queryClient.invalidateQueries({ queryKey: ['balances'] })
       setIsModalVisible(false)
       form.resetFields()
+    },
+    onError: (error: unknown) => {
+      message.error(getErrorMessage(error))
     },
   })
 
@@ -70,6 +108,9 @@ function App() {
       message.success('已批准請假')
       queryClient.invalidateQueries({ queryKey: ['leaves'] })
       queryClient.invalidateQueries({ queryKey: ['balances'] })
+    },
+    onError: (error: unknown) => {
+      message.error(getErrorMessage(error))
     },
   })
 
@@ -83,6 +124,9 @@ function App() {
       message.success('已拒絕請假')
       queryClient.invalidateQueries({ queryKey: ['leaves'] })
       queryClient.invalidateQueries({ queryKey: ['balances'] })
+    },
+    onError: (error: unknown) => {
+      message.error(getErrorMessage(error))
     },
   })
 
@@ -126,18 +170,13 @@ function App() {
     {
       title: '狀態',
       dataIndex: 'status',
-      render: (status: string) => {
-        const colorMap: any = {
-          PENDING: 'orange',
-          APPROVED: 'green',
-          REJECTED: 'red',
-        }
-        return <Tag color={colorMap[status]}>{status}</Tag>
+      render: (status: LeaveStatus) => {
+        return <Tag color={STATUS_COLOR_MAP[status]}>{status}</Tag>
       },
     },
     {
       title: '操作',
-      render: (_: any, record: any) =>
+      render: (_: unknown, record: LeaveRequest) =>
         record.status === 'PENDING' ? (
           <Space>
             <Button
@@ -164,7 +203,7 @@ function App() {
     <div style={{ padding: '24px' }}>
       <Card title="假期餘額" style={{ marginBottom: 24 }}>
         <Row gutter={16}>
-          {balances?.data?.map((balance: any) => (
+          {balances?.data?.map((balance: LeaveBalance) => (
             <Col span={6} key={balance.leaveType}>
               <Statistic
                 title={leaveTypeMap[balance.leaveType]}

@@ -183,7 +183,7 @@ export class TestHelpers {
   static async mockApiResponse(
     page: Page,
     urlPattern: string,
-    response: any,
+    response: unknown,
     status = 200
   ): Promise<void> {
     await page.route(urlPattern, (route) => {

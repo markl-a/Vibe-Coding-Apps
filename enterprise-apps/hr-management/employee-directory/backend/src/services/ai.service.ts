@@ -1,6 +1,50 @@
 import { PrismaClient } from '@prisma/client';
+import { getErrorMessage } from '@vibe/shared-utils';
 
 const prisma = new PrismaClient();
+
+interface OrganizationIssue {
+  type: 'SPAN_OF_CONTROL' | 'SMALL_DEPARTMENT' | 'LARGE_DEPARTMENT' | 'NO_MANAGER';
+  severity: 'HIGH' | 'MEDIUM' | 'LOW';
+  employeeId?: string;
+  employeeName?: string;
+  departmentId?: string;
+  departmentName?: string;
+  count?: number;
+  message: string;
+  suggestion: string;
+}
+
+interface SkillGap {
+  skill: string;
+  currentCount: number;
+  coverage: number;
+}
+
+interface EmployeeWithRelations {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  position: string;
+  jobTitle: string;
+  employeeType: string;
+  employmentStatus: string;
+  hireDate: Date;
+  baseSalary: number | null;
+  skills: string[];
+  managerId: string | null;
+  department?: {
+    id: string;
+    name: string;
+  } | null;
+  manager?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  } | null;
+  subordinates?: unknown[];
+}
 
 /**
  * AI 輔助服務 - 為員工管理提供智能化功能
@@ -125,7 +169,7 @@ export class AIService {
     });
 
     // 分析問題
-    const issues: any[] = [];
+    const issues: OrganizationIssue[] = [];
 
     // 1. 檢查主管下屬過多
     employees.forEach((emp) => {
@@ -357,7 +401,7 @@ export class AIService {
   /**
    * 生成建議
    */
-  private generateRecommendations(issues: any[]) {
+  private generateRecommendations(issues: OrganizationIssue[]): string[] {
     const recommendations: string[] = [];
 
     const highSeverityIssues = issues.filter((i) => i.severity === 'HIGH');
@@ -376,7 +420,7 @@ export class AIService {
   /**
    * 生成保留策略
    */
-  private generateRetentionStrategies(riskFactors: string[], employee: any) {
+  private generateRetentionStrategies(riskFactors: string[], employee: EmployeeWithRelations): string[] {
     const strategies: string[] = [];
 
     if (riskFactors.includes('新員工（在職不到1年）')) {
@@ -405,7 +449,7 @@ export class AIService {
   /**
    * 生成技能培訓建議
    */
-  private generateSkillRecommendations(skillGaps: any[], teamSize: number) {
+  private generateSkillRecommendations(skillGaps: SkillGap[], teamSize: number): string[] {
     const recommendations: string[] = [];
 
     if (skillGaps.length > 0) {

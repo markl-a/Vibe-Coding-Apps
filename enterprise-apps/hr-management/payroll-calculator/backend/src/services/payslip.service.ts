@@ -2,8 +2,41 @@ import { PrismaClient } from '@prisma/client';
 import PDFDocument from 'pdfkit';
 import { createWriteStream, mkdirSync } from 'fs';
 import { join } from 'path';
+import { getErrorMessage } from '@vibe/shared-utils';
 
 const prisma = new PrismaClient();
+
+interface Allowance {
+  type: string;
+  amount: number;
+}
+
+interface Deduction {
+  type: string;
+  amount: number;
+}
+
+function isAllowance(value: unknown): value is Allowance {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'type' in value &&
+    'amount' in value &&
+    typeof value.type === 'string' &&
+    typeof value.amount === 'number'
+  );
+}
+
+function isDeduction(value: unknown): value is Deduction {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'type' in value &&
+    'amount' in value &&
+    typeof value.type === 'string' &&
+    typeof value.amount === 'number'
+  );
+}
 
 /**
  * 薪資單生成服務
@@ -15,8 +48,8 @@ export class PayslipService {
     // 確保上傳目錄存在
     try {
       mkdirSync(this.uploadsDir, { recursive: true });
-    } catch (error) {
-      console.error('Failed to create payslips directory:', error);
+    } catch (error: unknown) {
+      console.error('Failed to create payslips directory:', getErrorMessage(error));
     }
   }
 
@@ -105,21 +138,23 @@ export class PayslipService {
 
         // 津貼
         try {
-          const allowances = JSON.parse(payroll.allowances as string);
+          const allowances: unknown = JSON.parse(payroll.allowances as string);
           if (Array.isArray(allowances) && allowances.length > 0) {
-            allowances.forEach((allowance: any) => {
-              doc.text(allowance.type, 70, y);
-              doc.text(
-                `NT$ ${Number(allowance.amount).toLocaleString('zh-TW')}`,
-                400,
-                y,
-                { align: 'right', width: 145 }
-              );
-              y = doc.y;
+            allowances.forEach((allowance: unknown) => {
+              if (isAllowance(allowance)) {
+                doc.text(allowance.type, 70, y);
+                doc.text(
+                  `NT$ ${Number(allowance.amount).toLocaleString('zh-TW')}`,
+                  400,
+                  y,
+                  { align: 'right', width: 145 }
+                );
+                y = doc.y;
+              }
             });
           }
-        } catch (error) {
-          console.error('Failed to parse allowances:', error);
+        } catch (error: unknown) {
+          console.error('Failed to parse allowances:', getErrorMessage(error));
         }
 
         doc.moveDown();
@@ -185,21 +220,23 @@ export class PayslipService {
 
         // 其他扣款
         try {
-          const otherDeductions = JSON.parse(payroll.deductions as string);
+          const otherDeductions: unknown = JSON.parse(payroll.deductions as string);
           if (Array.isArray(otherDeductions) && otherDeductions.length > 0) {
-            otherDeductions.forEach((deduction: any) => {
-              doc.text(deduction.type, 70, y);
-              doc.text(
-                `NT$ ${Number(deduction.amount).toLocaleString('zh-TW')}`,
-                400,
-                y,
-                { align: 'right', width: 145 }
-              );
-              y = doc.y;
+            otherDeductions.forEach((deduction: unknown) => {
+              if (isDeduction(deduction)) {
+                doc.text(deduction.type, 70, y);
+                doc.text(
+                  `NT$ ${Number(deduction.amount).toLocaleString('zh-TW')}`,
+                  400,
+                  y,
+                  { align: 'right', width: 145 }
+                );
+                y = doc.y;
+              }
             });
           }
-        } catch (error) {
-          console.error('Failed to parse deductions:', error);
+        } catch (error: unknown) {
+          console.error('Failed to parse deductions:', getErrorMessage(error));
         }
 
         doc.moveDown();
@@ -284,7 +321,7 @@ export class PayslipService {
         });
 
         stream.on('error', reject);
-      } catch (error) {
+      } catch (error: unknown) {
         reject(error);
       }
     });
@@ -309,8 +346,8 @@ export class PayslipService {
         const url = await this.generatePayslip(payroll.id);
         results.success++;
         results.urls.push(url);
-      } catch (error) {
-        console.error(`Failed to generate payslip for ${payroll.id}:`, error);
+      } catch (error: unknown) {
+        console.error(`Failed to generate payslip for ${payroll.id}:`, getErrorMessage(error));
         results.failed++;
       }
     }
