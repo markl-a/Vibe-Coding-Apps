@@ -2,6 +2,23 @@
  * 結構化日誌系統
  */
 
+// Express-compatible types (without requiring express dependency)
+interface HttpRequest {
+  method?: string;
+  url?: string;
+  path?: string;
+  headers?: Record<string, string | string[] | undefined>;
+  ip?: string;
+  connection?: { remoteAddress?: string };
+}
+
+interface HttpResponse {
+  statusCode?: number;
+  on(event: string, callback: () => void): void;
+}
+
+type NextFunction = (err?: unknown) => void;
+
 export enum LogLevel {
   DEBUG = 0,
   INFO = 1,
@@ -90,13 +107,14 @@ export class Logger {
   }
 
   // HTTP 請求日誌
-  logRequest(req: any, res: any, duration: number) {
+  logRequest(req: HttpRequest, res: HttpResponse, duration: number) {
+    const userAgent = req.headers?.['user-agent'];
     this.info('HTTP Request', {
       method: req.method,
       path: req.path || req.url,
       statusCode: res.statusCode,
       duration: `${duration}ms`,
-      userAgent: req.headers?.['user-agent'],
+      userAgent: Array.isArray(userAgent) ? userAgent[0] : userAgent,
       ip: req.ip || req.connection?.remoteAddress,
     });
   }
@@ -118,7 +136,7 @@ export function createLogger(service: string, options?: { minLevel?: LogLevel })
  * Express 日誌中間件
  */
 export function requestLogger(logger: Logger) {
-  return (req: any, res: any, next: any) => {
+  return (req: HttpRequest, res: HttpResponse, next: NextFunction) => {
     const start = Date.now();
     res.on('finish', () => {
       logger.logRequest(req, res, Date.now() - start);
