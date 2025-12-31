@@ -5,11 +5,12 @@ import { format } from 'date-fns'
 import { zhTW } from 'date-fns/locale'
 import { useChatStore } from '@/store/chatStore'
 import { useUserStore } from '@/store/userStore'
+import type { Message } from '@/types'
 import TypingIndicator from './TypingIndicator'
 
 // Memoized Message Item Component
 interface MessageItemProps {
-  message: any
+  message: Message
   isOwnMessage: boolean
   showAvatar: boolean
   showTimestamp: boolean

@@ -526,12 +526,12 @@ export const getSocket = () => {
 }
 
 // 使用範例
-export const sendMessage = (chatId: string, message: any) => {
+export const sendMessage = (chatId: string, message: { content: string; userId: string }) => {
   const socket = getSocket()
   socket.emit('send-message', { chatId, message })
 }
 
-export const onNewMessage = (callback: (message: any) => void) => {
+export const onNewMessage = (callback: (message: { id: string; content: string; userId: string; timestamp: Date }) => void) => {
   const socket = getSocket()
   socket.on('new-message', callback)
 }

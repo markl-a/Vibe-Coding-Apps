@@ -42,14 +42,14 @@ vi.mock('../utils.js', () => ({
 
 describe('CLI Argument Parsing', () => {
   let program: Command;
-  let consoleErrorSpy: any;
-  let processExitSpy: any;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+  let processExitSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
     program = new Command();
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    processExitSpy = vi.spyOn(process, 'exit').mockImplementation((code?: any) => {
+    processExitSpy = vi.spyOn(process, 'exit').mockImplementation((code?: number | string) => {
       throw new Error(`Process exited with code ${code}`);
     });
   });
@@ -414,7 +414,7 @@ describe('Project Creation Flow', () => {
 });
 
 describe('Success Messages', () => {
-  let consoleLogSpy: any;
+  let consoleLogSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -474,13 +474,13 @@ describe('Success Messages', () => {
 });
 
 describe('Error Handling', () => {
-  let consoleErrorSpy: any;
-  let processExitSpy: any;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+  let processExitSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    processExitSpy = vi.spyOn(process, 'exit').mockImplementation((code?: any) => {
+    processExitSpy = vi.spyOn(process, 'exit').mockImplementation((code?: number | string) => {
       throw new Error(`Process exited with code ${code}`);
     });
   });
@@ -496,8 +496,8 @@ describe('Error Handling', () => {
     try {
       console.error(chalk.red('Error:'), error);
       process.exit(1);
-    } catch (e: any) {
-      expect(e.message).toContain('Process exited with code 1');
+    } catch (e: unknown) {
+      expect((e as Error).message).toContain('Process exited with code 1');
     }
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -516,8 +516,8 @@ describe('Error Handling', () => {
   it('should exit with code 1 on error', () => {
     try {
       process.exit(1);
-    } catch (e: any) {
-      expect(e.message).toContain('code 1');
+    } catch (e: unknown) {
+      expect((e as Error).message).toContain('code 1');
     }
   });
 

@@ -141,7 +141,7 @@ export async function checkDatabaseHealth(connection: {
     }
 
     return { healthy: false, message: 'Unknown connection state' };
-  } catch (error: any) {
-    return { healthy: false, message: error.message };
+  } catch (error: unknown) {
+    return { healthy: false, message: error instanceof Error ? error.message : 'Unknown error' };
   }
 }

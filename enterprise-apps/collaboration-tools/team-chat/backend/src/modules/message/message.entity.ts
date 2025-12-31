@@ -20,6 +20,15 @@ export enum MessageType {
   SYSTEM = 'SYSTEM',
 }
 
+export interface MessageAttachment {
+  id: string;
+  filename: string;
+  url: string;
+  size: number;
+  mimeType: string;
+  uploadedAt: Date;
+}
+
 @Entity('messages')
 export class Message {
   @PrimaryGeneratedColumn('uuid')
@@ -42,7 +51,7 @@ export class Message {
   type: MessageType;
 
   @Column('jsonb', { nullable: true })
-  attachments: any[];
+  attachments: MessageAttachment[];
 
   @Column('jsonb', { default: [] })
   reactions: {

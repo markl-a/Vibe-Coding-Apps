@@ -3,6 +3,11 @@ import { startOfDay, differenceInHours, setHours, setMinutes } from 'date-fns';
 
 const prisma = new PrismaClient();
 
+interface Location {
+  latitude: number;
+  longitude: number;
+}
+
 const WORK_START_HOUR = 9;
 const WORK_START_MINUTE = 0;
 const WORK_END_HOUR = 18;
@@ -10,7 +15,7 @@ const WORK_END_MINUTE = 0;
 const LATE_THRESHOLD_MINUTES = 15;
 
 export class AttendanceService {
-  async checkIn(employeeId: string, location?: any) {
+  async checkIn(employeeId: string, location?: Location) {
     const today = startOfDay(new Date());
 
     const existing = await prisma.attendance.findFirst({
@@ -54,7 +59,7 @@ export class AttendanceService {
     });
   }
 
-  async checkOut(employeeId: string, location?: any) {
+  async checkOut(employeeId: string, location?: Location) {
     const today = startOfDay(new Date());
 
     const attendance = await prisma.attendance.findFirst({

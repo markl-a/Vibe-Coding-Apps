@@ -73,12 +73,15 @@ export interface QuizContent extends ContentBlock {
   };
 }
 
+// Union type for all lesson content types
+export type LessonContent = TextContent | VideoContent | CodeContent | QuizContent;
+
 // Lesson structure
 export interface Lesson {
   id: string;
   title: string;
   description: string;
-  content: ContentBlock[];
+  content: LessonContent[];
   duration?: number; // minutes
   order: number;
 }

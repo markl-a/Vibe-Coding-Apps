@@ -1,11 +1,11 @@
 import { DynamicTool, DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
 
-export interface ToolDefinition {
+export interface ToolDefinition<T extends z.ZodRawShape = z.ZodRawShape> {
   name: string;
   description: string;
-  schema?: z.ZodObject<any>;
-  func: (input: any) => Promise<string>;
+  schema?: z.ZodObject<T>;
+  func: (input: z.infer<z.ZodObject<T>> | string) => Promise<string>;
 }
 
 // Calculator tool
@@ -18,7 +18,7 @@ const calculatorTool = new DynamicTool({
       const sanitized = input.replace(/[^0-9+\-*/.() ]/g, '');
       const result = Function(`"use strict"; return (${sanitized})`)();
       return String(result);
-    } catch (error) {
+    } catch (error: unknown) {
       return `Error: Could not calculate "${input}"`;
     }
   },

@@ -320,7 +320,7 @@ export function example11_ExpressMiddleware() {
   alertManager.addHandler(consoleAlertHandler);
 
   // Express 中间件
-  function monitoringMiddleware(req: any, res: any, next: any) {
+  function monitoringMiddleware(req: Record<string, unknown>, res: Record<string, unknown>, next: () => void) {
     const startTime = Date.now();
     const { method, path } = req;
 
@@ -361,7 +361,7 @@ export function example11_ExpressMiddleware() {
   }
 
   // 指标端点
-  function metricsEndpoint(req: any, res: any) {
+  function metricsEndpoint(req: Record<string, unknown>, res: { setHeader: (name: string, value: string) => void; send: (body: string) => void }) {
     res.setHeader('Content-Type', 'text/plain; version=0.0.4');
     res.send(registry.export());
   }

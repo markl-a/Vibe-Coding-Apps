@@ -6,6 +6,21 @@ import { TRACKER_BLOCKING_RULES, HTTPS_UPGRADE_RULES } from '../constants/rules'
  * 背景服務 Worker
  */
 
+interface MessageRequest {
+  action: string;
+  whitelist?: string[];
+  options?: Record<string, unknown>;
+  passwordData?: unknown;
+  [key: string]: unknown;
+}
+
+interface MessageResponse {
+  success: boolean;
+  error?: string;
+  data?: unknown;
+  count?: number;
+}
+
 // 安裝時初始化
 chrome.runtime.onInstalled.addListener(async (details) => {
   console.log('Privacy Guardian 已安裝', details.reason);
@@ -63,9 +78,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 async function handleMessage(
-  request: any,
+  request: MessageRequest,
   sender: chrome.runtime.MessageSender,
-  sendResponse: (response: any) => void
+  sendResponse: (response: MessageResponse) => void
 ) {
   try {
     switch (request.action) {

@@ -3,12 +3,27 @@ import { createLogger } from '@vibe/shared-utils';
 
 const logger = createLogger('NotificationService');
 
+interface NotificationMessage {
+  id: string;
+  content: string;
+  channelId: string;
+  userId: string;
+  createdAt: Date;
+}
+
+interface BulkNotification {
+  type: 'mention' | 'message' | 'channel' | 'system';
+  title: string;
+  message: string;
+  data?: Record<string, unknown>;
+}
+
 @Injectable()
 export class NotificationService {
   /**
    * 發送提及通知
    */
-  async sendMentionNotification(userId: string, message: any): Promise<void> {
+  async sendMentionNotification(userId: string, message: NotificationMessage): Promise<void> {
     // TODO: 實現通知邏輯
     logger.info('Sending mention notification', {
       userId,
@@ -27,7 +42,7 @@ export class NotificationService {
    */
   async sendDirectMessageNotification(
     userId: string,
-    message: any,
+    message: NotificationMessage,
   ): Promise<void> {
     logger.info('Sending DM notification', { userId });
   }
@@ -38,7 +53,7 @@ export class NotificationService {
   async sendChannelMessageNotification(
     userId: string,
     channelId: string,
-    message: any,
+    message: NotificationMessage,
   ): Promise<void> {
     logger.info('Sending channel notification', { userId, channelId });
   }
@@ -48,7 +63,7 @@ export class NotificationService {
    */
   async sendBulkNotifications(
     userIds: string[],
-    notification: any,
+    notification: BulkNotification,
   ): Promise<void> {
     logger.info('Sending bulk notifications', { userCount: userIds.length });
 

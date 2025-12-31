@@ -850,7 +850,7 @@ export const metadata: Metadata = {
 
 ```typescript
 // lib/analytics.ts
-export const trackEvent = (eventName: string, properties?: any) => {
+export const trackEvent = (eventName: string, properties?: Record<string, unknown>) => {
   // Google Analytics
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('event', eventName, properties)

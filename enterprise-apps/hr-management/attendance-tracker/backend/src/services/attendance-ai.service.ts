@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Attendance, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -219,7 +219,7 @@ export class AttendanceAIService {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
-    const where: any = {
+    const where: Prisma.AttendanceWhereInput = {
       date: {
         gte: startDate,
       },
@@ -245,7 +245,7 @@ export class AttendanceAIService {
     }
 
     // 按員工分組
-    const employeeMap = new Map<string, any[]>();
+    const employeeMap = new Map<string, Attendance[]>();
     records.forEach((record) => {
       if (!employeeMap.has(record.employeeId)) {
         employeeMap.set(record.employeeId, []);
@@ -311,7 +311,7 @@ export class AttendanceAIService {
   /**
    * 分析工作日模式
    */
-  private analyzeWorkdayPatterns(records: any[]): AttendancePattern[] {
+  private analyzeWorkdayPatterns(records: Attendance[]): AttendancePattern[] {
     const patterns = new Map<number, { checkIns: number[]; checkOuts: number[]; count: number }>();
 
     records.forEach((record) => {
@@ -349,7 +349,7 @@ export class AttendanceAIService {
   /**
    * 計算平均工時
    */
-  private calculateAvgWorkHours(records: any[]): number {
+  private calculateAvgWorkHours(records: Attendance[]): number {
     const workHours = records.map((r) => Number(r.workHours)).filter((h) => h > 0);
     const avg = workHours.reduce((a, b) => a + b, 0) / workHours.length;
     return Math.round(avg * 10) / 10;
@@ -358,7 +358,7 @@ export class AttendanceAIService {
   /**
    * 分析打卡時間分佈
    */
-  private analyzeHourDistribution(records: any[]) {
+  private analyzeHourDistribution(records: Attendance[]) {
     const checkInHours = new Map<number, number>();
     const checkOutHours = new Map<number, number>();
 

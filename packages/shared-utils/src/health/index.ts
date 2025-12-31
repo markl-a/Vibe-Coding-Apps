@@ -59,11 +59,11 @@ export function createHealthRouter(options: {
           checks.push(checkResult);
           if (result.status === 'fail') overallStatus = 'unhealthy';
           else if (result.status === 'warn' && overallStatus === 'healthy') overallStatus = 'degraded';
-        } catch (error: any) {
+        } catch (error: unknown) {
           checks.push({
             name,
             status: 'fail',
-            message: error.message,
+            message: error instanceof Error ? error.message : 'Unknown error',
             responseTime: Date.now() - start
           });
           overallStatus = 'unhealthy';
@@ -93,7 +93,7 @@ export function createHealthRouter(options: {
  */
 export const healthCheckers = {
   // MongoDB 檢查
-  mongodb: (mongoose: any): HealthChecker => async () => {
+  mongodb: (mongoose: { connection: { readyState: number } }): HealthChecker => async () => {
     if (mongoose.connection.readyState === 1) {
       return { status: 'pass', message: 'MongoDB connected' };
     }
@@ -101,7 +101,7 @@ export const healthCheckers = {
   },
 
   // Redis 檢查
-  redis: (client: any): HealthChecker => async () => {
+  redis: (client: { ping: () => Promise<void> }): HealthChecker => async () => {
     try {
       await client.ping();
       return { status: 'pass', message: 'Redis connected' };

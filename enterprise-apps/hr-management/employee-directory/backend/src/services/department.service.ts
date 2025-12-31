@@ -2,6 +2,26 @@ import { PrismaClient, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+interface DepartmentTreeNode {
+  id: string;
+  name: string;
+  code: string | null;
+  description: string | null;
+  parentId: string | null;
+  managerId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  manager: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  } | null;
+  _count: {
+    employees: number;
+  };
+  children: DepartmentTreeNode[];
+}
+
 export class DepartmentService {
   async findAll() {
     return await prisma.department.findMany({
@@ -69,7 +89,7 @@ export class DepartmentService {
     });
   }
 
-  async getDepartmentTree() {
+  async getDepartmentTree(): Promise<DepartmentTreeNode[]> {
     const departments = await prisma.department.findMany({
       include: {
         manager: {
@@ -88,20 +108,20 @@ export class DepartmentService {
     });
 
     // 構建樹形結構
-    const departmentMap = new Map();
+    const departmentMap = new Map<string, DepartmentTreeNode>();
     departments.forEach((dept) => {
       departmentMap.set(dept.id, { ...dept, children: [] });
     });
 
-    const tree: any[] = [];
+    const tree: DepartmentTreeNode[] = [];
     departments.forEach((dept) => {
       const node = departmentMap.get(dept.id);
-      if (dept.parentId) {
+      if (node && dept.parentId) {
         const parent = departmentMap.get(dept.parentId);
         if (parent) {
           parent.children.push(node);
         }
-      } else {
+      } else if (node) {
         tree.push(node);
       }
     });

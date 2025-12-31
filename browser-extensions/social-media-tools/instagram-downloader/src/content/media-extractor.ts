@@ -127,35 +127,37 @@ export class MediaExtractor {
   /**
    * 遞迴搜尋媒體 URL
    */
-  private searchForMediaUrls(obj: any, mediaList: MediaInfo[]): void {
+  private searchForMediaUrls(obj: unknown, mediaList: MediaInfo[]): void {
     if (!obj || typeof obj !== 'object') return;
 
+    const record = obj as Record<string, unknown>;
+
     // 檢查是否有 display_url（圖片）
-    if (obj.display_url && typeof obj.display_url === 'string') {
-      if (!this.isDuplicate(mediaList, obj.display_url)) {
+    if (record.display_url && typeof record.display_url === 'string') {
+      if (!this.isDuplicate(mediaList, record.display_url)) {
         mediaList.push({
           type: 'image',
-          url: obj.display_url,
+          url: record.display_url,
           filename: this.generateFilename('image', 'jpg')
         });
       }
     }
 
     // 檢查是否有 video_url（影片）
-    if (obj.video_url && typeof obj.video_url === 'string') {
-      if (!this.isDuplicate(mediaList, obj.video_url)) {
+    if (record.video_url && typeof record.video_url === 'string') {
+      if (!this.isDuplicate(mediaList, record.video_url)) {
         mediaList.push({
           type: 'video',
-          url: obj.video_url,
+          url: record.video_url,
           filename: this.generateFilename('video', 'mp4')
         });
       }
     }
 
     // 遞迴搜尋子物件
-    for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        this.searchForMediaUrls(obj[key], mediaList);
+    for (const key in record) {
+      if (Object.prototype.hasOwnProperty.call(record, key)) {
+        this.searchForMediaUrls(record[key], mediaList);
       }
     }
   }

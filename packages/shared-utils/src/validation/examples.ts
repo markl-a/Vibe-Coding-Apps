@@ -270,7 +270,7 @@ export interface APIRequestInput {
   page?: number;
   limit?: number;
   sortBy?: string;
-  filter?: Record<string, any>;
+  filter?: Record<string, unknown>;
 }
 
 export function validateAPIRequest(input: APIRequestInput) {
@@ -386,7 +386,7 @@ export function validateIPWhitelist(ip: string, allowedIPs: string[]) {
 // =============================================================================
 
 export const createSanitizationMiddleware = () => {
-  return (req: any, res: any, next: any) => {
+  return (req: Record<string, unknown>, res: Record<string, unknown>, next: () => void) => {
     // Sanitize query parameters
     if (req.query) {
       for (const [key, value] of Object.entries(req.query)) {

@@ -192,7 +192,7 @@ async function cacheStrategiesExample() {
       console.log('DB get:', key);
       return { data: key };
     },
-    async set(key: string, value: any) {
+    async set(key: string, value: unknown) {
       console.log('DB set:', key, value);
     },
     async delete(key: string) {
@@ -207,10 +207,10 @@ async function cacheStrategiesExample() {
   const writeBehind = new WriteBehindStrategy(
     cache,
     {
-      async set(key: string, value: any) {
+      async set(key: string, value: unknown) {
         console.log('Async DB write:', key, value);
       },
-      async setMany(entries: Map<string, any>) {
+      async setMany(entries: Map<string, unknown>) {
         console.log('Batch DB write:', entries.size, 'entries');
       },
     },

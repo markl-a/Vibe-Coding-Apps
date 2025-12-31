@@ -6,11 +6,18 @@ import { VideoDownloader } from './video-downloader';
 import { AdSkipper } from './ad-skipper';
 import { PlayerEnhancements } from './player-enhancements';
 
+interface YouTubeEnhancerSettings {
+  skipAds: boolean;
+  enableDownloader: boolean;
+  customSpeed: boolean;
+  volumeBoost: boolean;
+}
+
 class YouTubeEnhancer {
   private videoDownloader: VideoDownloader;
   private adSkipper: AdSkipper;
   private playerEnhancements: PlayerEnhancements;
-  private settings: any;
+  private settings: YouTubeEnhancerSettings;
 
   constructor() {
     this.videoDownloader = new VideoDownloader();
@@ -38,7 +45,7 @@ class YouTubeEnhancer {
    */
   private async loadSettings(): Promise<void> {
     const result = await chrome.storage.local.get('settings');
-    this.settings = result.settings || {
+    this.settings = (result.settings as YouTubeEnhancerSettings) || {
       skipAds: true,
       enableDownloader: true,
       customSpeed: true,

@@ -3,8 +3,20 @@
  * 監控頁面並注入下載按鈕
  */
 
-import { MediaExtractor } from './media-extractor';
+import { MediaExtractor, MediaInfo } from './media-extractor';
 import { DownloadButtonInjector } from './download-button';
+
+interface InstagramMessage {
+  type: string;
+  [key: string]: unknown;
+}
+
+interface InstagramResponse {
+  success: boolean;
+  error?: string;
+  media?: MediaInfo[];
+  count?: number;
+}
 
 class InstagramDownloader {
   private buttonInjector: DownloadButtonInjector;
@@ -48,7 +60,7 @@ class InstagramDownloader {
   /**
    * 處理訊息
    */
-  private handleMessage(message: any, sendResponse: (response: any) => void): void {
+  private handleMessage(message: InstagramMessage, sendResponse: (response: InstagramResponse) => void): void {
     switch (message.type) {
       case 'GET_CURRENT_MEDIA':
         this.getCurrentPageMedia(sendResponse);
@@ -64,10 +76,10 @@ class InstagramDownloader {
   /**
    * 獲取當前頁面的媒體資訊
    */
-  private getCurrentPageMedia(sendResponse: (response: any) => void): void {
+  private getCurrentPageMedia(sendResponse: (response: InstagramResponse) => void): void {
     try {
       const posts = document.querySelectorAll('article[role="presentation"]');
-      const allMedia: any[] = [];
+      const allMedia: MediaInfo[] = [];
 
       posts.forEach(post => {
         const media = this.mediaExtractor.extractMediaFromPost(post as HTMLElement);
@@ -84,7 +96,7 @@ class InstagramDownloader {
   /**
    * 下載當前焦點貼文
    */
-  private downloadCurrentPost(sendResponse: (response: any) => void): void {
+  private downloadCurrentPost(sendResponse: (response: InstagramResponse) => void): void {
     try {
       // 嘗試找到當前檢視的貼文
       const activePost = document.querySelector('article[role="presentation"][tabindex="-1"]');

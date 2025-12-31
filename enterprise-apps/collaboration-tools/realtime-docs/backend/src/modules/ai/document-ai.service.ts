@@ -18,6 +18,18 @@ interface DocumentAnalysis {
   suggestions: SmartSuggestion[];
 }
 
+interface GrammarErrorResponse {
+  original: string;
+  correction: string;
+  type: 'grammar' | 'spelling' | 'punctuation';
+  message: string;
+}
+
+interface CompletionContext {
+  documentType?: 'email' | 'report' | 'article' | 'note';
+  tone?: 'formal' | 'casual' | 'technical';
+}
+
 @Injectable()
 export class DocumentAIService {
   private apiKey: string;
@@ -82,9 +94,9 @@ ${text}`;
       const response = await this.callOpenAI(prompt);
 
       try {
-        const errors = JSON.parse(response);
+        const errors: GrammarErrorResponse[] = JSON.parse(response);
         // 在實際文本中找到錯誤位置
-        return errors.map((error: any) => {
+        return errors.map((error) => {
           const start = text.indexOf(error.original);
           const end = start + error.original.length;
 
@@ -444,7 +456,7 @@ ${text}`;
 
   private buildCompletionPrompt(
     currentText: string,
-    context?: any,
+    context?: CompletionContext,
   ): string {
     const contextInfo = context
       ? `文檔類型：${context.documentType || '一般'}

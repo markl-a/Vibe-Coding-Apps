@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Table, Card, Button, Space, Modal, Form, Input, message } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { departmentApi, Department } from '../services/api'
+import { getErrorMessage } from '@vibe/shared-utils'
 
 const DepartmentList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -53,8 +54,8 @@ const DepartmentList = () => {
       } else {
         createMutation.mutate(values)
       }
-    } catch (error) {
-      console.error('Validation failed:', error)
+    } catch (error: unknown) {
+      console.error('Validation failed:', getErrorMessage(error))
     }
   }
 
@@ -70,7 +71,7 @@ const DepartmentList = () => {
     {
       title: '操作',
       key: 'action',
-      render: (_: any, record: Department) => (
+      render: (_: unknown, record: Department) => (
         <Space>
           <Button
             type="link"

@@ -87,3 +87,19 @@ export interface HealthStatus {
   };
   timestamp: Date;
 }
+
+// Express middleware types
+export interface ExpressRequest {
+  method: string;
+  url: string;
+  headers: Record<string, string | string[] | undefined>;
+  span?: unknown;
+}
+
+export interface ExpressResponse {
+  statusCode: number;
+  setHeader(name: string, value: string): void;
+  on(event: string, callback: () => void): void;
+}
+
+export type NextFunction = () => void;

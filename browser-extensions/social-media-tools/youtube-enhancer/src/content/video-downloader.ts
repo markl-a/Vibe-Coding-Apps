@@ -2,12 +2,18 @@
  * YouTube 影片下載器
  */
 
+interface VideoFormat {
+  quality: string;
+  url: string;
+  mimeType: string;
+}
+
 export interface VideoInfo {
   videoId: string;
   title: string;
   author: string;
   duration: number;
-  formats: any[];
+  formats: VideoFormat[];
 }
 
 export class VideoDownloader {

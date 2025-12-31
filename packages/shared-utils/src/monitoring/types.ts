@@ -57,7 +57,7 @@ export interface SpanContext {
 
 export interface SpanOptions {
   kind?: SpanKind;
-  attributes?: Record<string, any>;
+  attributes?: Record<string, unknown>;
   startTime?: number;
 }
 
@@ -77,9 +77,9 @@ export enum SpanStatus {
 
 export interface Span {
   context: SpanContext;
-  setAttribute(key: string, value: any): void;
-  setAttributes(attributes: Record<string, any>): void;
-  addEvent(name: string, attributes?: Record<string, any>): void;
+  setAttribute(key: string, value: unknown): void;
+  setAttributes(attributes: Record<string, unknown>): void;
+  addEvent(name: string, attributes?: Record<string, unknown>): void;
   setStatus(status: SpanStatus, message?: string): void;
   end(endTime?: number): void;
   isRecording(): boolean;

@@ -5,6 +5,11 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+interface NFTAttribute {
+  trait_type: string;
+  value: string | number;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { name, attributes } = await request.json();
@@ -17,7 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     const attributesText = attributes
-      ?.map((attr: any) => `${attr.trait_type}: ${attr.value}`)
+      ?.map((attr: NFTAttribute) => `${attr.trait_type}: ${attr.value}`)
       .join(', ');
 
     const prompt = `Generate an engaging and creative description for an NFT with the following details:

@@ -5,6 +5,16 @@ import useSWR from 'swr';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+interface NFT {
+  tokenId: string;
+  name: string;
+  description: string;
+  image: string;
+  price?: string;
+  seller?: string;
+  listingId?: string;
+}
+
 export function NFTGrid() {
   const { data: nfts, error, isLoading } = useSWR('/api/nfts', fetcher);
 
@@ -39,7 +49,7 @@ export function NFTGrid() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {nfts.map((nft: any) => (
+      {nfts.map((nft: NFT) => (
         <NFTCard key={nft.tokenId} nft={nft} />
       ))}
     </div>

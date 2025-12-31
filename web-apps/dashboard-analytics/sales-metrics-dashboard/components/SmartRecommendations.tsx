@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react';
 import { Lightbulb, TrendingUp, AlertTriangle, Target, CheckCircle2 } from 'lucide-react';
 import { analyzeProductPerformance, generateSalesInsights, ProductRecommendation, SalesInsight } from '@/lib/aiSalesService';
+import type { TopProduct, RegionSales } from '@/types';
 
 interface SmartRecommendationsProps {
   revenueData: { date: string; revenue: number; orders: number }[];
-  products: any[];
-  regions: any[];
+  products: TopProduct[];
+  regions: RegionSales[];
 }
 
 const SmartRecommendations = ({ revenueData, products, regions }: SmartRecommendationsProps) => {

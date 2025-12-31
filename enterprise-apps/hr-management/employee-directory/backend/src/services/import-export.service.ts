@@ -1,13 +1,52 @@
 import { PrismaClient, Prisma } from '@prisma/client';
 import * as XLSX from 'xlsx';
+import { getErrorMessage } from '@vibe/shared-utils';
 
 const prisma = new PrismaClient();
+
+interface ImportedEmployee {
+  id: string;
+  employeeNumber: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string | null;
+  position: string;
+  jobTitle: string;
+  employeeType: string;
+  hireDate: Date;
+  baseSalary: number | null;
+  skills: string[];
+  gender: string | null;
+  nationality: string | null;
+  address: string | null;
+  city: string | null;
+  country: string | null;
+}
 
 interface ImportResult {
   success: number;
   failed: number;
   errors: Array<{ row: number; error: string }>;
-  imported: any[];
+  imported: ImportedEmployee[];
+}
+
+interface ExcelRowData {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  position?: string;
+  jobTitle?: string;
+  employeeType?: string;
+  hireDate?: string | number;
+  baseSalary?: string | number;
+  skills?: string;
+  gender?: string;
+  nationality?: string;
+  address?: string;
+  city?: string;
+  country?: string;
 }
 
 /**
@@ -34,7 +73,7 @@ export class ImportExportService {
 
       // 處理每一行數據
       for (let i = 0; i < data.length; i++) {
-        const row = data[i] as any;
+        const row = data[i] as ExcelRowData;
         const rowNumber = i + 2; // Excel 行號從 1 開始，加上標題行
 
         try {
@@ -90,16 +129,16 @@ export class ImportExportService {
 
           result.success++;
           result.imported.push(employee);
-        } catch (error) {
+        } catch (error: unknown) {
           result.failed++;
           result.errors.push({
             row: rowNumber,
-            error: error instanceof Error ? error.message : '未知錯誤',
+            error: getErrorMessage(error),
           });
         }
       }
-    } catch (error) {
-      throw new Error('文件解析失敗: ' + (error instanceof Error ? error.message : '未知錯誤'));
+    } catch (error: unknown) {
+      throw new Error('文件解析失敗: ' + getErrorMessage(error));
     }
 
     return result;
@@ -119,7 +158,11 @@ export class ImportExportService {
     }
 
     if (filters?.status) {
-      where.employmentStatus = filters.status as any;
+      // Type guard to ensure status is a valid employment status
+      const validStatuses = ['ACTIVE', 'INACTIVE', 'TERMINATED', 'ON_LEAVE'];
+      if (validStatuses.includes(filters.status)) {
+        where.employmentStatus = filters.status;
+      }
     }
 
     const employees = await prisma.employee.findMany({

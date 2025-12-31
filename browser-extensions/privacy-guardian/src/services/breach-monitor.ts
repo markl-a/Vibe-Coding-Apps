@@ -1,5 +1,12 @@
 import { DataBreach } from '../types';
 
+interface BreachInfo {
+  name: string;
+  date: string;
+  description: string;
+  affectedAccounts: number;
+}
+
 /**
  * 數據洩漏監控服務
  * 整合 Have I Been Pwned API 檢查帳號和密碼是否洩漏
@@ -128,12 +135,7 @@ export class BreachMonitorService {
   /**
    * 監控新的數據洩漏事件
    */
-  static async monitorNewBreaches(): Promise<Array<{
-    name: string;
-    date: string;
-    description: string;
-    affectedAccounts: number;
-  }>> {
+  static async monitorNewBreaches(): Promise<BreachInfo[]> {
     try {
       // 取得已知的洩漏列表
       const knownBreaches = await this.getKnownBreaches();
@@ -310,12 +312,7 @@ export class BreachMonitorService {
   /**
    * 取得已知洩漏列表
    */
-  private static async getKnownBreaches(): Promise<Array<{
-    name: string;
-    date: string;
-    description: string;
-    affectedAccounts: number;
-  }>> {
+  private static async getKnownBreaches(): Promise<BreachInfo[]> {
     const result = await chrome.storage.local.get('knownBreaches');
     return result.knownBreaches || [];
   }
@@ -323,19 +320,14 @@ export class BreachMonitorService {
   /**
    * 更新已知洩漏列表
    */
-  private static async updateKnownBreaches(breaches: any[]): Promise<void> {
+  private static async updateKnownBreaches(breaches: BreachInfo[]): Promise<void> {
     await chrome.storage.local.set({ knownBreaches: breaches });
   }
 
   /**
    * 獲取最新洩漏事件（模擬）
    */
-  private static async fetchLatestBreaches(): Promise<Array<{
-    name: string;
-    date: string;
-    description: string;
-    affectedAccounts: number;
-  }>> {
+  private static async fetchLatestBreaches(): Promise<BreachInfo[]> {
     // 實際應該調用 HIBP API
     // 這裡返回空數組作為示例
     return [];
@@ -344,7 +336,7 @@ export class BreachMonitorService {
   /**
    * 發送洩漏通知
    */
-  private static async notifyNewBreaches(breaches: any[]): Promise<void> {
+  private static async notifyNewBreaches(breaches: BreachInfo[]): Promise<void> {
     for (const breach of breaches) {
       await chrome.notifications.create({
         type: 'basic',

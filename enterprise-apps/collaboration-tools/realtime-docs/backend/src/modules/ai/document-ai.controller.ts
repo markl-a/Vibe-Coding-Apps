@@ -189,7 +189,7 @@ export class DocumentAIController {
     );
 
     // Convert Map to Object
-    const emotionsObj: any = {};
+    const emotionsObj: Record<string, number> = {};
     analysis.emotions.forEach((value, key) => {
       emotionsObj[key] = value;
     });

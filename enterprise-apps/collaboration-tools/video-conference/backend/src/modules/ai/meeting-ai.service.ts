@@ -24,6 +24,23 @@ interface MeetingSummary {
   sentiment: 'positive' | 'neutral' | 'negative';
 }
 
+interface WhisperSegment {
+  text: string;
+  start: number;
+  confidence?: number;
+}
+
+interface WhisperApiResponse {
+  text?: string;
+  segments?: WhisperSegment[];
+}
+
+interface MeetingInfo {
+  title: string;
+  participants: string[];
+  duration: number;
+}
+
 @Injectable()
 export class MeetingAIService {
   private apiKey: string;
@@ -390,12 +407,12 @@ ${transcript}`;
     return data.choices?.[0]?.message?.content?.trim() || '';
   }
 
-  private processTranscription(result: any): TranscriptionSegment[] {
+  private processTranscription(result: WhisperApiResponse): TranscriptionSegment[] {
     // 處理 Whisper API 返回的轉錄結果
     const segments: TranscriptionSegment[] = [];
 
     if (result.segments) {
-      result.segments.forEach((segment: any, index: number) => {
+      result.segments.forEach((segment, index: number) => {
         segments.push({
           speaker: `speaker_${index % 3}`, // 簡化版本，實際需要 Speaker Diarization
           text: segment.text,
@@ -415,7 +432,7 @@ ${transcript}`;
     return segments;
   }
 
-  private getDefaultSummary(meetingInfo: any): MeetingSummary {
+  private getDefaultSummary(meetingInfo: MeetingInfo): MeetingSummary {
     return {
       title: meetingInfo.title,
       summary: '無法生成會議摘要',

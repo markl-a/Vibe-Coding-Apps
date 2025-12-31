@@ -29,7 +29,7 @@ export interface AIInsight {
   description: string;
   impact: 'positive' | 'negative' | 'neutral';
   confidence: number;
-  data?: any;
+  data?: unknown;
 }
 
 /**

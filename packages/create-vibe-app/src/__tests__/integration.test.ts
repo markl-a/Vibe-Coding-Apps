@@ -162,7 +162,7 @@ describe('Integration: Edge cases and error scenarios', () => {
     const projectPath = '/test/path/@myorg/my-app';
     await createBasicFiles(config, projectPath);
 
-    const readmeCall = (fs.writeFile as any).mock.calls.find((call: any) =>
+    const readmeCall = (fs.writeFile as any).mock.calls.find((call: WriteFileCall) =>
       call[0].endsWith('README.md')
     );
     expect(readmeCall[1]).toContain('# @myorg/my-app');

@@ -23,7 +23,7 @@ const config: Config = {
           900: '#0c4a6e',
         },
       },
-      typography: (theme: any) => ({
+      typography: (theme: (path: string) => string) => ({
         DEFAULT: {
           css: {
             maxWidth: 'none',

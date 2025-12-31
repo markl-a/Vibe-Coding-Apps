@@ -1,8 +1,145 @@
 /**
- * HTTP 安全頭中間件
+ * HTTP 安全頭中間件和 CORS 配置
  */
 
 import { Request, Response, NextFunction } from 'express';
+
+// ============================================
+// CORS 配置
+// ============================================
+
+export interface CorsOptions {
+  /** 允許的來源列表，或函數來動態驗證 */
+  origin?: string[] | ((origin: string | undefined) => boolean);
+  /** 允許的 HTTP 方法 */
+  methods?: string[];
+  /** 允許的請求頭 */
+  allowedHeaders?: string[];
+  /** 暴露給客戶端的響應頭 */
+  exposedHeaders?: string[];
+  /** 是否允許攜帶憑證 */
+  credentials?: boolean;
+  /** 預檢請求的快取時間（秒） */
+  maxAge?: number;
+}
+
+/**
+ * 創建安全的 CORS 配置
+ * @param options CORS 選項
+ * @returns 標準化的 CORS 配置對象
+ *
+ * @example
+ * // Express 使用
+ * import cors from 'cors';
+ * app.use(cors(createCorsConfig({ origin: ['https://example.com'] })));
+ *
+ * @example
+ * // Socket.io 使用
+ * const io = new Server(server, { cors: createCorsConfig() });
+ */
+export function createCorsConfig(options: CorsOptions = {}): {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => void;
+  methods: string[];
+  allowedHeaders: string[];
+  exposedHeaders: string[];
+  credentials: boolean;
+  maxAge: number;
+} {
+  const {
+    origin: allowedOrigins = getDefaultOrigins(),
+    methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders = ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Request-ID'],
+    exposedHeaders = ['X-Request-ID', 'X-RateLimit-Limit', 'X-RateLimit-Remaining'],
+    credentials = true,
+    maxAge = 86400, // 24 小時
+  } = options;
+
+  return {
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+      // 允許無 origin 的請求（如伺服器端請求、移動應用）
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      let isAllowed = false;
+
+      if (typeof allowedOrigins === 'function') {
+        isAllowed = allowedOrigins(origin);
+      } else if (Array.isArray(allowedOrigins)) {
+        isAllowed = allowedOrigins.some((allowed) => {
+          if (allowed === '*') return true;
+          if (allowed.startsWith('*.')) {
+            // 支援萬用字元子網域，如 *.example.com
+            const domain = allowed.slice(2);
+            return origin.endsWith(domain);
+          }
+          return allowed === origin;
+        });
+      }
+
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS policy: Origin ${origin} is not allowed`));
+      }
+    },
+    methods,
+    allowedHeaders,
+    exposedHeaders,
+    credentials,
+    maxAge,
+  };
+}
+
+/**
+ * 從環境變數獲取預設允許的來源
+ */
+function getDefaultOrigins(): string[] {
+  const envOrigins = process.env.ALLOWED_ORIGINS || process.env.CORS_ORIGINS;
+  if (envOrigins) {
+    return envOrigins.split(',').map((o) => o.trim());
+  }
+
+  // 開發環境預設值
+  if (process.env.NODE_ENV === 'development') {
+    return ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173'];
+  }
+
+  // 生產環境必須明確指定
+  return [];
+}
+
+/**
+ * CORS 預設配置
+ */
+export const corsPresets = {
+  /** 嚴格模式：只允許指定的來源 */
+  strict: (origins: string[]): CorsOptions => ({
+    origin: origins,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  }),
+
+  /** 開發模式：允許本地開發常用端口 */
+  development: (): CorsOptions => ({
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:5173',
+      'http://localhost:8080',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:5173',
+    ],
+    credentials: true,
+  }),
+
+  /** API 模式：適用於公開 API */
+  api: (origins: string[]): CorsOptions => ({
+    origin: origins,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    credentials: false,
+  }),
+};
 
 export interface SecurityHeadersOptions {
   contentSecurityPolicy?: boolean | {

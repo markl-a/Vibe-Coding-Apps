@@ -23,6 +23,21 @@ export interface Post {
   isDeleted: boolean;
 }
 
+export interface Comment {
+  id: bigint;
+  author: string;
+  content: string;
+  timestamp: bigint;
+}
+
+export interface PostCreatedEventArgs {
+  postId: bigint;
+  author: string;
+  ipfsHash: string;
+  tags: string[];
+  timestamp: bigint;
+}
+
 export function usePost() {
   const { writeContractAsync } = useWriteContract();
 
@@ -184,7 +199,7 @@ export function useGetComments(postId: bigint) {
   });
 
   return {
-    comments: data as any[] | undefined,
+    comments: data as Comment[] | undefined,
     isLoading,
     error,
     refetch,
@@ -194,14 +209,14 @@ export function useGetComments(postId: bigint) {
 /**
  * 監聽新貼文事件
  */
-export function useWatchNewPosts(onNewPost: (post: any) => void) {
+export function useWatchNewPosts(onNewPost: (post: PostCreatedEventArgs) => void) {
   useWatchContractEvent({
     address: CONTRACT_ADDRESS,
     abi: SocialPostABI.abi,
     eventName: 'PostCreated',
     onLogs(logs) {
       logs.forEach((log) => {
-        onNewPost(log.args);
+        onNewPost(log.args as PostCreatedEventArgs);
       });
     },
   });

@@ -140,7 +140,7 @@ const AISalesForecast = ({ historicalData }: AISalesForecastProps) => {
                 borderRadius: '8px',
                 boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
               }}
-              formatter={(value: any) => [`$${value?.toLocaleString()}`, '']}
+              formatter={(value: unknown) => [`$${(value as number)?.toLocaleString()}`, '']}
             />
             <Legend />
 

@@ -11,6 +11,26 @@ import { View, Text, Image } from 'react-native';
  * 4. 訂單管理
  */
 
+// MARK: - 類型定義
+
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  category: string;
+  image: string;
+  rating: number;
+  reviews: number;
+  inStock: boolean;
+  description: string;
+}
+
+interface CartItem {
+  productId: string;
+  quantity: number;
+  price: number;
+}
+
 // MARK: - 測試數據
 
 export const MarketplaceTestData = {
@@ -157,7 +177,7 @@ export const CartUtils = {
   },
 
   // 添加到購物車
-  addToCart: (cart: any[], productId: string, price: number) => {
+  addToCart: (cart: CartItem[], productId: string, price: number): CartItem[] => {
     const existing = cart.find(item => item.productId === productId);
     if (existing) {
       return cart.map(item =>
@@ -170,7 +190,7 @@ export const CartUtils = {
   },
 
   // 從購物車移除
-  removeFromCart: (cart: any[], productId: string) => {
+  removeFromCart: (cart: CartItem[], productId: string): CartItem[] => {
     return cart.filter(item => item.productId !== productId);
   },
 };
@@ -179,7 +199,7 @@ export const CartUtils = {
 
 export const SearchUtils = {
   // 搜尋產品
-  searchProducts: (products: any[], query: string) => {
+  searchProducts: (products: Product[], query: string): Product[] => {
     return products.filter(p =>
       p.name.toLowerCase().includes(query.toLowerCase()) ||
       p.description.toLowerCase().includes(query.toLowerCase())
@@ -187,26 +207,29 @@ export const SearchUtils = {
   },
 
   // 按分類篩選
-  filterByCategory: (products: any[], category: string) => {
+  filterByCategory: (products: Product[], category: string): Product[] => {
     return products.filter(p => p.category === category);
   },
 
   // 按價格範圍篩選
-  filterByPrice: (products: any[], min: number, max: number) => {
+  filterByPrice: (products: Product[], min: number, max: number): Product[] => {
     return products.filter(p => p.price >= min && p.price <= max);
   },
 
   // 按評分篩選
-  filterByRating: (products: any[], minRating: number) => {
+  filterByRating: (products: Product[], minRating: number): Product[] => {
     return products.filter(p => p.rating >= minRating);
   },
 
   // 排序
-  sortProducts: (products: any[], sortBy: 'price' | 'rating' | 'name', order: 'asc' | 'desc' = 'asc') => {
+  sortProducts: (products: Product[], sortBy: 'price' | 'rating' | 'name', order: 'asc' | 'desc' = 'asc'): Product[] => {
     return [...products].sort((a, b) => {
       const aVal = a[sortBy];
       const bVal = b[sortBy];
-      return order === 'asc' ? aVal - bVal : bVal - aVal;
+      if (typeof aVal === 'string' && typeof bVal === 'string') {
+        return order === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+      }
+      return order === 'asc' ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number);
     });
   },
 };

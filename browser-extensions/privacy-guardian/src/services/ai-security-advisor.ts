@@ -274,7 +274,11 @@ export class AISecurityAdvisor {
     return totalAge / passwords.length;
   }
 
-  private static calculateSecurityScore(analysis: any): number {
+  private static calculateSecurityScore(analysis: {
+    totalPasswords: number;
+    reuseDetected: string[];
+    weakPasswords: string[];
+  }): number {
     let score = 100;
 
     // 扣分項目
@@ -286,7 +290,11 @@ export class AISecurityAdvisor {
     return Math.max(0, Math.min(100, score));
   }
 
-  private static assessRiskLevel(analysis: any): 'low' | 'medium' | 'high' {
+  private static assessRiskLevel(analysis: {
+    totalPasswords: number;
+    reuseDetected: string[];
+    weakPasswords: string[];
+  }): 'low' | 'medium' | 'high' {
     const score = this.calculateSecurityScore(analysis);
     if (score >= 80) return 'low';
     if (score >= 50) return 'medium';

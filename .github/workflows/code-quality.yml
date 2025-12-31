@@ -1,0 +1,569 @@
+name: Code Quality
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '**/*.js'
+      - '**/*.jsx'
+      - '**/package.json'
+      - '**/pnpm-lock.yaml'
+      - '.github/workflows/code-quality.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Dependency vulnerability scanning
+  security-audit:
+    name: Security & Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run pnpm audit
+        id: audit
+        continue-on-error: true
+        run: |
+          echo "## Security Audit Results" >> $GITHUB_STEP_SUMMARY
+          pnpm audit --json > audit-results.json || true
+
+          # Parse and display results
+          if [ -s audit-results.json ]; then
+            HIGH=$(jq '.metadata.vulnerabilities.high // 0' audit-results.json)
+            CRITICAL=$(jq '.metadata.vulnerabilities.critical // 0' audit-results.json)
+            MODERATE=$(jq '.metadata.vulnerabilities.moderate // 0' audit-results.json)
+            LOW=$(jq '.metadata.vulnerabilities.low // 0' audit-results.json)
+
+            echo "- Critical: $CRITICAL" >> $GITHUB_STEP_SUMMARY
+            echo "- High: $HIGH" >> $GITHUB_STEP_SUMMARY
+            echo "- Moderate: $MODERATE" >> $GITHUB_STEP_SUMMARY
+            echo "- Low: $LOW" >> $GITHUB_STEP_SUMMARY
+
+            if [ "$CRITICAL" -gt 0 ] || [ "$HIGH" -gt 0 ]; then
+              echo "status=failed" >> $GITHUB_OUTPUT
+              echo "::error::Found $CRITICAL critical and $HIGH high severity vulnerabilities"
+              exit 1
+            fi
+          fi
+
+      - name: Upload audit results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: audit-results
+          path: audit-results.json
+          retention-days: 30
+
+  # License compliance check
+  license-compliance:
+    name: License Compliance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install license-checker
+        run: pnpm add -g license-checker
+
+      - name: Check licenses
+        id: license-check
+        run: |
+          echo "## License Compliance Report" >> $GITHUB_STEP_SUMMARY
+
+          # Allowed licenses (permissive open source)
+          ALLOWED_LICENSES="MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC;CC0-1.0;Unlicense;0BSD"
+
+          # Check for problematic licenses
+          license-checker --summary --json > licenses.json
+          license-checker --summary >> $GITHUB_STEP_SUMMARY
+
+          # Check for GPL, AGPL, and other copyleft licenses
+          PROBLEMATIC=$(license-checker --json | jq -r 'to_entries[] | select(.value.licenses | tostring | test("GPL|AGPL|SSPL|EUPL"; "i")) | .key' || true)
+
+          if [ -n "$PROBLEMATIC" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### ⚠️ Potential License Issues" >> $GITHUB_STEP_SUMMARY
+            echo "$PROBLEMATIC" >> $GITHUB_STEP_SUMMARY
+            echo "::warning::Found packages with potentially restrictive licenses"
+          else
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### ✅ No license conflicts detected" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload license report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: license-report
+          path: licenses.json
+          retention-days: 30
+
+  # Bundle size analysis
+  bundle-size:
+    name: Bundle Size Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build projects
+        run: pnpm build
+
+      - name: Analyze bundle sizes
+        id: bundle-analysis
+        run: |
+          echo "## Bundle Size Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Find all dist/build directories
+          BUNDLE_DIRS=$(find . -type d \( -name "dist" -o -name "build" -o -name ".next" \) -not -path "*/node_modules/*" | head -20)
+
+          for dir in $BUNDLE_DIRS; do
+            if [ -d "$dir" ]; then
+              SIZE=$(du -sh "$dir" | cut -f1)
+              PROJECT=$(dirname "$dir" | sed 's|^\./||')
+              echo "- \`$PROJECT\`: **$SIZE**" >> $GITHUB_STEP_SUMMARY
+
+              # Check for large bundles (>5MB warning, >10MB error)
+              SIZE_MB=$(du -sm "$dir" | cut -f1)
+              if [ "$SIZE_MB" -gt 10 ]; then
+                echo "::error::Bundle size for $PROJECT is ${SIZE_MB}MB (exceeds 10MB limit)"
+              elif [ "$SIZE_MB" -gt 5 ]; then
+                echo "::warning::Bundle size for $PROJECT is ${SIZE_MB}MB (approaching limit)"
+              fi
+            fi
+          done
+
+      - name: Upload bundle analysis
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: bundle-artifacts
+          path: |
+            **/dist
+            **/build
+            **/.next/standalone
+          retention-days: 7
+
+  # Dead code detection
+  dead-code-detection:
+    name: Dead Code Detection
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install knip
+        run: pnpm add -g knip
+
+      - name: Detect unused exports and dependencies
+        id: dead-code
+        continue-on-error: true
+        run: |
+          echo "## Dead Code Detection Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Run knip to find unused exports, dependencies, and files
+          knip --reporter json > knip-report.json || true
+
+          if [ -s knip-report.json ]; then
+            # Parse and summarize results
+            UNUSED_FILES=$(jq '.files | length // 0' knip-report.json 2>/dev/null || echo "0")
+            UNUSED_DEPS=$(jq '.dependencies | length // 0' knip-report.json 2>/dev/null || echo "0")
+            UNUSED_EXPORTS=$(jq '.exports | length // 0' knip-report.json 2>/dev/null || echo "0")
+
+            echo "### Summary" >> $GITHUB_STEP_SUMMARY
+            echo "- Unused files: $UNUSED_FILES" >> $GITHUB_STEP_SUMMARY
+            echo "- Unused dependencies: $UNUSED_DEPS" >> $GITHUB_STEP_SUMMARY
+            echo "- Unused exports: $UNUSED_EXPORTS" >> $GITHUB_STEP_SUMMARY
+
+            if [ "$UNUSED_FILES" -gt 0 ] || [ "$UNUSED_DEPS" -gt 0 ] || [ "$UNUSED_EXPORTS" -gt 10 ]; then
+              echo "::warning::Found potential dead code. Review the artifacts for details."
+            fi
+          else
+            echo "✅ No significant dead code detected" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload dead code report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: dead-code-report
+          path: knip-report.json
+          retention-days: 30
+
+  # Code complexity metrics
+  complexity-analysis:
+    name: Complexity Metrics
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install complexity tools
+        run: pnpm add -g typescript-complexity eslint-plugin-complexity
+
+      - name: Analyze code complexity
+        id: complexity
+        continue-on-error: true
+        run: |
+          echo "## Code Complexity Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Find TypeScript/JavaScript files with high complexity
+          # Using ESLint complexity rules
+          npx eslint . \
+            --ext .ts,.tsx,.js,.jsx \
+            --rule 'complexity: [error, { max: 10 }]' \
+            --format json > complexity-report.json || true
+
+          if [ -s complexity-report.json ]; then
+            TOTAL_ISSUES=$(jq '[.[].messages | length] | add // 0' complexity-report.json)
+            FILES_WITH_ISSUES=$(jq '[.[] | select(.messages | length > 0)] | length' complexity-report.json)
+
+            echo "- Files with high complexity: $FILES_WITH_ISSUES" >> $GITHUB_STEP_SUMMARY
+            echo "- Total complexity issues: $TOTAL_ISSUES" >> $GITHUB_STEP_SUMMARY
+
+            if [ "$TOTAL_ISSUES" -gt 50 ]; then
+              echo "::warning::Found $TOTAL_ISSUES functions with high cyclomatic complexity (>10)"
+            fi
+
+            # Show top 5 most complex files
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Top Complex Files" >> $GITHUB_STEP_SUMMARY
+            jq -r '.[] | select(.messages | length > 0) | "\(.filePath): \(.messages | length) issues"' complexity-report.json | head -5 >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ No high complexity issues detected" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload complexity report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: complexity-report
+          path: complexity-report.json
+          retention-days: 30
+
+  # Code duplication check
+  duplication-check:
+    name: Code Duplication Detection
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install jscpd
+        run: pnpm add -g jscpd
+
+      - name: Detect code duplication
+        id: duplication
+        continue-on-error: true
+        run: |
+          echo "## Code Duplication Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Run jscpd with reasonable thresholds
+          jscpd . \
+            --min-lines 10 \
+            --min-tokens 50 \
+            --threshold 5 \
+            --reporters json,console \
+            --ignore "node_modules/**,dist/**,build/**,.next/**,coverage/**" \
+            --format "typescript,javascript,tsx,jsx" \
+            --output ./jscpd-report || true
+
+          if [ -f "./jscpd-report/jscpd-report.json" ]; then
+            DUPLICATION=$(jq '.statistics.total.percentage' jscpd-report/jscpd-report.json 2>/dev/null || echo "0")
+            DUPLICATES=$(jq '.duplicates | length // 0' jscpd-report/jscpd-report.json)
+
+            echo "- Duplication percentage: ${DUPLICATION}%" >> $GITHUB_STEP_SUMMARY
+            echo "- Number of duplicates: $DUPLICATES" >> $GITHUB_STEP_SUMMARY
+
+            # Check against threshold
+            DUPLICATION_INT=$(echo "$DUPLICATION" | cut -d. -f1)
+            if [ "$DUPLICATION_INT" -gt 5 ]; then
+              echo "::warning::Code duplication is ${DUPLICATION}% (threshold: 5%)"
+            else
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "✅ Duplication is within acceptable limits" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
+
+      - name: Upload duplication report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: duplication-report
+          path: jscpd-report/
+          retention-days: 30
+
+  # SonarCloud/SonarQube analysis (optional - runs only if SONAR_TOKEN is set)
+  sonar-analysis:
+    name: SonarCloud Analysis
+    runs-on: ubuntu-latest
+    if: ${{ vars.SONAR_ENABLED == 'true' && secrets.SONAR_TOKEN != '' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for better analysis
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests with coverage
+        run: pnpm test --coverage --coverageReporters=lcov || true
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
+            -Dsonar.sources=.
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**,**/*.test.ts,**/*.spec.ts
+            -Dsonar.tests=.
+            -Dsonar.test.inclusions=**/*.test.ts,**/*.spec.ts,**/*.test.tsx,**/*.spec.tsx
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
+
+      - name: SonarCloud Quality Gate Check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  # Summary job - all quality checks passed
+  quality-gate:
+    name: Quality Gate
+    runs-on: ubuntu-latest
+    needs:
+      - security-audit
+      - license-compliance
+      - bundle-size
+      - dead-code-detection
+      - complexity-analysis
+      - duplication-check
+    if: always()
+    steps:
+      - name: Check quality gate status
+        run: |
+          echo "## Code Quality Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Check each job status
+          SECURITY="${{ needs.security-audit.result }}"
+          LICENSE="${{ needs.license-compliance.result }}"
+          BUNDLE="${{ needs.bundle-size.result }}"
+          DEAD_CODE="${{ needs.dead-code-detection.result }}"
+          COMPLEXITY="${{ needs.complexity-analysis.result }}"
+          DUPLICATION="${{ needs.duplication-check.result }}"
+
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Security Audit | $SECURITY |" >> $GITHUB_STEP_SUMMARY
+          echo "| License Compliance | $LICENSE |" >> $GITHUB_STEP_SUMMARY
+          echo "| Bundle Size | $BUNDLE |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dead Code Detection | $DEAD_CODE |" >> $GITHUB_STEP_SUMMARY
+          echo "| Complexity Analysis | $COMPLEXITY |" >> $GITHUB_STEP_SUMMARY
+          echo "| Duplication Check | $DUPLICATION |" >> $GITHUB_STEP_SUMMARY
+
+          # Fail if security audit failed (critical)
+          if [[ "$SECURITY" != "success" ]]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "❌ Security audit failed - this must be fixed" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+          # Warn on other failures but don't block
+          if [[ "$LICENSE" != "success" ]] || \
+             [[ "$BUNDLE" != "success" ]] || \
+             [[ "$DEAD_CODE" != "success" ]] || \
+             [[ "$COMPLEXITY" != "success" ]] || \
+             [[ "$DUPLICATION" != "success" ]]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ Some quality checks reported issues - please review" >> $GITHUB_STEP_SUMMARY
+            echo "::warning::Code quality checks found issues. Review the job outputs for details."
+          else
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✅ All quality checks passed!" >> $GITHUB_STEP_SUMMARY
+          fi

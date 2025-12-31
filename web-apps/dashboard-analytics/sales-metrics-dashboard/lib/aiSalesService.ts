@@ -301,8 +301,8 @@ export const analyzeRegionalPerformance = (
  */
 export const generateSalesInsights = (
   revenueData: { date: string; revenue: number; orders: number }[],
-  products: any[],
-  regions: any[]
+  products: Array<{ id: string; name: string; sales: number; revenue: number; growth: number; category: string }>,
+  regions: Array<{ region: string; sales: number; percentage: number }>
 ): SalesInsight[] => {
   const insights: SalesInsight[] = [];
 

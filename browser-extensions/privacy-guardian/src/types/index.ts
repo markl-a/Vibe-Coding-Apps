@@ -37,7 +37,10 @@ export interface PasswordGeneratorOptions {
 
 export interface PasswordStrength {
   score: number;
-  feedback: any;
+  feedback: {
+    warning?: string;
+    suggestions?: string[];
+  };
   crackTime: string;
   suggestions: string[];
 }

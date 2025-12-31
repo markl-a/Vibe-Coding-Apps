@@ -15,7 +15,13 @@ import { VoiceNote } from '../types';
 
 type FilterType = 'all' | 'favorites';
 
-export const NotesListScreen = ({ navigation }: any) => {
+type NotesListScreenProps = {
+  navigation: {
+    navigate: (screen: string, params?: { note: VoiceNote }) => void;
+  };
+};
+
+export const NotesListScreen = ({ navigation }: NotesListScreenProps) => {
   const notes = useNotesStore((state) => state.notes);
   const deleteNote = useNotesStore((state) => state.deleteNote);
   const toggleFavorite = useNotesStore((state) => state.toggleFavorite);

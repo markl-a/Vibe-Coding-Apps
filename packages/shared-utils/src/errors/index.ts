@@ -1,4 +1,56 @@
 /**
+ * 從 unknown 類型的錯誤中安全地提取錯誤訊息
+ * 用於 catch 塊中處理 unknown 類型的錯誤
+ *
+ * @param error - 捕獲的錯誤（unknown 類型）
+ * @param fallback - 預設錯誤訊息
+ * @returns 錯誤訊息字串
+ *
+ * @example
+ * try {
+ *   await someAsyncOperation();
+ * } catch (error: unknown) {
+ *   res.status(400).json({ error: getErrorMessage(error) });
+ * }
+ */
+export function getErrorMessage(error: unknown, fallback = '發生未知錯誤'): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  if (typeof error === 'string') {
+    return error;
+  }
+  if (error && typeof error === 'object' && 'message' in error) {
+    return String((error as { message: unknown }).message);
+  }
+  return fallback;
+}
+
+/**
+ * 從 unknown 類型的錯誤中提取完整的錯誤信息
+ *
+ * @param error - 捕獲的錯誤（unknown 類型）
+ * @returns 包含訊息、名稱和堆棧的錯誤信息對象
+ */
+export function getErrorInfo(error: unknown): {
+  message: string;
+  name: string;
+  stack?: string;
+} {
+  if (error instanceof Error) {
+    return {
+      message: error.message,
+      name: error.name,
+      stack: error.stack,
+    };
+  }
+  return {
+    message: getErrorMessage(error),
+    name: 'UnknownError',
+  };
+}
+
+/**
  * 統一的應用錯誤基類
  */
 export class AppError extends Error {

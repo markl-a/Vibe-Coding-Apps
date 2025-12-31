@@ -15,7 +15,18 @@ import { Card, Button } from '../../../shared/components';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 
-export const NoteDetailScreen = ({ route, navigation }: any) => {
+type NoteDetailScreenProps = {
+  route: {
+    params: {
+      note: VoiceNote;
+    };
+  };
+  navigation: {
+    goBack: () => void;
+  };
+};
+
+export const NoteDetailScreen = ({ route, navigation }: NoteDetailScreenProps) => {
   const note: VoiceNote = route.params.note;
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);

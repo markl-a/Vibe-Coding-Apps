@@ -1,250 +1,662 @@
-# 企業應用 Enterprise Applications
-🤖 **AI-Driven | AI-Native** 🚀
-🚧 **建設中** 🚧
+# Enterprise Applications
 
-這個資料夾包含各種使用 **AI 輔助開發**的企業級應用系統專案。利用 AI 工具快速建立可擴展、安全且高效的企業解決方案。
+A comprehensive collection of enterprise-grade applications built with modern technologies and AI-assisted development practices. This repository contains 34+ production-ready applications across 8 major business categories, designed to meet the diverse needs of modern enterprises.
 
-## 子資料夾說明
+## Overview
 
-### erp-systems (企業資源規劃)
-- 整合式企業管理系統
-- 庫存管理
-- 生產計劃
-- 採購管理
-- 銷售管理
+This directory contains a complete suite of enterprise applications, from HR management to business intelligence, all built with scalability, security, and maintainability in mind. Each application is designed to work independently or as part of an integrated enterprise ecosystem.
 
-### crm-systems (客戶關係管理)
-- 客戶資料管理
-- 銷售漏斗追蹤
-- 客戶服務系統
-- 行銷自動化
-- 客戶分析
+## Application Categories
 
-### hr-management (人力資源管理)
-- 員工資料管理
-- 招聘管理系統
-- 績效評估
-- 薪資管理
-- 出勤管理
+### 1. HR Management (`hr-management/`)
 
-### project-management (專案管理)
-- 專案規劃與追蹤
-- 任務管理
-- 資源分配
-- 時程管理
-- 團隊協作
+Complete human resources management solutions for employee lifecycle management.
 
-### finance-accounting (財務會計)
-- 會計系統
-- 發票管理
-- 預算控制
-- 財務報表
-- 稅務管理
+- **[Employee Directory](hr-management/employee-directory/)** - Full-featured employee information management system with org chart visualization
+- **[Attendance Tracker](hr-management/attendance-tracker/)** - GPS-enabled attendance tracking with anomaly detection
+- **[Payroll Calculator](hr-management/payroll-calculator/)** - Comprehensive payroll processing with tax calculations and payslip generation
+- **[Leave Management](hr-management/leave-management/)** - Multi-type leave request and approval workflow system
 
-### supply-chain (供應鏈管理)
-- 供應商管理
-- 物流追蹤
-- 庫存優化
-- 需求預測
-- 採購自動化
+**Key Features:** CRUD operations, department management, advanced search, role-based access control, automated calculations
 
-### business-intelligence (商業智能)
-- 數據分析平台
-- 報表系統
-- 數據視覺化
-- KPI 儀表板
-- 預測分析
+### 2. CRM Systems (`crm-systems/`)
 
-### collaboration-tools (協作工具)
-- 企業通訊平台
-- 文檔協作
-- 視訊會議系統
-- 知識管理
-- 工作流程自動化
+Customer relationship management tools for sales and customer service teams.
 
-## 適合開發的企業應用類型
+- **[Simple CRM](crm-systems/simple-crm/)** - Lightweight CRM with customer management, contacts, and opportunity tracking
+- **[Customer Portal](crm-systems/customer-portal/)** - Self-service portal for customers
+- **[Lead Management](crm-systems/lead-management/)** - Lead capture and nurturing system
+- **[Sales Pipeline](crm-systems/sales-pipeline/)** - Visual sales pipeline management
 
-### 管理系統
-- 全功能 ERP 系統
-- CRM 平台
-- HRM 系統
-- 專案管理平台
-- 文檔管理系統
+**Key Features:** Customer data management, sales funnel tracking, activity logging, contact management, reporting
 
-### 業務流程
-- 工作流引擎
-- 審批系統
-- 電子簽核
-- 自動化平台
-- BPM 系統
+### 3. ERP Systems (`erp-systems/`)
 
-### 數據與分析
-- BI 平台
-- 數據倉儲
-- 報表生成器
-- 即時分析系統
-- 預測性分析
+Integrated enterprise resource planning modules for business operations.
 
-### 協作與溝通
-- 企業社交網絡
-- 團隊協作平台
-- 知識庫系統
-- 企業門戶
-- 內部通訊系統
+- **[Financial Accounting](erp-systems/financial-accounting/)** - Core accounting and general ledger system
+- **[Inventory Management](erp-systems/inventory-management/)** - Stock tracking and warehouse management
+- **[Purchase Order System](erp-systems/purchase-order-system/)** - Procurement and supplier management
+- **[Sales Order System](erp-systems/sales-order-system/)** - Order processing and fulfillment
 
-## 技術棧建議
+**Key Features:** Integrated business processes, real-time inventory, automated workflows, financial controls
 
-### 後端
-- Java (Spring Boot, Jakarta EE)
-- C# (.NET, ASP.NET Core)
-- Python (Django, FastAPI)
-- Node.js (NestJS, Express)
-- Go (Gin, Echo)
+### 4. Finance & Accounting (`finance-accounting/`)
 
-### 前端
-- React + TypeScript
-- Vue 3 + TypeScript
-- Angular
-- Next.js
-- Blazor
+Financial management and accounting tools for business finance operations.
 
-### 資料庫
-- PostgreSQL
-- Microsoft SQL Server
-- Oracle Database
-- MongoDB
-- Redis (快取)
+- **[Budget Planner](finance-accounting/budget-planner/)** - Budget creation and monitoring
+- **[Expense Tracker](finance-accounting/expense-tracker/)** - Employee expense management and reimbursement
+- **[Financial Dashboard](finance-accounting/financial-dashboard/)** - Real-time financial KPIs and reporting
+- **[Invoice Generator](finance-accounting/invoice-generator/)** - Automated invoice creation and management
+- **[Receipt OCR](finance-accounting/receipt-ocr/)** - AI-powered receipt scanning and data extraction
 
-### 訊息佇列
-- RabbitMQ
-- Apache Kafka
-- Redis Pub/Sub
-- Azure Service Bus
+**Key Features:** Financial reporting, budget controls, invoice management, expense tracking, OCR technology
 
-### 雲端平台
-- AWS
-- Azure
-- Google Cloud Platform
-- 私有雲 (OpenStack)
+### 5. Project Management (`project-management/`)
 
-### 安全與認證
-- OAuth 2.0 / OpenID Connect
-- SAML
-- Active Directory
-- JWT
+Tools for agile and traditional project management methodologies.
+
+- **[Kanban Board](project-management/kanban-board/)** - Visual task management with drag-and-drop interface
+- **[Gantt Chart](project-management/gantt-chart/)** - Timeline-based project planning
+- **[Project Dashboard](project-management/project-dashboard/)** - Project overview and status monitoring
+- **[Resource Allocator](project-management/resource-allocator/)** - Team capacity and resource planning
+- **[Sprint Manager](project-management/sprint-manager/)** - Agile sprint planning and tracking
+- **[AI Assistant](project-management/ai-assistant/)** - AI-powered project insights and recommendations
+
+**Key Features:** Task tracking, team collaboration, time estimation, progress visualization, agile workflows
+
+### 6. Collaboration Tools (`collaboration-tools/`)
+
+Enterprise communication and collaboration platforms.
+
+- **[Team Chat](collaboration-tools/team-chat/)** - Real-time messaging and team communication
+- **[Video Conference](collaboration-tools/video-conference/)** - Web-based video conferencing solution
+- **[Knowledge Base](collaboration-tools/knowledge-base/)** - Internal wiki and documentation system
+- **[Realtime Docs](collaboration-tools/realtime-docs/)** - Collaborative document editing
+
+**Key Features:** Real-time communication, document collaboration, knowledge sharing, team coordination
+
+### 7. Business Intelligence (`business-intelligence/`)
+
+Data analytics and reporting tools for data-driven decision making.
+
+- **[Interactive Dashboard](business-intelligence/interactive-dashboard/)** - Plotly Dash-based interactive data visualization
+- **[Predictive Analytics](business-intelligence/predictive-analytics/)** - ML-powered forecasting and predictions
+- **[Sales Analytics](business-intelligence/sales-analytics/)** - Sales performance analysis and insights
+- **[AI Insights Engine](business-intelligence/ai-insights-engine/)** - Automated insights generation
+- **[ETL Pipeline](business-intelligence/etl-pipeline/)** - Data extraction, transformation, and loading
+- **[KPI Monitoring](business-intelligence/kpi-monitoring/)** - Key performance indicator tracking
+- **[NLQ Interface](business-intelligence/nlq-interface/)** - Natural language query interface
+
+**Key Features:** Data visualization, predictive analytics, real-time dashboards, automated reporting, ML integration
+
+### 8. Supply Chain (`supply-chain/`)
+
+Supply chain optimization and logistics management.
+
+- **[Demand Forecasting](supply-chain/demand-forecasting/)** - ML-based demand prediction
+- **[Inventory Optimization](supply-chain/inventory-optimization/)** - Smart inventory level management
+- **[Route Optimization](supply-chain/route-optimization/)** - Delivery route planning
+- **[Supplier Performance](supply-chain/supplier-performance/)** - Vendor performance tracking
+
+**Key Features:** Demand prediction, logistics optimization, supplier management, inventory control
+
+## Common Features Across Applications
+
+### Security & Authentication
+- JWT-based authentication and authorization
 - Role-Based Access Control (RBAC)
+- Secure password hashing (bcrypt)
+- Session management
+- API key authentication
+- CORS configuration
 
-## 🤖 AI 開發建議
+### Data Management
+- RESTful API architecture
+- CRUD operations with validation
+- Database transactions
+- Data migration support
+- Backup and restore capabilities
+- CSV/Excel import/export
 
-### 使用 AI 工具開發企業應用
+### User Experience
+- Responsive design (mobile-friendly)
+- Real-time updates
+- Advanced search and filtering
+- Pagination and infinite scroll
+- Dark/light theme support
+- Internationalization (i18n) ready
 
-- 使用 **GitHub Copilot** 快速生成業務邏輯和 CRUD 操作
-- 利用 **Claude** 或 **ChatGPT** 設計複雜的企業架構和數據模型
-- AI 協助生成完整的 RESTful API 和 GraphQL schema
-- 使用 AI 工具生成報表和數據分析程式碼
-- AI 協助實作複雜的業務規則和工作流程
-- 利用 AI 生成單元測試和整合測試
-- 使用 AI 優化資料庫查詢和性能調校
-- AI 協助生成 API 文檔和技術文件
+### Monitoring & Logging
+- Application logging
+- Error tracking
+- Performance monitoring
+- Audit trails
+- Activity history
 
-### AI 輔助企業應用開發工作流程
+### Integration Capabilities
+- Webhook support
+- Third-party API integration
+- Email notifications
+- Calendar integration
+- Cloud storage integration
 
-1. **需求分析與架構設計**
-   - AI 協助分析業務需求和流程
-   - 使用 AI 設計系統架構和模組劃分
-   - AI 協助設計資料庫 schema 和關聯
+## Technology Stack
 
-2. **核心功能開發**
-   - AI 生成業務邏輯和領域模型
-   - 使用 AI 實作 CRUD 操作和 API 端點
-   - AI 協助實作複雜的業務規則
+### Backend Technologies
 
-3. **整合與自動化**
-   - AI 協助整合第三方服務和 API
-   - 使用 AI 實作工作流程引擎
-   - AI 協助建立自動化腳本
+#### Node.js Stack
+- **Runtime:** Node.js 18+
+- **Framework:** Express.js
+- **Language:** TypeScript
+- **ORM:** Prisma
+- **Database:** PostgreSQL, SQLite
+- **Authentication:** JWT (jsonwebtoken), bcrypt
+- **Validation:** Zod, express-validator
 
-4. **安全與權限**
-   - AI 協助實作身份驗證和授權
-   - 使用 AI 生成安全相關程式碼
-   - AI 協助進行安全審查
+#### Python Stack
+- **Runtime:** Python 3.8+
+- **Frameworks:** Flask, FastAPI, Dash
+- **Data Processing:** Pandas, NumPy
+- **Visualization:** Plotly, Matplotlib
+- **Database:** SQLAlchemy ORM
+- **ML/AI:** scikit-learn, TensorFlow
 
-5. **測試與部署**
-   - AI 生成全面的測試案例
-   - 使用 AI 優化 CI/CD 管道
-   - AI 協助生成部署文檔和操作手冊
+### Frontend Technologies
 
-## 企業應用開發最佳實踐
+- **Framework:** React 18+ with TypeScript
+- **UI Library:** Ant Design
+- **State Management:** React Query, Context API
+- **Routing:** React Router v6
+- **Forms:** React Hook Form, Formik
+- **Charts:** Recharts, Chart.js
+- **Date/Time:** dayjs, date-fns
+- **Build Tool:** Vite
+- **Styling:** CSS Modules, Tailwind CSS (selected apps)
 
-### 架構設計
-- 使用微服務或模組化單體架構
-- 實作清晰的分層架構 (展示層、業務層、資料層)
-- 採用領域驅動設計 (DDD) 原則
-- 實作 CQRS 模式處理複雜查詢
+### Databases
 
-### 安全性
-- 實作多因素身份驗證 (MFA)
-- 使用角色基礎存取控制 (RBAC)
-- 資料加密（傳輸中和靜態）
-- 定期安全審計和漏洞掃描
+- **PostgreSQL** - Primary relational database for most applications
+- **SQLite** - Lightweight database for simple applications and development
+- **MongoDB** - Document database for specific use cases
+- **Redis** - Caching and session storage
 
-### 可擴展性
-- 水平擴展設計
-- 資料庫分片和讀寫分離
-- 使用快取策略提升性能
-- 實作負載平衡
+### Development Tools
 
-### 可維護性
-- 完整的程式碼文檔
-- 自動化測試覆蓋率 > 80%
-- 使用版本控制和 Git Flow
-- 實作持續整合和持續部署
+- **Package Managers:** npm, yarn, pip
+- **Version Control:** Git
+- **Code Quality:** ESLint, Prettier, Black (Python)
+- **Testing:** Jest, Supertest, pytest
+- **API Testing:** Postman, Thunder Client
+- **Documentation:** Swagger/OpenAPI
 
-### 監控與日誌
-- 實作分散式追蹤
-- 集中式日誌管理
-- 應用性能監控 (APM)
-- 業務指標儀表板
+### DevOps & Deployment
 
-## 🎯 AI 在企業應用的特殊應用
+- **Containerization:** Docker, Docker Compose
+- **Process Management:** PM2 (Node.js)
+- **Web Servers:** Nginx, Apache
+- **CI/CD:** GitHub Actions, GitLab CI
+- **Cloud Platforms:** AWS, Azure, Google Cloud, Heroku
+- **Monitoring:** Application logs, Performance metrics
 
-### 智能化功能
-- 使用 AI 生成智能推薦系統
-- 實作自然語言查詢介面
-- AI 驅動的數據分析和預測
-- 智能工作流程建議
+## Getting Started
 
-### 自動化
-- AI 協助開發 RPA (流程自動化機器人)
-- 智能文檔處理和分類
-- 自動化測試和品質保證
-- 智能客服和聊天機器人
+### Prerequisites
 
-### 決策支援
-- AI 驅動的商業智能
-- 預測性分析和趨勢預測
-- 風險評估和預警系統
-- 智能報表生成
+Before running any application, ensure you have the following installed:
 
-## 📚 相關資源
+**For Node.js Applications:**
+- Node.js 18+ and npm
+- PostgreSQL 14+ (for production apps) or SQLite (for development)
+- Git
 
-### 學習資源
-- 企業應用架構模式
-- 微服務設計模式
-- 領域驅動設計 (DDD)
-- 企業整合模式
+**For Python Applications:**
+- Python 3.8+
+- pip
+- Virtual environment (venv or conda)
 
-### 開源專案參考
-- Odoo (開源 ERP)
-- ERPNext
-- SuiteCRM
-- Apache OFBiz
-- Metabase (BI)
+### Quick Start Guide
 
-## ⚠️ 注意事項
+#### 1. Clone the Repository
 
-- 企業應用需要特別注重安全性和資料隱私
-- 確保符合相關法規要求 (如 GDPR, SOC 2)
-- 重視系統可用性和業務連續性
-- 建立完善的備份和災難恢復計劃
-- 提供完整的使用者培訓和技術支援文檔
+```bash
+git clone <repository-url>
+cd enterprise-apps
+```
+
+#### 2. Choose an Application
+
+Navigate to the desired application category and project:
+
+```bash
+# Example: HR Management - Employee Directory
+cd hr-management/employee-directory
+```
+
+#### 3. Setup Backend (Node.js Example)
+
+```bash
+cd backend
+
+# Install dependencies
+npm install
+
+# Configure environment variables
+cp .env.example .env
+# Edit .env file with your database credentials
+
+# Run database migrations
+npx prisma migrate dev
+
+# Generate Prisma client
+npx prisma generate
+
+# Start development server
+npm run dev
+```
+
+The backend will typically run on `http://localhost:3000` (or the port specified in .env)
+
+#### 4. Setup Frontend (React Example)
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Configure environment variables (if needed)
+cp .env.example .env
+
+# Start development server
+npm run dev
+```
+
+The frontend will typically run on `http://localhost:5173` (Vite default)
+
+#### 5. Setup Python Applications
+
+```bash
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# On Linux/Mac:
+source venv/bin/activate
+# On Windows:
+venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the application
+python app.py
+# or for Streamlit apps:
+streamlit run app.py
+```
+
+### Environment Configuration
+
+Most applications require environment variables for configuration. Common variables include:
+
+```env
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/dbname"
+
+# Server
+PORT=3000
+NODE_ENV=development
+
+# JWT Authentication
+JWT_SECRET=your-secret-key-here
+JWT_EXPIRES_IN=7d
+
+# CORS
+CORS_ORIGIN=http://localhost:5173
+
+# Email (if applicable)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASSWORD=your-app-password
+```
+
+## Architecture Overview
+
+### Application Architecture
+
+Most applications in this repository follow a **three-tier architecture**:
+
+```
+┌─────────────────────────────────────────┐
+│         Frontend (React + TS)            │
+│  - UI Components (Ant Design)           │
+│  - State Management (React Query)       │
+│  - Routing (React Router)               │
+└─────────────────┬───────────────────────┘
+                  │ HTTP/REST API
+┌─────────────────▼───────────────────────┐
+│      Backend (Node.js/Python)           │
+│  - API Routes & Controllers             │
+│  - Business Logic                       │
+│  - Authentication & Authorization       │
+│  - Data Validation                      │
+└─────────────────┬───────────────────────┘
+                  │ ORM/Query
+┌─────────────────▼───────────────────────┐
+│       Database (PostgreSQL/SQLite)      │
+│  - Data Models & Relations              │
+│  - Migrations                           │
+│  - Indexes & Constraints                │
+└─────────────────────────────────────────┘
+```
+
+### Backend Architecture Pattern
+
+```
+backend/
+├── src/
+│   ├── controllers/     # Request handlers
+│   ├── services/        # Business logic
+│   ├── models/          # Data models (Prisma/SQLAlchemy)
+│   ├── routes/          # API route definitions
+│   ├── middleware/      # Auth, validation, error handling
+│   ├── utils/           # Helper functions
+│   ├── config/          # Configuration files
+│   └── types/           # TypeScript type definitions
+├── prisma/              # Database schema & migrations
+├── tests/               # Unit and integration tests
+└── package.json         # Dependencies
+```
+
+### Frontend Architecture Pattern
+
+```
+frontend/
+├── src/
+│   ├── components/      # Reusable UI components
+│   ├── pages/           # Page components
+│   ├── services/        # API calls
+│   ├── hooks/           # Custom React hooks
+│   ├── contexts/        # React contexts
+│   ├── utils/           # Helper functions
+│   ├── types/           # TypeScript interfaces
+│   ├── styles/          # Global styles
+│   └── App.tsx          # Main application component
+├── public/              # Static assets
+└── package.json         # Dependencies
+```
+
+### API Design Principles
+
+All applications follow RESTful API conventions:
+
+- **GET** `/api/resource` - List all resources
+- **GET** `/api/resource/:id` - Get single resource
+- **POST** `/api/resource` - Create new resource
+- **PUT** `/api/resource/:id` - Update entire resource
+- **PATCH** `/api/resource/:id` - Partial update
+- **DELETE** `/api/resource/:id` - Delete resource
+
+Standard response format:
+```json
+{
+  "success": true,
+  "data": {...},
+  "message": "Operation successful",
+  "timestamp": "2025-12-31T00:00:00Z"
+}
+```
+
+Error response format:
+```json
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid input data",
+    "details": [...]
+  }
+}
+```
+
+## Development Best Practices
+
+### Code Quality
+- Use TypeScript for type safety
+- Follow consistent coding style (ESLint, Prettier)
+- Write self-documenting code with clear naming
+- Keep functions small and focused (Single Responsibility)
+- Use meaningful commit messages
+
+### Security
+- Never commit secrets or credentials
+- Use environment variables for configuration
+- Implement proper input validation and sanitization
+- Use parameterized queries to prevent SQL injection
+- Implement rate limiting on API endpoints
+- Keep dependencies updated
+
+### Testing
+- Write unit tests for business logic
+- Integration tests for API endpoints
+- End-to-end tests for critical user flows
+- Aim for >70% code coverage
+- Test error scenarios and edge cases
+
+### Performance
+- Implement database indexes for frequently queried fields
+- Use connection pooling for database connections
+- Cache frequently accessed data (Redis)
+- Implement pagination for large datasets
+- Optimize database queries (avoid N+1 queries)
+- Use lazy loading for frontend components
+
+### Documentation
+- README file for each application
+- API documentation (Swagger/OpenAPI)
+- Code comments for complex logic
+- Database schema documentation
+- Deployment instructions
+
+## Deployment
+
+### Docker Deployment
+
+Most applications include Docker support. To deploy using Docker:
+
+```bash
+# Navigate to application directory
+cd hr-management/employee-directory
+
+# Build and run with Docker Compose
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+### Manual Production Deployment
+
+#### Backend (Node.js)
+
+```bash
+# Build the application
+npm run build
+
+# Install PM2 for process management
+npm install -g pm2
+
+# Start with PM2
+pm2 start dist/index.js --name app-name
+
+# Save PM2 configuration
+pm2 save
+
+# Setup PM2 to start on boot
+pm2 startup
+```
+
+#### Frontend (React)
+
+```bash
+# Build for production
+npm run build
+
+# The build output will be in the 'dist' or 'build' directory
+# Serve with nginx or any static file server
+```
+
+#### Nginx Configuration Example
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    # Frontend
+    location / {
+        root /var/www/app/frontend/dist;
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Backend API
+    location /api {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+### Cloud Platform Deployment
+
+#### Heroku
+
+```bash
+# Login to Heroku
+heroku login
+
+# Create application
+heroku create your-app-name
+
+# Add PostgreSQL addon
+heroku addons:create heroku-postgresql:hobby-dev
+
+# Deploy
+git push heroku main
+
+# Run migrations
+heroku run npx prisma migrate deploy
+```
+
+#### AWS / Azure / Google Cloud
+
+Refer to individual application READMEs for specific deployment instructions.
+
+## Testing
+
+### Running Tests
+
+#### Node.js Applications
+
+```bash
+# Run all tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run tests in watch mode
+npm run test:watch
+```
+
+#### Python Applications
+
+```bash
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=src --cov-report=html
+
+# Run specific test file
+pytest tests/test_api.py
+```
+
+## Contributing
+
+We welcome contributions! Here's how you can help:
+
+1. **Report Bugs** - Open an issue with details about the bug
+2. **Suggest Features** - Open an issue with your feature request
+3. **Submit Pull Requests** - Fork the repo and submit a PR
+
+### Development Workflow
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Run tests and ensure they pass
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
+
+## Troubleshooting
+
+### Common Issues
+
+**Database Connection Errors**
+- Verify DATABASE_URL in .env file
+- Ensure PostgreSQL is running
+- Check database credentials
+
+**Port Already in Use**
+- Change PORT in .env file
+- Kill the process using the port: `lsof -ti:3000 | xargs kill`
+
+**Prisma Client Not Generated**
+- Run `npx prisma generate`
+- Delete node_modules and reinstall
+
+**CORS Errors**
+- Update CORS_ORIGIN in backend .env
+- Ensure frontend URL matches CORS configuration
+
+## Support and Resources
+
+### Documentation
+- Each application has its own detailed README
+- API documentation available via Swagger (where implemented)
+- Database schema documented in Prisma schema files
+
+### Learning Resources
+- [Node.js Best Practices](https://github.com/goldbergyoni/nodebestpractices)
+- [React TypeScript Cheatsheet](https://react-typescript-cheatsheet.netlify.app/)
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+
+### Reference Projects
+- Odoo - Open Source ERP
+- ERPNext - Open Source ERP
+- SuiteCRM - Open Source CRM
+- Metabase - Open Source BI
+
+## License
+
+MIT License - See individual project LICENSE files for details.
+
+## Acknowledgments
+
+These applications were built using modern best practices and draw inspiration from industry-leading enterprise software solutions. Special thanks to the open-source community for the excellent tools and frameworks that made this possible.
+
+---
+
+**Note:** This is an active development repository. Applications are in various stages of completion. Please refer to individual project READMEs for specific status and feature completeness.

@@ -2,13 +2,20 @@ import { Request, Response } from 'express';
 import { leaveService } from '../services/leave.service';
 import { leaveAIService } from '../services/leave-ai.service';
 
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return String(error);
+}
+
 export class LeaveController {
   async createRequest(req: Request, res: Response) {
     try {
       const request = await leaveService.createLeaveRequest(req.body);
       res.status(201).json(request);
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
+    } catch (error: unknown) {
+      res.status(400).json({ error: getErrorMessage(error) });
     }
   }
 
@@ -20,8 +27,8 @@ export class LeaveController {
         status as string
       );
       res.json(requests);
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
+    } catch (error: unknown) {
+      res.status(400).json({ error: getErrorMessage(error) });
     }
   }
 
@@ -31,8 +38,8 @@ export class LeaveController {
       const { approverId } = req.body;
       const request = await leaveService.approveLeaveRequest(id, approverId);
       res.json(request);
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
+    } catch (error: unknown) {
+      res.status(400).json({ error: getErrorMessage(error) });
     }
   }
 
@@ -46,8 +53,8 @@ export class LeaveController {
         rejectionReason
       );
       res.json(request);
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
+    } catch (error: unknown) {
+      res.status(400).json({ error: getErrorMessage(error) });
     }
   }
 
@@ -59,8 +66,8 @@ export class LeaveController {
         parseInt(year as string) || new Date().getFullYear()
       );
       res.json(balances);
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
+    } catch (error: unknown) {
+      res.status(400).json({ error: getErrorMessage(error) });
     }
   }
 
@@ -69,8 +76,8 @@ export class LeaveController {
       const { id } = req.params;
       const recommendation = await leaveAIService.getApprovalRecommendation(id);
       res.json(recommendation);
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
+    } catch (error: unknown) {
+      res.status(400).json({ error: getErrorMessage(error) });
     }
   }
 
@@ -79,8 +86,8 @@ export class LeaveController {
       const { employeeId } = req.params;
       const pattern = await leaveAIService.analyzeLeavePattern(employeeId);
       res.json(pattern);
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
+    } catch (error: unknown) {
+      res.status(400).json({ error: getErrorMessage(error) });
     }
   }
 
@@ -93,8 +100,8 @@ export class LeaveController {
         endDate ? new Date(endDate as string) : undefined
       );
       res.json(analysis);
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
+    } catch (error: unknown) {
+      res.status(400).json({ error: getErrorMessage(error) });
     }
   }
 }

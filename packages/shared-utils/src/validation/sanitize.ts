@@ -275,7 +275,7 @@ export function sanitizeJSON(input: string): Record<string, unknown> | null {
     // Remove dangerous keys
     const dangerous = ['__proto__', 'constructor', 'prototype'];
 
-    const sanitize = (obj: any): any => {
+    const sanitize = (obj: unknown): unknown => {
       if (obj === null || typeof obj !== 'object') {
         return obj;
       }
@@ -285,9 +285,9 @@ export function sanitizeJSON(input: string): Record<string, unknown> | null {
       }
 
       const clean: Record<string, unknown> = {};
-      for (const key in obj) {
-        if (obj.hasOwnProperty(key) && !dangerous.includes(key)) {
-          clean[key] = sanitize(obj[key]);
+      for (const key in obj as Record<string, unknown>) {
+        if (Object.prototype.hasOwnProperty.call(obj, key) && !dangerous.includes(key)) {
+          clean[key] = sanitize((obj as Record<string, unknown>)[key]);
         }
       }
 

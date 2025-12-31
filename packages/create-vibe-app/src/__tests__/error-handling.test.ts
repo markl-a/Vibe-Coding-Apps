@@ -19,13 +19,13 @@ vi.mock('child_process', () => ({
 
 describe('Error Handling - validateProjectName', () => {
   it('should handle null values', () => {
-    const result = validateProjectName(null as any);
+    const result = validateProjectName(null as unknown as string);
     expect(result).not.toBe(true);
     expect(typeof result).toBe('string');
   });
 
   it('should handle undefined values', () => {
-    const result = validateProjectName(undefined as any);
+    const result = validateProjectName(undefined as unknown as string);
     expect(result).not.toBe(true);
     expect(typeof result).toBe('string');
   });
@@ -366,22 +366,22 @@ describe('Error Handling - Edge Cases', () => {
   });
 
   it('should handle empty config object', async () => {
-    const config: any = {
+    const config: Partial<ProjectConfig> & { features: string[] } = {
       features: [], // features is required to avoid undefined.includes()
     };
 
-    await expect(createPackageJson(config, '/test/path')).resolves.not.toThrow();
+    await expect(createPackageJson(config as ProjectConfig, '/test/path')).resolves.not.toThrow();
   });
 
   it('should handle config with missing optional properties', async () => {
-    const config: any = {
+    const config: Partial<ProjectConfig> & { name: string; features: string[] } = {
       name: 'test-app',
       features: [], // features array is required
       // missing template, framework, packageManager
     };
 
     // Should handle gracefully
-    await createPackageJson(config, '/test/path');
+    await createPackageJson(config as ProjectConfig, '/test/path');
     expect(fs.writeJSON).toHaveBeenCalled();
   });
 
@@ -482,7 +482,7 @@ describe('Error Handling - Concurrency and Race Conditions', () => {
   it('should handle file writes in order', async () => {
     const writeOrder: string[] = [];
 
-    vi.mocked(fs.writeFile).mockImplementation(async (path: any) => {
+    vi.mocked(fs.writeFile).mockImplementation(async (path: string) => {
       writeOrder.push(path.toString());
     });
 

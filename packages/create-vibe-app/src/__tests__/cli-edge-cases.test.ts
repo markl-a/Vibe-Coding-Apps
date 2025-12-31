@@ -149,7 +149,7 @@ describe('CLI Edge Cases - Template Selection', () => {
   });
 
   it('should handle template without frameworks field', () => {
-    const mockTemplate: any = {
+    const mockTemplate: { name: string; frameworks?: string[] } = {
       name: 'Test Template',
       // no frameworks field
     };
