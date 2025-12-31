@@ -5,15 +5,15 @@
 
 import { CacheManager, getDefaultCacheManager } from './CacheManager';
 
-export interface CacheableOptions {
+export interface CacheableOptions<T = unknown> {
   /** Time to live in seconds */
   ttl?: number;
   /** Custom cache key generator function */
-  keyGenerator?: (...args: any[]) => string;
+  keyGenerator?: (...args: unknown[]) => string;
   /** Cache manager instance (uses default if not provided) */
   cacheManager?: CacheManager;
   /** Condition to determine if result should be cached */
-  condition?: (result: any) => boolean;
+  condition?: (result: T) => boolean;
   /** Prefix for cache key */
   keyPrefix?: string;
 }
@@ -26,7 +26,7 @@ export interface CacheEvictOptions {
   /** Whether to clear all cache */
   allEntries?: boolean;
   /** Custom key generator for eviction */
-  keyGenerator?: (...args: any[]) => string | string[];
+  keyGenerator?: (...args: unknown[]) => string | string[];
   /** Prefix for cache key */
   keyPrefix?: string;
 }
@@ -35,7 +35,7 @@ export interface CachePutOptions {
   /** Time to live in seconds */
   ttl?: number;
   /** Custom cache key generator function */
-  keyGenerator?: (...args: any[]) => string;
+  keyGenerator?: (...args: unknown[]) => string;
   /** Cache manager instance (uses default if not provided) */
   cacheManager?: CacheManager;
   /** Prefix for cache key */
@@ -48,7 +48,7 @@ export interface CachePutOptions {
 function generateDefaultKey(
   className: string,
   methodName: string,
-  args: any[],
+  args: unknown[],
   prefix?: string
 ): string {
   const argsKey = args.length > 0 ? `:${JSON.stringify(args)}` : '';
@@ -70,14 +70,14 @@ function generateDefaultKey(
  */
 export function Cacheable(options: CacheableOptions = {}) {
   return function (
-    target: any,
+    target: object,
     propertyKey: string,
     descriptor: PropertyDescriptor
   ): PropertyDescriptor {
     const originalMethod = descriptor.value;
     const className = target.constructor.name;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]) {
       const cacheManager = options.cacheManager || getDefaultCacheManager();
 
       // Generate cache key
@@ -123,14 +123,14 @@ export function Cacheable(options: CacheableOptions = {}) {
  */
 export function CacheEvict(options: CacheEvictOptions = {}) {
   return function (
-    target: any,
+    target: object,
     propertyKey: string,
     descriptor: PropertyDescriptor
   ): PropertyDescriptor {
     const originalMethod = descriptor.value;
     const className = target.constructor.name;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]) {
       const cacheManager = options.cacheManager || getDefaultCacheManager();
 
       // Execute original method first
@@ -179,14 +179,14 @@ export function CacheEvict(options: CacheEvictOptions = {}) {
  */
 export function CachePut(options: CachePutOptions = {}) {
   return function (
-    target: any,
+    target: object,
     propertyKey: string,
     descriptor: PropertyDescriptor
   ): PropertyDescriptor {
     const originalMethod = descriptor.value;
     const className = target.constructor.name;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]) {
       const cacheManager = options.cacheManager || getDefaultCacheManager();
 
       // Execute original method
@@ -222,16 +222,16 @@ export function CachePut(options: CachePutOptions = {}) {
  * }
  */
 export function Memoize() {
-  const cache = new WeakMap<any, Map<string, any>>();
+  const cache = new WeakMap<object, Map<string, unknown>>();
 
   return function (
-    target: any,
+    target: object,
     propertyKey: string,
     descriptor: PropertyDescriptor
   ): PropertyDescriptor {
     const originalMethod = descriptor.value;
 
-    descriptor.value = function (...args: any[]) {
+    descriptor.value = function (...args: unknown[]) {
       // Get or create cache for this instance
       if (!cache.has(this)) {
         cache.set(this, new Map());
@@ -267,14 +267,14 @@ export function Memoize() {
  *   { ttl: 3600, keyPrefix: 'user' }
  * );
  */
-export function withCache<T extends (...args: any[]) => Promise<any>>(
+export function withCache<T extends (...args: unknown[]) => Promise<unknown>>(
   fn: T,
   options: CacheableOptions & { name?: string } = {}
 ): T {
   const cacheManager = options.cacheManager || getDefaultCacheManager();
   const functionName = options.name || fn.name || 'anonymous';
 
-  return (async (...args: any[]) => {
+  return (async (...args: unknown[]) => {
     // Generate cache key
     const cacheKey = options.keyGenerator
       ? options.keyGenerator(...args)
@@ -311,7 +311,7 @@ export function withCache<T extends (...args: any[]) => Promise<any>>(
  *   3600
  * );
  */
-export function cached<T extends (...args: any[]) => Promise<any>>(
+export function cached<T extends (...args: unknown[]) => Promise<unknown>>(
   keyPrefix: string,
   fn: T,
   ttl?: number,
@@ -352,7 +352,7 @@ export class BatchCache {
   /**
    * Set multiple values in cache
    */
-  async mset(entries: Map<string, any>, ttl?: number): Promise<void> {
+  async mset(entries: Map<string, unknown>, ttl?: number): Promise<void> {
     await Promise.all(
       Array.from(entries.entries()).map(([key, value]) =>
         this.cacheManager.set(key, value, ttl)
